@@ -1,0 +1,30 @@
+#/bin/bash
+
+# Verify the formatting and compilation post-commit.
+# It's done post-commit so that git commit -av remains fast.
+# Mistakes should be rare and amend is easy so this shouldn't cause much toil.
+
+set -e
+
+function fail() {
+  echo "$@"
+  exit 1
+}
+
+if test "$1" = install; then
+  ln -rs post-commit .git/hooks/ || fail "error: post-commit install failed."
+  echo "success: post-commit installed."
+  exit
+fi
+
+# Check formatting.
+prettier --check --print-width=160 --no-semi *.ts >/dev/null || fail 'Reformat code with `prettier --write --print-width=160 --no-semi *.ts` and amend the commit'.
+
+# Verify that the code compiled and the compiled code is up to date.
+tmpdir=/tmp/.tlewaprecommit
+rm -rf "$tmpdir"
+tsc --outDir "$tmpdir" || fail 'Fix compiler error and amend the commit.'
+for f in "$tmpdir"/*; do
+  bf="$(basename "$f")"
+  cmp "$bf" "$f" || fail 'Retest and amend the commit if needed.'
+done

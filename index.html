@@ -1,0 +1,315 @@
+<!doctype html><html lang=en><head>
+  <title>tlewa</title>
+  <meta charset=utf-8>
+  <meta name=viewport content='width=device-width,initial-scale=1'>
+  <style>:root{color-scheme:light dark}</style>
+  <link rel=icon href=favicon.ico>
+  <link rel=stylesheet href=style.css>
+</head><body>
+
+<pre id=hError class=cbgNegative hidden></pre>
+
+<div id=hIntro>
+<h1>tlewa: The LEast Wrong Answer game</h1>
+
+<p id=hNeedJS><em>This page needs Javascript enabled to work.</em></p>
+
+<p>
+This site provides bunch of question cards and 2-4 wrong answers for each question.
+It's a make your own rules adult game.
+The general rule is that the players have to honestly answer the questions.
+If none of the answers feels right then they have to choose the <em>least wrong answer</em>.
+The other players try to guess what the answer will be.
+As a punishment for getting the guess wrong, they have to explain why they thought the answerer will choose their guess.
+It's a way to learn about each other for people of few words.
+</p>
+
+<p>
+For example suppose the question is "Who is your favorite superhero?" and the answers are Superman, Batman, Ironman, Spiderman.
+If your favorite superhero is Deadpool then you might choose Spiderman as your favorite superhero because he's also a fun hero.
+You can always explain your real answer after the guessing round ends.
+</p>
+
+<p>
+There are 5 question categories:
+</p>
+
+<ul>
+  <li><input type=checkbox id=hqPersonal checked> <label for=hqPersonal>personal: easy, family friendly questions; can be used as a gentle intro into the game.</label>
+  <li><input type=checkbox id=hqDivisive> <label for=hqDivisive>divisive: political questions; ideal for turning friends into enemies.</label>
+  <li><input type=checkbox id=hqSpicy> <label for=hqSpicy>spicy: nsfw questions; ideal for making people regret coming to your drinking party.</label>
+  <li><input type=checkbox id=hqPartner> <label for=hqPartner>partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
+  <li><input type=checkbox id=hqDares> <label for=hqDares>dares: very nsfw; answers with consequences; ideal for having a night that will be forever regretted. Special rules apply, see the <a href=#dares>Dares</a> section below.</label>
+</ul>
+
+<p>
+Select the ones you want to play with.
+Spoilers: see <a href="questions.js">the source code</a> to see what the questions are.
+See the advanced game options below to add your own questions.
+</p>
+
+<p>
+Start game:
+</p>
+
+<ul>
+  <li><button>Start</button> (the join code, if needed, will be available once started)
+  <li><button>Print</button> (for creating an offline version of the game)
+  <li><input type=number size=6 placeholder=CODE> <button>Join</button> (for joining an online version of the game or to present the questions on more screens)
+</ul>
+
+<details>
+  <summary>Advanced settings</summary>
+  <ul>
+    <li>Game seed: <input type=number size=6 id=hSeed placeholder=SEED> <button onclick=handleSeedPreview()>Preview</button> (see <a href=#seed>Game Seed</a> below)
+    <li><input type=checkbox id=hqCustom> <label for=hqCustom>Custom questions (<span id=hCustomQuestionsCount>?</span>):</label><br>
+        <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># Lines starting with hash are comments.
+# One question per line.
+# Separate answers via @.
+
+# Question example:
+Who is your favorite superhero? @ Superman @ Batman @ Ironman @ Spiderman
+
+# Omit adding @ answers to create a dare.
+# Dare example:
+Can someone slap your face?</textarea><br>
+  </ul>
+</details>
+
+<hr>
+
+<h2>Sample rules for a couples game</h2>
+
+<p>
+Two people can this play game just fine:
+</p>
+
+<ul>
+  <li>In each round one person is the answerer, the other person is the guesser.
+  <li>Read the question.
+  <li>Decide on the answer or the guess depending on your role.
+  <li>Once ready, count to three and on three show the answer number you chose with your hand.
+      E.g. open 3 fingers if you answered or guessed answer number 3.
+  <li>If the numbers match, all good, go to the next question with the roles reversed.
+  <li>If the numbers mismatch, well, you learned something about each other.
+      Maybe explain the answer or the guess if it's surprising to the other.
+  <li>Stop playing after 20 minutes or so otherwise the game might become too monotone and boring.
+  <li>The loser is who guessed wrong more times. The loser does the dishes.
+</ul>
+
+<h2>Sample rules for a group game</h2>
+
+<p>
+The game is meant for a group of friends who know each other quite well and would like to learn even more about each other.
+The ideal player count is 4 to 6 players.
+Above that player count the game becomes too cumbersome to manage and people might be more reluctant to open up their dark secrets to a large group.
+Split into smaller groups to keep it more personal.
+</p>
+
+<p>
+Make sure to mentally prepare the players about potentially uncomfortable questions if you enable any of the adult categories.
+Only play those categories if everyone agrees to them and there's high trust between everyone.
+Allow anyone to stop the game if it gets too heavy.
+See the custom questions section on how to fine-tune the questions if needed.
+</p>
+
+<p>
+Prepare voting chips before the game: cut out small paper pieces and write 1, 2, 3, or 4 onto each.
+Players will use these to prepare their answers.
+If you have the game Dixit, then you can re-use its <a href=https://boardgamegeek.com/image/456324/dixit>voting chips</a> (or just print and cut out that pic).
+Alternatively vote with your hands as in the couples game
+(but then people have to remember their choice until the reveal and that can be hard for some).
+</p>
+
+<p>
+Gameplay:
+</p>
+
+<ul>
+  <li>In each round one person is the answerer, the other people are the guessers.
+      The answerer role goes in a clockwise circle around the table.
+  <li>Read the question when the round starts.
+  <li>Answerer decides on their answer, the guessers decide what the answerer will answer.
+  <li>Each player puts the corresponding voting chip face down in front of them to mark they have decided on their answer.
+  <li>Wait until each player picked an answer.
+  <li>The reveal phase comes: each player turns their vote chip upside down to reveal their answer.
+      Do it at the same time.
+      For extra suspense this can be done one player at a time and having the answerer reveal their answer last to eliminate any possibility for cheating.
+  <li>If everyone guessed correctly, then no new information was learned, move to next round.
+  <li>Otherwise the answerer can pick someone who answered wrong and ask them to explain their guess.
+      Why did they think the answerer will choose their guess?
+      It's a nice way to learn how other people see the answerer.
+      Or people can challenge the answerer's answer if it's not in-line with past behavior.
+  <li>The game's host should timebox the discussion phase to 5 minutes so that other players have the chance to embarrass themselves too.
+  <li>Stop playing after 30 minutes otherwise the game might become too monotone and boring.
+  <li>The loser is who guessed wrong the most often. The loser cleans up after the party.
+</ul>
+
+<h2 id=dares>Dares</h2>
+
+<p>
+Dares are special questions.
+They have the form of "Can someone do X to you?".
+E.g. "Can someone pour water on your head?".
+The answer options are always:
+</p>
+
+<ol>
+  <li>no
+  <li>yes
+</ol>
+
+<p>
+Other players have to answer this question: "Do you want to do X to the answerer?"
+They can answer:
+</p>
+
+<ol>
+  <li>no
+  <li>I don't mind
+  <li>I want to
+</ol>
+
+<p>
+The rules are the following:
+</p>
+
+<ul>
+  <li>When all players made their choice, the answerer flips their answer chip.
+      If it's "no", the round ends without action and moves to the next round.
+      The other players don't have to reveal their fantasies.
+  <li>When the answerer's answer is "yes" then the other players reveal their answer chips.
+      If everyone picked "no" then the round ends without action and moves to the next round.
+  <li>Otherwise the answerer needs to pick someone from the "I don't mind" and "I want to" crowd to do the action.
+      Then the action is carried out right away in front of the group.
+      It's encouraged but not required for the answerer to to prefer folks who voted with "I want to".
+      It's discouraged but acceptable for the person to name their partner if they are part of the game.
+  <li>Each action should take no longer than 2 minutes to ensure the game keeps moving.
+  <li>Rule: what happens here, stays here. The players should erase their memory after the game.
+</ul>
+
+<p>
+Most dare questions are very sexual in nature.
+Make sure this is very clear to all players before enabling these questions.
+Not everyone is into such things, especially in group settings.
+Also make it clear that the players can always say no.
+Boundaries and consent must be always honored.
+</p>
+
+<p>
+This section is meant for exploring one's boundaries.
+Can I let other people see me or touch me?
+Can I actually admit that I'd like to try something on my non-partner person?
+Should I try something, even if I don't like it, just to expand my experiences?
+Opening up in this way can be life-changing if the group is open-minded enough and nobody takes life too seriously.
+Or it can be used in a couples game just to try new things.
+Use the simultaneous hand signals as described in the couples game section to answer the desirability of each action and act it out if neither party rejected the act.
+</p>
+
+<p>
+Remember that the game is make-your-own-rules.
+If the above doesn't make sense then alter into something that everyone could enjoy.
+</p>
+
+<h2>Custom questions</h2>
+
+<p>
+In the advanced settings you can configure custom questions.
+Workflow for creating a fully customized game:
+</p>
+
+<ul>
+  <li>Unselect all categories and keep only the custom questions enabled.
+  <li>Open the <a href=questions.js>source code</a>.
+  <li>Copy paste all the questions into the custom questions box.
+  <li>Remove the questions and dares you deem inappropriate for your upcoming game session.
+  <li>Add any other interesting questions you can think of.
+  <li>Start the game as usual.
+</ul>
+
+<h2>Present mode</h2>
+
+<p>
+Other devices can "follow" the main device: they will present the same question as the main device.
+This can be used to present the current question onto a big screen or to present the current question on 1-2 additional phones.
+This way people don't need to awkwardly turn their head to read the question from a single, badly oriented smartphone.
+Steps to follow:
+<p>
+
+<ol>
+  <li>Start a game as usual.
+  <li>In the settings click "start hosting".
+  <li>Join the game from the other device with the given code.
+  <li>Make sure to keep the "name" empty to make the device into a spectator rather than a player.
+</ol>
+
+<h2>Online game</h2>
+
+<p>
+This site supports playing over web as well.
+Follow these steps to set this up:
+</p>
+
+<ol>
+  <li>Make all players join a webconference, e.g. a jitsi call, so that you can communicate effortlessly.
+  <li>Start a game as usual.
+  <li>In the settings click "start hosting".
+  <li>Tell the join code for the other participants and have them join the game with the "join" button above.
+  <li>Ask participants to set a name in the settings (otherwise they will be a spectator).
+  <li>Each player should use two devices to play: a laptop for having the video call full screen and a phone for answering the questions.
+      But playing on a single device and quickly switching between the video and game window should work too.
+</ol>
+
+<p>
+Once a game has 3 or more people, the interface changes: for each question someone must volunteer to answer it.
+Make your own rule for this: e.g. round robin in alphabetical order.
+</p>
+
+<p>
+Note that the host's device must remain available for the network game to work (the system is peer to peer based on WebRTC).
+But another person can start a new game any time.
+If the game seed is the same then the question order should be the same as long as they didn't use custom questions.
+The new host should be able to quickly jump to the same question the previous host's game was via the settings.
+</p>
+
+<h2 id=seed>Game seed</h2>
+
+<p>
+By default the order of questions is randomized.
+To ensure this random order is predictable, the randomization depends on a seed value configurable in the advanced settings.
+It defaults to a value based on the current calendar day.
+This ensures the game is easily continuable without needing to tweak the seed value if the host's smartphone breaks or if the game's tab is accidentally closed.
+</p>
+
+<p>
+Check out the "preview" option in the advanced settings to see what order the questions will be.
+Use the "jump to question" button in the mid-game settings to jump to a specific question (e.g. to continue a previous game).
+Use the seed value 0 to disable question randomization.
+This can be useful for the custom questions where the question order might be significant.
+Note that the addition or removal of custom questions completely changes the question order even if the seed remains the same.
+</p>
+
+<h2>Other languages</h2>
+
+<p>
+Non-English speakers can join the game in present mode and enable the browser's auto-translation for their native language.
+This should work well for custom questions too.
+</p>
+
+<h2>Contact</h2>
+
+<ul>
+  <li>General discussion: <a href=https://github.com/ypsu/tlewa/discussions>https://github.com/ypsu/tlewa/discussions</a>
+  <li>Reporting issues: <a href=https://github.com/ypsu/tlewa/issues>https://github.com/ypsu/tlewa/issues</a>
+</ul>
+</div>
+
+<div id=hSeedPreview hidden>
+  <button id=hSeedPreviewBack>Back</button>
+  <ol id=hSeedPreviewQuestions></ol>
+</div>
+
+<script src=questions.js></script>
+<script src=tlewa.js></script>
+
+</body></html>
