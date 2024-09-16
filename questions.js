@@ -8,7 +8,7 @@ What's your alarm clock set at on your average working day? @ 5am or less @ betw
 Could you live without a smartphone? @ no @ yes but I'd use laptops a lot @ yes, I'm not an internet addict
 Do you snore? @ no @ sometimes @ all the time
 Do you exercise and maintain a fit lifestyle? @ nope @ a little bit but should be doing more @ I'm doing enough
-How many kids would you prefer to have? @ none @ 1 or 2 @ 3 @ 4 or more
+How many kids would you prefer to have? @ none @ 1 or 2 @ 3 or 4 @ I want to be a child factory
 How many proper pushups could you do right now in one go? @ none @ about 5 @ about 10 @ 15 or more, easy
 How often do you feel depressed? @ never @ rarely @ sometimes @ always
 How would you live if you could restart your life from your childhood? @ roughly the same way as now @ completely differently
@@ -26,7 +26,7 @@ What's your go to food when you are lazy? @ sandwich @ eggs @ pizza @ potato chi
 What books do you like? @ autobiography @ romantic novels @ scifi-novels @ travel guides
 What book would you write? @ autobiography @ romantic novel @ scifi-novel @ travel guide
 When do you brush your teeth in the morning? @ I don't brush @ before breakfast @ after breakfast
-Which type of personalities do you like the most? @ intelligent @ funny @ quiet @ energetic
+Which type of personalities do you like the most? @ intelligent @ fun @ quiet @ empathetic
 How do you sleep? @ naked @ in underwear @ in an oversized t-shirt @ in pyjamas with separate pants
 What new friends would you prefer the most? @ guys @ girls @ balanced
 Where do you want to grow old? @ in a small village @ in a town @ in a big city
@@ -37,7 +37,7 @@ Where are you at in your life? @ I've done most things I wanted out of life @ th
 What's your favorite way to communicate remotely? @ email @ chat/sms/whatsapp @ phone call @ video call
 What's your favorite drink? @ coffee @ hot chocolate @ orange juice @ beer
 What's after death? @ nothing @ we reincarnate @ we meet the biblical God @ we exit the "simulation" and meet our universe administrators
-What's your weight? 0 - 60 kg @ 60 - 90 kg @ 90-120 kg @ 120+ kg
+What's your weight? @ 0 - 70 kg @ 70 - 90 kg @ 90-120 kg @ 120+ kg
 What's your opinion when your friends talk during a movie night? @ awesome @ annoying
 What's you opinion on pineapples on pizza? @ delicious @ abomination
 What gives you more joy? @ to receive a gift @ to give a gift
