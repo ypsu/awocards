@@ -21,14 +21,18 @@ declare var hqDaresSpicy: HTMLInputElement
 
 declare var questionsdata: string
 
+// q[0] is the category, q[1] is the questions, q[2:] are the answers.
 type question = string[]
 
 let g = {
   // All questions for each category.
-  questionsDB: {} as Record<string, question[]>,
+  questions: [] as question[],
 
-  // The selected list of questions in randomized order.
-  questionsList: [] as question[],
+  // The questions but shuffled.
+  shuffledqs: [] as question[],
+
+  // The currently enabled categories.
+  categories: {} as Record<string, boolean>,
 
   // The current question index.
   questionIndex: -1 as number,
@@ -70,19 +74,19 @@ function random() {
 }
 
 function selectQuestions() {
-  let qs = []
-  if (hqPersonal.checked) qs.push(...g.questionsDB["personal"])
-  if (hqDivisive.checked) qs.push(...g.questionsDB["divisive"])
-  if (hqSpicy.checked) qs.push(...g.questionsDB["spicy"])
-  if (hqPartner.checked) qs.push(...g.questionsDB["partner"])
-  if (hqDaresLight.checked) qs.push(...g.questionsDB["dares-light"])
-  if (hqDaresSpicy.checked) qs.push(...g.questionsDB["dares-spicy"])
-  g.questionsList = qs
+  let cats = {} as Record<string, boolean>
+  if (hqPersonal.checked) cats["personal"] = true
+  if (hqDivisive.checked) cats["divisive"] = true
+  if (hqSpicy.checked) cats["spicy"] = true
+  if (hqPartner.checked) cats["partner"] = true
+  if (hqDaresLight.checked) cats["dares-light"] = true
+  if (hqDaresSpicy.checked) cats["dares-spicy"] = true
+  g.categories = cats
 }
 
-function generateQuestionList() {
+function shuffle() {
   selectQuestions()
-  let qs = g.questionsList
+  let qs = g.questions.slice()
 
   // Shuffle the questions.
   let seednumber = parseInt(hSeed.value)
@@ -93,14 +97,15 @@ function generateQuestionList() {
       ;[qs[i], qs[j]] = [qs[j], qs[i]]
     }
   }
+  g.shuffledqs = qs
 }
 
 function handleSeedPreview() {
-  generateQuestionList()
+  shuffle()
 
   let html = ""
-  for (let q of g.questionsList) {
-    html += `<li>${escapehtml(q.join(" @ "))}\n`
+  for (let q of g.shuffledqs) {
+    if (g.categories[q[0]]) html += `<li>${escapehtml(q.join(" @ "))}\n`
   }
   hSeedPreview.innerHTML = html
   location.hash = "#preview"
@@ -123,8 +128,8 @@ function handlePrint() {
   selectQuestions()
 
   let h = ""
-  for (let q of g.questionsList) {
-    h += `<div class=hPrintableCard><span>${makeQuestionHTML(q)}</span></div>`
+  for (let q of g.questions) {
+    if (g.categories[q[0]]) h += `<div class=hPrintableCard><span>${makeQuestionHTML(q)}</span></div>`
   }
   hPrintable.hidden = false
   hPrintable.innerHTML = h
@@ -147,29 +152,39 @@ function handlePrint() {
 }
 
 function handleStart() {
-  generateQuestionList()
-  g.questionIndex = 0
+  selectQuestions()
+  g.questionIndex = -1
+  handleNext()
   location.hash = "#play"
 }
 
 function handlePrev() {
-  if (g.questionIndex >= 1) g.questionIndex--
+  g.questionIndex--
+  while (g.questionIndex >= 0 && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex--
+  if (g.questionIndex < 0) handleNext()
   renderQuestion()
 }
 
 function handleNext() {
-  if (g.questionIndex < g.questionsList.length) g.questionIndex++
+  g.questionIndex++
+  while (g.questionIndex < g.shuffledqs.length && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex++
   renderQuestion()
 }
 
 function renderQuestion() {
   let h = ""
-  if (g.questionIndex >= g.questionsList.length) {
+  if (g.questionIndex >= g.questions.length) {
     h = "<p>Out of questions, game finished.</p>"
     hStat.innerText = "game over"
   } else {
-    h += makeQuestionHTML(g.questionsList[g.questionIndex])
-    hStat.innerText = `card ${g.questionIndex + 1}/${g.questionsList.length}, category ${g.questionsList[g.questionIndex][0]}`
+    let [current, total] = [0, 0]
+    for (let i = 0; i < g.shuffledqs.length; i++) {
+      if (!g.categories[g.shuffledqs[i][0]]) continue
+      total++
+      if (i == g.questionIndex) current = total
+    }
+    h += makeQuestionHTML(g.shuffledqs[g.questionIndex])
+    hStat.innerText = `card ${current}/${total}, category ${g.shuffledqs[g.questionIndex][0]}`
   }
   h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
   hGameScreen.innerHTML = h
@@ -185,6 +200,7 @@ function renderQuestion() {
 function handleHash() {
   hIntro.hidden = true
   hSeedPreview.hidden = true
+  hPrintable.hidden = true
   hGameUI.hidden = true
 
   if (location.hash == "#preview") {
@@ -222,12 +238,10 @@ function handleFullscreen() {
 function handleParse() {
   let data = questionsdata
   if (hCustomDB.checked) data = hCustomText.value
-  let db = {} as Record<string, question[]>
   let category = "unset-category"
   let knownCategories = new Set(["personal", "divisive", "spicy", "partner", "dares-light", "dares-spicy"])
-  for (let cat of knownCategories) db[cat] = []
   let invalidCategories = new Set()
-  let found = 0
+  let qs = []
   for (let line of data.split("\n")) {
     line = line.trim()
     if (line == "" || line.startsWith("#")) continue
@@ -238,17 +252,17 @@ function handleParse() {
     }
     let parts = line.split("@")
     for (let i in parts) parts[i] = parts[i].trim()
-    db[category].push([category].concat(parts))
-    found++
+    qs.push([category].concat(parts))
   }
-  g.questionsDB = db
+  g.questions = qs
+  shuffle()
 
   if (!hCustomDB.checked) {
     hCustomQuestionsReport.innerText = `custom questions not enabled`
   } else if (invalidCategories.size > 0) {
     hCustomQuestionsReport.innerText = `found invalid categories: ${Array.from(invalidCategories.values()).join(", ")}`
   } else {
-    hCustomQuestionsReport.innerText = `found ${found} entries`
+    hCustomQuestionsReport.innerText = `found ${qs.length} entries`
   }
 }
 
