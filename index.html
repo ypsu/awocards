@@ -376,7 +376,10 @@ This should work well for custom questions too.
   <p id=hStat></p>
   <details ontoggle=renderQuestion()>
     <summary>Settings</summary>
-    <p><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label></p>
+    <ul>
+      <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
+      <li>Jump to question: <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump()>Jump</button>
+    </ul>
   </details>
 </div>
 

@@ -3,9 +3,10 @@ declare var hCustomQuestionsReport: HTMLElement
 declare var hCustomText: HTMLTextAreaElement
 declare var hError: HTMLElement
 declare var hFullscreen: HTMLInputElement
-declare var hIntro: HTMLElement
 declare var hGameUI: HTMLElement
 declare var hGameScreen: HTMLElement
+declare var hIntro: HTMLElement
+declare var hJumpIndex: HTMLInputElement
 declare var hNeedJS: HTMLElement
 declare var hPrintable: HTMLElement
 declare var hSeed: HTMLInputElement
@@ -229,6 +230,20 @@ function handleFullscreen() {
     document.documentElement.requestFullscreen().catch(() => {})
   } else {
     document.exitFullscreen().catch(() => {})
+  }
+  renderQuestion()
+}
+
+function handleJump() {
+  g.questionIndex = g.shuffledqs.length
+  let [idx, total] = [parseInt(hJumpIndex.value), 0]
+  for (let i = 0; i < g.shuffledqs.length; i++) {
+    if (!g.categories[g.shuffledqs[i][0]]) continue
+    total++
+    if (total == idx) {
+      g.questionIndex = i
+      break
+    }
   }
   renderQuestion()
 }
