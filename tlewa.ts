@@ -32,13 +32,18 @@ function escapehtml(unsafe: string) {
 }
 
 function updateCustomQuestions() {
+  let category = "custom"
   let qs = []
   for (let line of hCustomText.value.split("\n")) {
     line = line.trim()
-    if (line == "" || line.startsWith("#") || line.startsWith("@")) continue
+    if (line == "" || line.startsWith("#")) continue
+    if (line.startsWith("@")) {
+      category = line.substr(1)
+      continue
+    }
     let parts = line.split("@")
     for (let i in parts) parts[i] = parts[i].trim()
-    qs.push(parts)
+    qs.push([category].concat(parts))
   }
   g.questionsDB["custom"] = qs
   hCustomQuestionsCount.innerText = `${qs.length}`
@@ -46,7 +51,11 @@ function updateCustomQuestions() {
 
 function saveCustomQuestions() {
   updateCustomQuestions()
-  localStorage.setItem("CustomQuestions", hCustomText.value)
+  if (hCustomText.value == "") {
+    localStorage.removeItem("CustomQuestions")
+  } else {
+    localStorage.setItem("CustomQuestions", hCustomText.value)
+  }
 }
 
 let saveCustomQuestionsTimeout: number
@@ -71,7 +80,7 @@ function random() {
   return result
 }
 
-function generateQuestionList() {
+function selectQuestions() {
   let qs = []
   if (hqPersonal.checked) qs.push(...g.questionsDB["personal"])
   if (hqDivisive.checked) qs.push(...g.questionsDB["divisive"])
@@ -79,6 +88,12 @@ function generateQuestionList() {
   if (hqPartner.checked) qs.push(...g.questionsDB["partner"])
   if (hqDares.checked) qs.push(...g.questionsDB["dares"])
   if (hqCustom.checked) qs.push(...g.questionsDB["custom"])
+  g.questionsList = qs
+}
+
+function generateQuestionList() {
+  selectQuestions()
+  let qs = g.questionsList
 
   // Shuffle the questions.
   let seednumber = parseInt(hSeed.value)
@@ -89,8 +104,6 @@ function generateQuestionList() {
       ;[qs[i], qs[j]] = [qs[j], qs[i]]
     }
   }
-
-  g.questionsList = qs
 }
 
 function hideall() {
@@ -113,6 +126,10 @@ function handleSeedPreview() {
     hIntro.hidden = false
   }
   hSeedPreview.hidden = false
+}
+
+function handlePrint() {
+  selectQuestions()
 }
 
 function seterror(msg: string) {
@@ -145,7 +162,7 @@ function main() {
     let parts = line.split("@")
     for (let i in parts) parts[i] = parts[i].trim()
     if (g.questionsDB[category] == undefined) g.questionsDB[category] = []
-    g.questionsDB[category].push(parts)
+    g.questionsDB[category].push([category].concat(parts))
   }
   updateCustomQuestions()
   if (Object.keys(g.questionsDB).length != 6) {

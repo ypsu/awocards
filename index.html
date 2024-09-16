@@ -54,8 +54,8 @@ Start game:
 
 <ul>
   <li><button>Start</button> (the join code, if needed, will be available once started)
-  <li><button>Print</button> (for creating an offline version of the game)
   <li><input type=number size=6 placeholder=CODE> <button>Join</button> (for joining an online version of the game or to present the questions on more screens)
+  <li><button>Generate printable cards</button> (for creating an offline version of the game)
 </ul>
 
 <details>
@@ -63,15 +63,18 @@ Start game:
   <ul>
     <li>Game seed: <input type=number size=6 id=hSeed placeholder=SEED> <button onclick=handleSeedPreview()>Preview</button> (see <a href=#seed>Game Seed</a> below)
     <li><input type=checkbox id=hqCustom> <label for=hqCustom>Custom questions (<span id=hCustomQuestionsCount>?</span>):</label><br>
-        <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># Lines starting with hash are comments.
-# One question per line.
+        <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># One question per line.
 # Separate answers via @.
+# Lines starting with # are comments.
+# Lines starting with @ set the question category.
 
 # Question example:
+@custom-personal
 Who is your favorite superhero? @ Superman @ Batman @ Ironman @ Spiderman
 
 # Omit adding @ answers to create a dare.
 # Dare example:
+@custom-dares
 Can someone slap your face?</textarea><br>
   </ul>
 </details>
