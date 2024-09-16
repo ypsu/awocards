@@ -8,11 +8,10 @@
 </head><body>
 
 <pre id=hError class=cbgNegative hidden></pre>
+<p id=hNeedJS><em>This page needs Javascript enabled to work.</em></p>
 
 <div id=hIntro>
 <h1>tlewa: The LEast Wrong Answer game</h1>
-
-<p id=hNeedJS><em>This page needs Javascript enabled to work.</em></p>
 
 <p>
 This site provides bunch of question cards and 2-4 wrong answers for each question.
@@ -53,7 +52,7 @@ Start game:
 </p>
 
 <ul>
-  <li><button>Start</button> (the join code, if needed, will be available once started)
+  <li><button onclick=handleStart()>Start</button> (the join code, if needed, will be available once started)
   <li><input type=number size=6 placeholder=CODE> <button>Join</button> (for joining an online version of the game or to present the questions on more screens)
   <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
 </ul>
@@ -342,6 +341,15 @@ This should work well for custom questions too.
 <ol id=hSeedPreview hidden></ol>
 
 <div id=hPrintable hidden></div>
+
+<div id=hGameUI hidden>
+  <div id=hGameScreen></div>
+  <hr>
+  <details ontoggle=renderQuestion()>
+    <summary>Settings</summary>
+    <p><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label></p>
+  </details>
+</div>
 
 <script src=questions.js></script>
 <script src=tlewa.js></script>

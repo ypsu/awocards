@@ -1,7 +1,10 @@
 declare var hCustomQuestionsCount: HTMLElement
 declare var hCustomText: HTMLTextAreaElement
 declare var hError: HTMLElement
+declare var hFullscreen: HTMLInputElement
 declare var hIntro: HTMLElement
+declare var hGameUI: HTMLElement
+declare var hGameScreen: HTMLElement
 declare var hNeedJS: HTMLElement
 declare var hPrintable: HTMLElement
 declare var hSeed: HTMLInputElement
@@ -105,11 +108,6 @@ function generateQuestionList() {
   }
 }
 
-function hideall() {
-  hIntro.hidden = true
-  hSeedPreview.hidden = true
-}
-
 function handleSeedPreview() {
   generateQuestionList()
 
@@ -161,20 +159,53 @@ function handlePrint() {
   location.hash = "#printable"
 }
 
+function handleStart() {
+  generateQuestionList()
+  location.hash = "#play"
+}
+
+function renderQuestion() {
+  hGameScreen.innerHTML = makeQuestionHTML(g.questionsList[0])
+
+  let fsz = 300
+  hGameScreen.style.fontSize = `${fsz}px`
+  while (fsz >= 12 && (hGameUI.scrollWidth + hGameUI.offsetLeft > innerWidth || hGameUI.scrollHeight + hGameUI.offsetTop > innerHeight)) {
+    fsz = Math.floor(0.9 * fsz)
+    hGameScreen.style.fontSize = `${fsz}px`
+  }
+}
+
 function handleHash() {
-  hideall()
+  hIntro.hidden = true
+  hSeedPreview.hidden = true
+  hGameUI.hidden = true
+
   if (location.hash == "#preview") {
-    if (g.questionsList.length == 0) handleSeedPreview()
+    handleSeedPreview()
     hSeedPreview.hidden = false
     return
   }
   if (location.hash == "#printable") {
-    if (g.questionsList.length == 0) handlePrint()
+    handlePrint()
     hPrintable.hidden = false
+    return
+  }
+  if (location.hash == "#play") {
+    handleStart()
+    hGameUI.hidden = false
+    renderQuestion()
     return
   }
 
   hIntro.hidden = false
+}
+
+function handleFullscreen() {
+  if (hFullscreen.checked) {
+    document.documentElement.requestFullscreen()
+  } else {
+    document.exitFullscreen()
+  }
 }
 
 function seterror(msg: string) {
@@ -187,6 +218,9 @@ function main() {
   window.onerror = (msg, src, line) => seterror(`${src}:${line} ${msg}`)
   window.onunhandledrejection = (e) => seterror(e.reason)
   window.onhashchange = handleHash
+  window.onresize = () => {
+    if (location.hash == "#play") renderQuestion()
+  }
 
   // Init seed with current day.
   let now = new Date()
