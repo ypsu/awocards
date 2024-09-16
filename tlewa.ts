@@ -201,10 +201,11 @@ function handleHash() {
 }
 
 function handleFullscreen() {
+  // Ignore errors, we don't care.
   if (hFullscreen.checked) {
-    document.documentElement.requestFullscreen()
+    document.documentElement.requestFullscreen().catch(() => {})
   } else {
-    document.exitFullscreen()
+    document.exitFullscreen().catch(() => {})
   }
 }
 
