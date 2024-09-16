@@ -9,6 +9,7 @@ declare var hNeedJS: HTMLElement
 declare var hPrintable: HTMLElement
 declare var hSeed: HTMLInputElement
 declare var hSeedPreview: HTMLElement
+declare var hStat: HTMLInputElement
 
 declare var hqPersonal: HTMLInputElement
 declare var hqDivisive: HTMLInputElement
@@ -182,8 +183,10 @@ function renderQuestion() {
   let h = ""
   if (g.questionIndex >= g.questionsList.length) {
     h = "<p>Out of questions, game finished.</p>"
+    hStat.innerText = "game over"
   } else {
     h += makeQuestionHTML(g.questionsList[g.questionIndex])
+    hStat.innerText = `card ${g.questionIndex + 1}/${g.questionsList.length}, category ${g.questionsList[g.questionIndex][0]}`
   }
   h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
   hGameScreen.innerHTML = h
