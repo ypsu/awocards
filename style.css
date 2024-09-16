@@ -55,6 +55,7 @@
 body { font-family: sans-serif; }
 #hIntro { max-width: 50em; margin: 0 auto; padding: 0 8px; }
 #hGameUI { margin: 0 auto; padding: 0 8px; }
+button { padding-left: 1ch; padding-right: 1ch; font-size: inherit; }
 #hGameUI p { margin: 0 0; }
 ol { margin-left: 2ch; }
 summary { cursor: default; }

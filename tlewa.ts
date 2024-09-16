@@ -165,7 +165,10 @@ function handleStart() {
 }
 
 function renderQuestion() {
-  hGameScreen.innerHTML = makeQuestionHTML(g.questionsList[0])
+  let h = ""
+  h += makeQuestionHTML(g.questionsList[0])
+  h += "<button>Prev</button> <button>Next</button>\n"
+  hGameScreen.innerHTML = h
 
   let fsz = 300
   hGameScreen.style.fontSize = `${fsz}px`
@@ -207,6 +210,7 @@ function handleFullscreen() {
   } else {
     document.exitFullscreen().catch(() => {})
   }
+  renderQuestion()
 }
 
 function seterror(msg: string) {
