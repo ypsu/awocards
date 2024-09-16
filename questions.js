@@ -175,54 +175,55 @@ How would you prefer your partner to sleep? @ naked @ in underwear @ in an overs
 What would you do if your partner suddenly became bedridden for life? @ stay with them and take care of them forever @ start a new life but take care of them @ start a new life without them
 Would you watch your partner having sex with someone else? @ no, I wouldn't allow my partner to have sex with others @ I don't want to be present @ sure, I'd be happy to watch @ sure, I'd be happy to record it even
 
-@dares
+@dares-light
 Can someone pour a glass of water over your head?
-Can someone spit into your hand?
-Can someone spit on your face?
-Can someone drink something from your mouth?
-Can someone eat something from your mouth after you pre-chewed it?
 Can someone kiss your cheek?
 Can someone kiss your hand?
 Can someone kiss your sole?
-Can someone french kiss you?
 Can someone bite your ear?
 Can someone bite your neck?
 Can someone slap your ass?
-Can someone slap your naked ass?
 Can someone slap your face?
 Can someone have their hands go through your hair?
 Can someone hug you?
 Can someone put their ear on your chest and listen to your heartbeat?
+Can someone give you a short feet massage?
+Can someone give you a short breast massage? (clothed version)
+Can someone lick your armpit?
+Can someone lick your cheek?
+Can someone lick your ear?
+Can someone lick your lips?
+Can someone lick your navel?
+Can someone lick your palm?
+Can someone lick your sole?
+Can someone lick your teeth?
+Can someone suck your finger?
+Can someone suck your toe?
+Can someone suck your tongue?
+
+@dares-spicy
+Can someone drink something from your mouth?
+Can someone eat something from your mouth after you pre-chewed it?
+Can someone french kiss you?
+Can someone slap your naked ass?
 Can someone scratch your naked back?
 Can someone take off all your clothing and see you fully naked?
 Can someone take off all your upper body clothing and see you topless?
 Can someone pull all your bottom body clothing and see you bottomless?
 Can someone have a naked hug with you?
-Can someone give you a short feet massage?
-Can someone give you a short breast massage?
+Can someone give you a short breast massage? (topless version)
 Can someone take a photo of your bare chest / breasts and keep it?
 Can someone take a photo of your genital and keep it?
 Can someone take a photo of your asshole and keep it?
 Can someone take a photo of your fully naked body without face and keep it?
 Can someone take a photo of your fully naked body with face and keep it?
-Can someone lick your armpit?
 Can someone lick your asshole?
-Can someone lick your cheek?
-Can someone lick your ear?
 Can someone lick your genital?
-Can someone lick your lips?
-Can someone lick your navel?
 Can someone lick your nipple?
-Can someone lick your palm?
-Can someone lick your sole?
-Can someone lick your teeth?
-Can someone suck your finger?
 Can someone suck your genital?
 Can someone suck your nipple?
-Can someone suck your toe?
-Can someone suck your tongue?
 Can someone stroke your genital?
 Can someone have their genital touch your genital?
-Can someone quickly inspect your genital up close ("play doctor")?
+Can someone inspect your genital up close ("play doctor")?
 Can someone finger your asshole?
 `

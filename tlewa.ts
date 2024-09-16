@@ -15,7 +15,8 @@ declare var hqPersonal: HTMLInputElement
 declare var hqDivisive: HTMLInputElement
 declare var hqSpicy: HTMLInputElement
 declare var hqPartner: HTMLInputElement
-declare var hqDares: HTMLInputElement
+declare var hqDaresLight: HTMLInputElement
+declare var hqDaresSpicy: HTMLInputElement
 declare var hqCustom: HTMLInputElement
 
 declare var questionsdata: string
@@ -92,7 +93,8 @@ function selectQuestions() {
   if (hqDivisive.checked) qs.push(...g.questionsDB["divisive"])
   if (hqSpicy.checked) qs.push(...g.questionsDB["spicy"])
   if (hqPartner.checked) qs.push(...g.questionsDB["partner"])
-  if (hqDares.checked) qs.push(...g.questionsDB["dares"])
+  if (hqDaresLight.checked) qs.push(...g.questionsDB["dares-light"])
+  if (hqDaresSpicy.checked) qs.push(...g.questionsDB["dares-spicy"])
   if (hqCustom.checked) qs.push(...g.questionsDB["custom"])
   g.questionsList = qs
 }
@@ -271,8 +273,8 @@ function main() {
     g.questionsDB[category].push([category].concat(parts))
   }
   updateCustomQuestions()
-  if (Object.keys(g.questionsDB).length != 6) {
-    seterror(`found ${Object.keys(g.questionsDB).length} question categories, want 6`)
+  if (Object.keys(g.questionsDB).length != 7) {
+    seterror(`found ${Object.keys(g.questionsDB).length} question categories, want 7`)
   }
 
   hNeedJS.hidden = true
