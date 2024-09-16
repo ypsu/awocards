@@ -5,6 +5,7 @@ declare var hError: HTMLElement
 declare var hFullscreen: HTMLInputElement
 declare var hGameUI: HTMLElement
 declare var hGameScreen: HTMLElement
+declare var hHostcode: HTMLInputElement
 declare var hIntro: HTMLElement
 declare var hJumpIndex: HTMLInputElement
 declare var hNeedJS: HTMLElement
@@ -303,6 +304,13 @@ function main() {
   // Load custom questions from localstorage if there are some.
   let storedQuestions = localStorage.getItem("CustomQuestions")
   if (storedQuestions != null) hCustomText.value = storedQuestions
+
+  // Load or generate code.
+  let storedHostcode = localStorage.getItem("Hostcode")
+  if (storedHostcode == null && hHostcode.value == "") {
+    let hostcode = Math.round(1000 + Math.random() * (9999 - 1000))
+    hHostcode.value = `${hostcode}`
+  }
 
   handleParse()
   handleHash()
