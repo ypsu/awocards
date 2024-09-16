@@ -3,10 +3,9 @@ declare var hCustomText: HTMLTextAreaElement
 declare var hError: HTMLElement
 declare var hIntro: HTMLElement
 declare var hNeedJS: HTMLElement
+declare var hPrintable: HTMLElement
 declare var hSeed: HTMLInputElement
 declare var hSeedPreview: HTMLElement
-declare var hSeedPreviewBack: HTMLElement
-declare var hSeedPreviewQuestions: HTMLElement
 
 declare var hqPersonal: HTMLInputElement
 declare var hqDivisive: HTMLInputElement
@@ -118,18 +117,64 @@ function handleSeedPreview() {
   for (let q of g.questionsList) {
     html += `<li>${escapehtml(q.join(" @ "))}\n`
   }
-  hSeedPreviewQuestions.innerHTML = html
+  hSeedPreview.innerHTML = html
+  location.hash = "#preview"
+}
 
-  hideall()
-  hSeedPreviewBack.onclick = () => {
-    hideall()
-    hIntro.hidden = false
+function makeQuestionHTML(q: question) {
+  let h = `<p>${escapehtml(q[1])}</p>\n<ol>\n`
+  if (q.length == 2) {
+    h += "<li>no<li>yes</ol>\n"
+    h += "<p>Others: would you want to do that to the answerer?</p>\n"
+    h += "<ol><li>no<li>I can<li>I want to</ol>\n"
+    return h
   }
-  hSeedPreview.hidden = false
+  for (let i = 2; i < q.length; i++) h += `<li>${escapehtml(q[i])}\n`
+  h += "</ol>\n"
+  return h
 }
 
 function handlePrint() {
   selectQuestions()
+
+  let h = ""
+  for (let q of g.questionsList) {
+    h += `<div class=hPrintableCard><span>${makeQuestionHTML(q)}</span></div>`
+  }
+  hPrintable.hidden = false
+  hPrintable.innerHTML = h
+  for (let div of hPrintable.children) {
+    let span = div.children[0] as HTMLElement
+    let [lo, hi] = [50, 200]
+    for (let i = 0; i < 4; i++) {
+      let mid = (lo + hi) / 2
+      span.style.fontSize = `${mid}%`
+      if (div.scrollWidth <= div.clientWidth && div.scrollHeight <= div.clientHeight) {
+        lo = mid
+      } else {
+        hi = mid
+      }
+    }
+    span.style.fontSize = `${lo}%`
+  }
+
+  location.hash = "#printable"
+}
+
+function handleHash() {
+  hideall()
+  if (location.hash == "#preview") {
+    if (g.questionsList.length == 0) handleSeedPreview()
+    hSeedPreview.hidden = false
+    return
+  }
+  if (location.hash == "#printable") {
+    if (g.questionsList.length == 0) handlePrint()
+    hPrintable.hidden = false
+    return
+  }
+
+  hIntro.hidden = false
 }
 
 function seterror(msg: string) {
@@ -141,6 +186,7 @@ function seterror(msg: string) {
 function main() {
   window.onerror = (msg, src, line) => seterror(`${src}:${line} ${msg}`)
   window.onunhandledrejection = (e) => seterror(e.reason)
+  window.onhashchange = handleHash
 
   // Init seed with current day.
   let now = new Date()
@@ -170,6 +216,7 @@ function main() {
   }
 
   hNeedJS.hidden = true
+  handleHash()
 }
 
 main()

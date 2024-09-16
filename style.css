@@ -56,3 +56,4 @@
 body { margin: 0 auto; padding: 0 8px; }
 summary { cursor:default; }
 textarea { width: 100%; }
+.hPrintableCard { border: 1px solid black; display: inline-block; width: 51mm; height: 37mm; padding: 1em; overflow: hidden; line-height: normal; }

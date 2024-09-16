@@ -40,7 +40,6 @@ What's after death? @ nothing @ we reincarnate @ we meet the biblical God @ we e
 What's your weight? 0 - 60 kg @ 60 - 90 kg @ 90-120 kg @ 120+ kg
 What's your opinion when your friends talk during a movie night? @ awesome @ annoying
 What's you opinion on pineapples on pizza? @ delicious @ abomination
-Which form of cleansing do you prefer? @ soaking in a bath @ having a shower
 What gives you more joy? @ to receive a gift @ to give a gift
 What is your typical sleeping pattern? @ morning person (wake up early) @ evening person (stay up late) @ completely random
 What's your favorite drug for watching movies? @ potato chips @ tortilla chips with a nice sauce @ popcorn @ no drugs, no distraction

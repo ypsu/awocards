@@ -55,7 +55,7 @@ Start game:
 <ul>
   <li><button>Start</button> (the join code, if needed, will be available once started)
   <li><input type=number size=6 placeholder=CODE> <button>Join</button> (for joining an online version of the game or to present the questions on more screens)
-  <li><button>Generate printable cards</button> (for creating an offline version of the game)
+  <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
 </ul>
 
 <details>
@@ -169,7 +169,7 @@ They can answer:
 
 <ol>
   <li>no
-  <li>I don't mind
+  <li>I can
   <li>I want to
 </ol>
 
@@ -183,24 +183,26 @@ The rules are the following:
       The other players don't have to reveal their fantasies.
   <li>When the answerer's answer is "yes" then the other players reveal their answer chips.
       If everyone picked "no" then the round ends without action and moves to the next round.
-  <li>Otherwise the answerer needs to pick someone from the "I don't mind" and "I want to" crowd to do the action.
-      Then the action is carried out right away in front of the group.
+  <li>Otherwise the answerer needs to pick someone from the "I can" and "I want to" crowd to do the action.
+      The difference between "I can" and "I want to" is the level of desirability:
+      "I can" means the player not particularly interested in the action but happy to do it to make the answerer happy, "I want to" means the player would like to do the action to the answerer if the answerer allows it.
       It's encouraged but not required for the answerer to to prefer folks who voted with "I want to".
       It's discouraged but acceptable for the person to name their partner if they are part of the game.
+  <li>Then the action is carried out right away in front of the group.
   <li>Each action should take no longer than 2 minutes to ensure the game keeps moving.
   <li>Rule: what happens here, stays here. The players should erase their memory after the game.
 </ul>
 
 <p>
-Most dare questions are very sexual in nature.
+Most dares are very sexual in nature.
 Make sure this is very clear to all players before enabling these questions.
-Not everyone is into such things, especially in group settings.
+Not everyone is into such things, especially in a group setting.
 Also make it clear that the players can always say no.
 Boundaries and consent must be always honored.
 </p>
 
 <p>
-This section is meant for exploring one's boundaries.
+This section is meant for exploring one's boundaries, to practice certain sections of the <a href=https://bettymartin.org/how-to-play-the-3-minute-game/>wheel of consent</a>.
 Can I let other people see me or touch me?
 Can I actually admit that I'd like to try something on my non-partner person?
 Should I try something, even if I don't like it, just to expand my experiences?
@@ -307,10 +309,9 @@ This should work well for custom questions too.
 </ul>
 </div>
 
-<div id=hSeedPreview hidden>
-  <button id=hSeedPreviewBack>Back</button>
-  <ol id=hSeedPreviewQuestions></ol>
-</div>
+<ol id=hSeedPreview hidden></ol>
+
+<div id=hPrintable hidden></div>
 
 <script src=questions.js></script>
 <script src=tlewa.js></script>
