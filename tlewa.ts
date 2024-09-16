@@ -1,4 +1,5 @@
-declare var hCustomQuestionsCount: HTMLElement
+declare var hCustomDB: HTMLInputElement
+declare var hCustomQuestionsReport: HTMLElement
 declare var hCustomText: HTMLTextAreaElement
 declare var hError: HTMLElement
 declare var hFullscreen: HTMLInputElement
@@ -17,7 +18,6 @@ declare var hqSpicy: HTMLInputElement
 declare var hqPartner: HTMLInputElement
 declare var hqDaresLight: HTMLInputElement
 declare var hqDaresSpicy: HTMLInputElement
-declare var hqCustom: HTMLInputElement
 
 declare var questionsdata: string
 
@@ -38,26 +38,8 @@ function escapehtml(unsafe: string) {
   return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;")
 }
 
-function updateCustomQuestions() {
-  let category = "custom"
-  let qs = []
-  for (let line of hCustomText.value.split("\n")) {
-    line = line.trim()
-    if (line == "" || line.startsWith("#")) continue
-    if (line.startsWith("@")) {
-      category = line.substr(1)
-      continue
-    }
-    let parts = line.split("@")
-    for (let i in parts) parts[i] = parts[i].trim()
-    qs.push([category].concat(parts))
-  }
-  g.questionsDB["custom"] = qs
-  hCustomQuestionsCount.innerText = `${qs.length}`
-}
-
 function saveCustomQuestions() {
-  updateCustomQuestions()
+  handleParse()
   if (hCustomText.value == "") {
     localStorage.removeItem("CustomQuestions")
   } else {
@@ -68,7 +50,7 @@ function saveCustomQuestions() {
 let saveCustomQuestionsTimeout: number
 function handleCustomTextChange() {
   clearTimeout(saveCustomQuestionsTimeout)
-  saveCustomQuestionsTimeout = setTimeout(saveCustomQuestions, 2000)
+  saveCustomQuestionsTimeout = setTimeout(saveCustomQuestions, 1000)
 }
 
 // Seedable random from https://stackoverflow.com/a/19301306/103855.
@@ -95,7 +77,6 @@ function selectQuestions() {
   if (hqPartner.checked) qs.push(...g.questionsDB["partner"])
   if (hqDaresLight.checked) qs.push(...g.questionsDB["dares-light"])
   if (hqDaresSpicy.checked) qs.push(...g.questionsDB["dares-spicy"])
-  if (hqCustom.checked) qs.push(...g.questionsDB["custom"])
   g.questionsList = qs
 }
 
@@ -236,6 +217,41 @@ function handleFullscreen() {
   renderQuestion()
 }
 
+// Parses data into g.questionsDB.
+// Returns an error message if there were errors, an empty string otherwise.
+function handleParse() {
+  let data = questionsdata
+  if (hCustomDB.checked) data = hCustomText.value
+  let db = {} as Record<string, question[]>
+  let category = "unset-category"
+  let knownCategories = new Set(["personal", "divisive", "spicy", "partner", "dares-light", "dares-spicy"])
+  for (let cat of knownCategories) db[cat] = []
+  let invalidCategories = new Set()
+  let found = 0
+  for (let line of data.split("\n")) {
+    line = line.trim()
+    if (line == "" || line.startsWith("#")) continue
+    if (line.startsWith("@")) {
+      category = line.substr(1)
+      if (!knownCategories.has(category)) invalidCategories.add(category)
+      continue
+    }
+    let parts = line.split("@")
+    for (let i in parts) parts[i] = parts[i].trim()
+    db[category].push([category].concat(parts))
+    found++
+  }
+  g.questionsDB = db
+
+  if (!hCustomDB.checked) {
+    hCustomQuestionsReport.innerText = `custom questions not enabled`
+  } else if (invalidCategories.size > 0) {
+    hCustomQuestionsReport.innerText = `found invalid categories: ${Array.from(invalidCategories.values()).join(", ")}`
+  } else {
+    hCustomQuestionsReport.innerText = `found ${found} entries`
+  }
+}
+
 function seterror(msg: string) {
   hError.innerText = `Error: ${msg}.\nReload the page to try again.`
   hError.hidden = false
@@ -243,6 +259,7 @@ function seterror(msg: string) {
 }
 
 function main() {
+  hNeedJS.hidden = true
   window.onerror = (msg, src, line) => seterror(`${src}:${line} ${msg}`)
   window.onunhandledrejection = (e) => seterror(e.reason)
   window.onhashchange = handleHash
@@ -258,26 +275,7 @@ function main() {
   let storedQuestions = localStorage.getItem("CustomQuestions")
   if (storedQuestions != null) hCustomText.value = storedQuestions
 
-  // Parse the embedded questions.
-  let category = ""
-  for (let line of questionsdata.split("\n")) {
-    line = line.trim()
-    if (line == "" || line.startsWith("#")) continue
-    if (line.startsWith("@")) {
-      category = line.substr(1)
-      continue
-    }
-    let parts = line.split("@")
-    for (let i in parts) parts[i] = parts[i].trim()
-    if (g.questionsDB[category] == undefined) g.questionsDB[category] = []
-    g.questionsDB[category].push([category].concat(parts))
-  }
-  updateCustomQuestions()
-  if (Object.keys(g.questionsDB).length != 7) {
-    seterror(`found ${Object.keys(g.questionsDB).length} question categories, want 7`)
-  }
-
-  hNeedJS.hidden = true
+  handleParse()
   handleHash()
 }
 

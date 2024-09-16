@@ -54,7 +54,6 @@ There also 2 dare categories.
 <p>
 Select the ones you want to play with.
 Spoilers: see <a href="questions.js">the source code</a> to see what the questions and dares are.
-See the advanced game options below to add your own questions.
 </p>
 
 <p>
@@ -71,19 +70,20 @@ Start game:
   <summary>Advanced settings</summary>
   <ul>
     <li>Game seed: <input type=number size=6 id=hSeed placeholder=SEED> <button onclick=handleSeedPreview()>Preview</button> (see <a href=#seed>Game Seed</a> below)
-    <li><input type=checkbox id=hqCustom> <label for=hqCustom>Custom questions (<span id=hCustomQuestionsCount>?</span>):</label><br>
+    <li><input type=checkbox id=hCustomDB onclick=handleParse()> <label for=hCustomDB>Use custom database, see <a href=#customdb>Custom questions</a> below (<span id=hCustomQuestionsReport>?</span>):</label><br>
         <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># One question per line.
 # Separate answers via @.
 # Lines starting with # are comments.
 # Lines starting with @ set the question category.
+# Category must be one of personal, divisive, spicy, partner, dares-light, dares-spicy.
 
 # Question example:
-@custom-personal
+@personal
 Who is your favorite superhero? @ Superman @ Batman @ Ironman @ Spiderman
 
 # Omit adding @ answers to create a dare.
 # Dare example:
-@custom-dares
+@dares-light
 Can someone slap your face?</textarea><br>
   </ul>
 </details>
@@ -229,7 +229,7 @@ The rules are the following:
       It's discouraged but acceptable for the person to name their partner if they are part of the game.
   <li>Then the action is carried out right away in front of the group.
   <li>Each action should take no longer than 2 minutes to ensure the game keeps moving.
-  <li>Rule: what happens here, stays here. The players should erase their memory after the game.
+  <li>Rule for the spicy version: what happens here, stays here. The players should erase their memory after the game.
 </ul>
 
 <p>
@@ -261,7 +261,7 @@ Remember that the game is make-your-own-rules.
 If the above doesn't make sense then alter into something that everyone could enjoy.
 </p>
 
-<h2>Custom questions</h2>
+<h2 id=customdb>Custom questions</h2>
 
 <p>
 In the advanced settings you can configure custom questions.
@@ -269,13 +269,18 @@ Workflow for creating a fully customized game:
 </p>
 
 <ul>
-  <li>Unselect all categories and keep only the custom questions enabled.
+  <li>Select the custom DB checkbox in the advanced settings.
   <li>Open the <a href=questions.js>source code</a>.
   <li>Copy paste all the questions into the custom questions box.
   <li>Remove the questions and dares you deem inappropriate for your upcoming game session.
   <li>Add any other interesting questions you can think of.
   <li>Start the game as usual.
 </ul>
+
+<p>
+Note that changing the number of questions will also permute the order of questions even if the seed remains.
+Don't change the questions mid-game if that is an issue.
+</p>
 
 <h2>Present mode</h2>
 
