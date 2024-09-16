@@ -27,6 +27,9 @@ let g = {
 
   // The selected list of questions in randomized order.
   questionsList: [] as question[],
+
+  // The current question index.
+  questionIndex: -1 as number,
 }
 
 function escapehtml(unsafe: string) {
@@ -161,13 +164,28 @@ function handlePrint() {
 
 function handleStart() {
   generateQuestionList()
+  g.questionIndex = 0
   location.hash = "#play"
+}
+
+function handlePrev() {
+  if (g.questionIndex >= 1) g.questionIndex--
+  renderQuestion()
+}
+
+function handleNext() {
+  if (g.questionIndex < g.questionsList.length) g.questionIndex++
+  renderQuestion()
 }
 
 function renderQuestion() {
   let h = ""
-  h += makeQuestionHTML(g.questionsList[0])
-  h += "<button>Prev</button> <button>Next</button>\n"
+  if (g.questionIndex >= g.questionsList.length) {
+    h = "<p>Out of questions, game finished.</p>"
+  } else {
+    h += makeQuestionHTML(g.questionsList[g.questionIndex])
+  }
+  h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
   hGameScreen.innerHTML = h
 
   let fsz = 300
