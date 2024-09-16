@@ -5,8 +5,11 @@ declare var hError: HTMLElement
 declare var hFullscreen: HTMLInputElement
 declare var hGameUI: HTMLElement
 declare var hGameScreen: HTMLElement
+declare var hHostGame: HTMLInputElement
+declare var hNetwork: HTMLElement
 declare var hHostcode: HTMLInputElement
 declare var hIntro: HTMLElement
+declare var hJoincode: HTMLInputElement
 declare var hJumpIndex: HTMLInputElement
 declare var hNeedJS: HTMLElement
 declare var hPrintable: HTMLElement
@@ -23,6 +26,20 @@ declare var hqDaresSpicy: HTMLInputElement
 
 declare var questionsdata: string
 
+class client {
+  username: string
+  status: string
+  conn: RTCPeerConnection
+  channel: RTCDataChannel
+
+  constructor(conn: RTCPeerConnection, ch: RTCDataChannel) {
+    this.username = ""
+    this.status = ""
+    this.conn = conn
+    this.channel = ch
+  }
+}
+
 // q[0] is the category, q[1] is the questions, q[2:] are the answers.
 type question = string[]
 
@@ -38,6 +55,18 @@ let g = {
 
   // The current question index.
   questionIndex: -1 as number,
+
+  // To abort a sig request if there's on in flight.
+  aborter: null as AbortController | null,
+
+  // All the currently connected clients when hosting.
+  clients: [] as client[],
+
+  // Clients only: connection data towards the host.
+  clientMode: false as boolean,
+  conn: null as RTCPeerConnection | null,
+  channel: null as RTCDataChannel | null,
+  status: "" as string,
 }
 
 function escapehtml(unsafe: string) {
@@ -221,6 +250,11 @@ function handleHash() {
     renderQuestion()
     return
   }
+  if (location.hash.startsWith("#join-")) {
+    hGameUI.hidden = false
+    join()
+    return
+  }
 
   hIntro.hidden = false
 }
@@ -282,6 +316,189 @@ function handleParse() {
   }
 }
 
+// Convert continuation passing style into direct style:
+// await eventPromise(obj, 'click') will wait for a single click on obj.
+function eventPromise(obj: EventTarget, eventName: string) {
+  return new Promise((resolve) => {
+    let handler = (event: Event) => {
+      obj.removeEventListener(eventName, handler)
+      resolve(event)
+    }
+    obj.addEventListener(eventName, handler)
+  })
+}
+
+const signalingServer = "https://iio.ie/sig"
+const rtcConfig = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] }
+
+async function connectToClient(hostcode: string, clientID: number) {
+  // Create a description offer and upload it to the signaling service.
+  let response
+  let conn = new RTCPeerConnection(rtcConfig)
+  let channel = conn.createDataChannel("datachannel")
+  hNetwork.innerText = "hosting: creating local offer..."
+  let offer = await conn.createOffer()
+  conn.setLocalDescription(offer)
+  hNetwork.innerText = "hosting: awaiting icegatheringstatechange == 'completed'..."
+  do {
+    await eventPromise(conn, "icegatheringstatechange")
+  } while (conn.iceGatheringState != "complete")
+  hNetwork.innerText = "hosting: waiting for a client to connect..."
+  try {
+    response = await fetch(`${signalingServer}?set=tlewa-${hostcode}-${clientID}-offer&timeoutms=5000`, {
+      method: "POST",
+      body: conn.localDescription?.sdp,
+    })
+  } catch (e) {
+    conn.close()
+    hNetwork.innerText = `hosting: error: upload offer to signaling server: ${e} (will try again soon)`
+    await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+    return
+  }
+  if (response.status == 204) {
+    conn.close()
+    return
+  }
+
+  // Establish the connection to the connecting client.
+  hNetwork.innerText = "hosting: awaiting client's signal..."
+  try {
+    response = await fetch(`${signalingServer}?get=tlewa-${hostcode}-${clientID}-answer&timeoutms=5000`, { method: "POST" })
+  } catch (e) {
+    conn.close()
+    return
+  }
+  if (response.status == 204) {
+    conn.close()
+    return
+  }
+  hNetwork.innerText = "hosting: awaiting client's sdp answer..."
+  let sdp = await response.text()
+  conn.setRemoteDescription({ type: "answer", sdp: sdp })
+  hNetwork.innerText = "hosting: connecting to the new client..."
+  await eventPromise(channel, "open")
+
+  // TODO: handle disconnect.
+  let c = new client(conn, channel)
+  channel.send("hello world")
+  g.clients.push(c)
+}
+
+async function handleHost() {
+  if (!hHostGame.checked) {
+    if (g.aborter != null) g.aborter.abort()
+    hNetwork.hidden = true
+    return
+  }
+
+  let hostcode = hHostcode.value
+  localStorage.setItem("Hostcode", hHostcode.value)
+
+  hNetwork.hidden = false
+  hNetwork.innerText = "hosting: initializing..."
+  g.aborter = new AbortController()
+
+  for (let clientID = 1; ; clientID++) {
+    let response
+    // Advertise the next client ID.
+    hNetwork.innerText = `hosting: waiting for next client...`
+    try {
+      response = await fetch(`${signalingServer}?set=tlewa-${hostcode}-nextid`, {
+        method: "POST",
+        body: `${clientID}`,
+        signal: g.aborter.signal,
+      })
+    } catch (e) {
+      if (g.aborter.signal.aborted) {
+        return
+      }
+      hNetwork.innerText = `hosting: error: upload offer to signaling server: ${e} (will try again soon)`
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      continue
+    }
+    if (response.status == 204) {
+      continue
+    }
+    let id = clientID
+    setTimeout(() => {
+      connectToClient(hostcode, id)
+    }, 0)
+  }
+}
+
+function handleJoin() {
+  if (hJoincode.value == "" || hJoincode.value.startsWith("-")) return
+  location.hash = "#join-" + hJoincode.value
+}
+
+async function join() {
+  hNetwork.hidden = false
+  let joincode = location.hash.substr(6)
+  localStorage.setItem("Joincode", joincode)
+
+  while (true) {
+    let response
+    hNetwork.innerText = "joining: awaiting server's signal..."
+    try {
+      response = await fetch(`${signalingServer}?get=tlewa-${joincode}-nextid&timeoutms=600000`, { method: "POST" })
+    } catch (e) {
+      hNetwork.innerText = `joining: error: await server's signal: ${e} (will try again soon)`
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      continue
+    }
+    let clientID = await response.text()
+
+    hNetwork.innerText = "joining: awaiting server's offer..."
+    try {
+      response = await fetch(`${signalingServer}?get=tlewa-${joincode}-${clientID}-offer&timeoutms=5000`, { method: "POST" })
+    } catch (e) {
+      hNetwork.innerText = `joining: error: await server's signal: ${e} (will try again soon)`
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      continue
+    }
+    let offer = await response.text()
+    let conn = new RTCPeerConnection(rtcConfig)
+
+    hNetwork.innerText = "joining: awaiting icegatheringstatechange == 'complete'..."
+    await conn.setRemoteDescription({ type: "offer", sdp: offer })
+    conn.setLocalDescription(await conn.createAnswer())
+    do {
+      await eventPromise(conn, "icegatheringstatechange")
+    } while (conn.iceGatheringState != "complete")
+
+    hNetwork.innerText = "joining: sending answer..."
+    try {
+      response = await fetch(`${signalingServer}?set=tlewa-${joincode}-${clientID}-answer`, {
+        method: "POST",
+        body: conn.localDescription?.sdp,
+      })
+    } catch (e) {
+      hNetwork.innerText = `joining: error: sending answer: ${e} (will try again soon)`
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      continue
+    }
+    let channel = ((await eventPromise(conn, "datachannel")) as RTCDataChannelEvent).channel
+
+    conn.oniceconnectionstatechange = async (ev) => {
+      if (conn.iceConnectionState != "disconnected") return
+      hNetwork.hidden = false
+      hNetwork.innerText = "joining: lost connection, will retry connection soon..."
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      join()
+    }
+
+    channel.onmessage = (ev) => {
+      let msg = (ev as MessageEvent).data
+      console.log(msg)
+    }
+
+    hNetwork.hidden = true
+    g.conn = conn
+    g.channel = channel
+    break
+  }
+}
+
 function seterror(msg: string) {
   hError.innerText = `Error: ${msg}.\nReload the page to try again.`
   hError.hidden = false
@@ -305,14 +522,23 @@ function main() {
   let storedQuestions = localStorage.getItem("CustomQuestions")
   if (storedQuestions != null) hCustomText.value = storedQuestions
 
-  // Load or generate code.
+  // Load or generate host code.
   let storedHostcode = localStorage.getItem("Hostcode")
   if (storedHostcode == null && hHostcode.value == "") {
     let hostcode = Math.round(1000 + Math.random() * (9999 - 1000))
     hHostcode.value = `${hostcode}`
+  } else if (storedHostcode != null) {
+    hHostcode.value = `${storedHostcode}`
+  }
+
+  // Load join code if stored.
+  let storedJoincode = localStorage.getItem("Joincode")
+  if (storedHostcode != null && hJoincode.value == "") {
+    hJoincode.value = `${storedJoincode}`
   }
 
   handleParse()
+  handleHost()
   handleHash()
 }
 

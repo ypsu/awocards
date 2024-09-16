@@ -62,7 +62,7 @@ Start game:
 
 <ul>
   <li><button onclick=handleStart()>Start</button> (the join code, if needed, will be available once started)
-  <li><input type=number size=6 placeholder=CODE> <button>Join</button> (for joining an online version of the game or to present the questions on more screens)
+  <li><input type=number size=6 placeholder=CODE id=hJoincode> <button onclick=handleJoin()>Join</button> (for joining an online version of the game or to present the questions on more screens)
   <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
 </ul>
 
@@ -374,12 +374,13 @@ This should work well for custom questions too.
   <div id=hGameScreen></div>
   <hr>
   <p id=hStat></p>
+  <p id=hNetwork hidden></p>
   <details ontoggle=renderQuestion()>
     <summary>Settings</summary>
     <ul>
       <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
       <li>Jump to question: <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump()>Jump</button>
-      <li><input type=checkbox id=hHostGame><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode>
+      <li><input type=checkbox id=hHostGame onclick=handleHost()><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode onchange='hHostGame.checked=false;handleHost()'>
     </ul>
   </details>
 </div>
