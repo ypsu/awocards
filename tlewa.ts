@@ -53,8 +53,13 @@ let g = {
   // The currently enabled categories.
   categories: {} as Record<string, boolean>,
 
-  // The current question index.
+  // The current question index from shuffledqs.
   questionIndex: -1 as number,
+
+  // The currently displayed question and its stat.
+  currentQuestion: [] as question,
+  filteredIndex: -1,
+  filteredQuestions: -1,
 
   // To abort a sig request if there's on in flight.
   aborter: null as AbortController | null,
@@ -112,7 +117,12 @@ function selectQuestions() {
   if (hqPartner.checked) cats["partner"] = true
   if (hqDaresLight.checked) cats["dares-light"] = true
   if (hqDaresSpicy.checked) cats["dares-spicy"] = true
+  let cnt = 0
+  for (let q of g.shuffledqs) {
+    if (cats[q[0]]) cnt++
+  }
   g.categories = cats
+  g.filteredQuestions = cnt
 }
 
 function shuffle() {
@@ -185,38 +195,37 @@ function handlePrint() {
 function handleStart() {
   selectQuestions()
   g.questionIndex = -1
+  g.filteredIndex = -1
   handleNext()
   location.hash = "#play"
 }
 
 function handlePrev() {
+  if (g.filteredIndex == 0) return
+  g.filteredIndex--
   g.questionIndex--
-  while (g.questionIndex >= 0 && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex--
-  if (g.questionIndex < 0) handleNext()
+  while (g.questionIndex > 0 && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex--
+  g.currentQuestion = g.shuffledqs[g.questionIndex]
   renderQuestion()
 }
 
 function handleNext() {
+  if (g.filteredIndex == g.filteredQuestions) return
+  g.filteredIndex++
   g.questionIndex++
   while (g.questionIndex < g.shuffledqs.length && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex++
+  if (g.questionIndex == g.shuffledqs.length) {
+    g.currentQuestion = ["none", "Game over because out of questions. What now?", "go home", "play again with spicier categories", "play something else"]
+  } else {
+    g.currentQuestion = g.shuffledqs[g.questionIndex]
+  }
   renderQuestion()
 }
 
 function renderQuestion() {
   let h = ""
-  if (g.questionIndex >= g.questions.length) {
-    h = "<p>Out of questions, game finished.</p>"
-    hStat.innerText = "game over"
-  } else {
-    let [current, total] = [0, 0]
-    for (let i = 0; i < g.shuffledqs.length; i++) {
-      if (!g.categories[g.shuffledqs[i][0]]) continue
-      total++
-      if (i == g.questionIndex) current = total
-    }
-    h += makeQuestionHTML(g.shuffledqs[g.questionIndex])
-    hStat.innerText = `card ${current}/${total}, category ${g.shuffledqs[g.questionIndex][0]}`
-  }
+  h += makeQuestionHTML(g.currentQuestion)
+  hStat.innerText = `card ${g.filteredIndex + 1}/${g.filteredQuestions}, category ${g.currentQuestion[0]}`
   h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
   hGameScreen.innerHTML = h
 
