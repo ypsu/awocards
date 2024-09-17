@@ -422,8 +422,8 @@ async function connectToClient(hostcode: string, clientID: number) {
     error(`error: upload offer: ${e} (client has to try again)`)
     return
   }
-  if (response.status == 204) {
-    error("error: client didn't read offer")
+  if (response.status != 200) {
+    error("error: ${response.status}: client didn't read offer")
     return
   }
 
@@ -435,8 +435,8 @@ async function connectToClient(hostcode: string, clientID: number) {
     error(`error: await client's answer: ${e} (client has to try again)`)
     return
   }
-  if (response.status == 204) {
-    error(`error: client didn't answer (client has to try again)`)
+  if (response.status != 200) {
+    error(`error: ${response.status}: client didn't answer (client has to try again)`)
     return
   }
   let sdp = await response.text()
@@ -470,6 +470,9 @@ async function handleHost() {
   g.aborter = new AbortController()
 
   for (let clientID = 1; ; clientID++) {
+    if (g.aborter.signal.aborted) {
+      return
+    }
     let response
     // Advertise the next client ID.
     setNetworkStatus("waiting for next client")
@@ -487,7 +490,18 @@ async function handleHost() {
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
+    if (response.status == 409) {
+      setNetworkStatus(`error: code already taken by another server (will try again soon though)`)
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      continue
+    }
     if (response.status == 204) {
+      continue
+    }
+    if (response.status != 200) {
+      let body = await response.text()
+      setNetworkStatus(`error: upload offer to signaling server: ${response.status}: ${body} (will try again soon)`)
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
     let id = clientID
@@ -516,13 +530,28 @@ async function join() {
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
+    if (response.status == 204) {
+      continue
+    }
+    if (response.status != 200) {
+      let body = await response.text()
+      setNetworkStatus(`error: wait server's signal: ${body} (will try again soon)`)
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      continue
+    }
     let clientID = await response.text()
 
     setNetworkStatus("awaiting server's offer")
     try {
       response = await fetch(`${signalingServer}?get=tlewra-${joincode}-${clientID}-offer&timeoutms=5000`, { method: "POST" })
     } catch (e) {
-      setNetworkStatus(`error: await server's offer: ${e} (will try again soon`)
+      setNetworkStatus(`error: wait server's offer: ${e} (will try again soon`)
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      continue
+    }
+    if (response.status != 200) {
+      let body = await response.text()
+      setNetworkStatus(`error: wait server's offer: ${response.status}: ${body} (will try again soon)`)
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
@@ -547,6 +576,12 @@ async function join() {
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
+    if (response.status != 200) {
+      let body = await response.text()
+      setNetworkStatus(`error: send answer: ${response.status}: ${body} (will try again soon)`)
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      continue
+    }
     let channel = ((await eventPromise(conn, "datachannel")) as RTCDataChannelEvent).channel
 
     conn.oniceconnectionstatechange = async (ev) => {
@@ -562,7 +597,7 @@ async function join() {
       if (msg.startsWith("q")) {
         let parts = msg.split("@")
         if (parts.length <= 2) return
-        g.currentPos = parts[0]
+        g.currentPos = parts[0].substr(1)
         g.currentQuestion = parts.slice(1)
         renderQuestion()
       }
