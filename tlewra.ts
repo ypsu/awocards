@@ -357,7 +357,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   } while (conn.iceGatheringState != "complete")
   hNetwork.innerText = "hosting: waiting for a client to connect..."
   try {
-    response = await fetch(`${signalingServer}?set=tlewa-${hostcode}-${clientID}-offer&timeoutms=5000`, {
+    response = await fetch(`${signalingServer}?set=tlewra-${hostcode}-${clientID}-offer&timeoutms=5000`, {
       method: "POST",
       body: conn.localDescription?.sdp,
     })
@@ -375,7 +375,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   // Establish the connection to the connecting client.
   hNetwork.innerText = "hosting: awaiting client's signal..."
   try {
-    response = await fetch(`${signalingServer}?get=tlewa-${hostcode}-${clientID}-answer&timeoutms=5000`, { method: "POST" })
+    response = await fetch(`${signalingServer}?get=tlewra-${hostcode}-${clientID}-answer&timeoutms=5000`, { method: "POST" })
   } catch (e) {
     conn.close()
     return
@@ -415,7 +415,7 @@ async function handleHost() {
     // Advertise the next client ID.
     hNetwork.innerText = `hosting: waiting for next client...`
     try {
-      response = await fetch(`${signalingServer}?set=tlewa-${hostcode}-nextid`, {
+      response = await fetch(`${signalingServer}?set=tlewra-${hostcode}-nextid`, {
         method: "POST",
         body: `${clientID}`,
         signal: g.aborter.signal,
@@ -452,7 +452,7 @@ async function join() {
     let response
     hNetwork.innerText = "joining: awaiting server's signal..."
     try {
-      response = await fetch(`${signalingServer}?get=tlewa-${joincode}-nextid&timeoutms=600000`, { method: "POST" })
+      response = await fetch(`${signalingServer}?get=tlewra-${joincode}-nextid&timeoutms=600000`, { method: "POST" })
     } catch (e) {
       hNetwork.innerText = `joining: error: await server's signal: ${e} (will try again soon)`
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
@@ -462,7 +462,7 @@ async function join() {
 
     hNetwork.innerText = "joining: awaiting server's offer..."
     try {
-      response = await fetch(`${signalingServer}?get=tlewa-${joincode}-${clientID}-offer&timeoutms=5000`, { method: "POST" })
+      response = await fetch(`${signalingServer}?get=tlewra-${joincode}-${clientID}-offer&timeoutms=5000`, { method: "POST" })
     } catch (e) {
       hNetwork.innerText = `joining: error: await server's signal: ${e} (will try again soon)`
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
@@ -480,7 +480,7 @@ async function join() {
 
     hNetwork.innerText = "joining: sending answer..."
     try {
-      response = await fetch(`${signalingServer}?set=tlewa-${joincode}-${clientID}-answer`, {
+      response = await fetch(`${signalingServer}?set=tlewra-${joincode}-${clientID}-answer`, {
         method: "POST",
         body: conn.localDescription?.sdp,
       })
