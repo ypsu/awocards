@@ -205,6 +205,13 @@ function handleStart() {
   location.hash = "#play"
 }
 
+function sendQuestion() {
+  let msg = "q" + [`card ${g.filteredIndex + 1}/${g.filteredQuestions}`].concat(g.currentQuestion).join("@")
+  for (let c of g.clients) {
+    if (c.networkStatus == "") c.channel.send(msg)
+  }
+}
+
 function handlePrev() {
   if (g.filteredIndex == 0) return
   g.filteredIndex--
@@ -213,6 +220,7 @@ function handlePrev() {
   g.currentQuestion = g.shuffledqs[g.questionIndex]
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
   renderQuestion()
+  sendQuestion()
 }
 
 function handleNext() {
@@ -227,6 +235,7 @@ function handleNext() {
   }
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
   renderQuestion()
+  sendQuestion()
 }
 
 function renderQuestion() {
@@ -437,7 +446,6 @@ async function connectToClient(hostcode: string, clientID: number) {
 
   // TODO: handle disconnect.
   channel.send("q" + [`card ${g.filteredIndex + 1}/${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
-  g.clients.push(c)
 }
 
 async function handleHost() {
