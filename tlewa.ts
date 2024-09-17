@@ -60,6 +60,7 @@ let g = {
   currentQuestion: [] as question,
   filteredIndex: -1,
   filteredQuestions: -1,
+  currentPos: "", // the "card 12/34" string precomputed
 
   // To abort a sig request if there's on in flight.
   aborter: null as AbortController | null,
@@ -206,6 +207,7 @@ function handlePrev() {
   g.questionIndex--
   while (g.questionIndex > 0 && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex--
   g.currentQuestion = g.shuffledqs[g.questionIndex]
+  g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
   renderQuestion()
 }
 
@@ -219,13 +221,14 @@ function handleNext() {
   } else {
     g.currentQuestion = g.shuffledqs[g.questionIndex]
   }
+  g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
   renderQuestion()
 }
 
 function renderQuestion() {
   let h = ""
   h += makeQuestionHTML(g.currentQuestion)
-  hStat.innerText = `card ${g.filteredIndex + 1}/${g.filteredQuestions}, category ${g.currentQuestion[0]}`
+  hStat.innerText = `${g.currentPos}, category ${g.currentQuestion[0]}`
   h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
   hGameScreen.innerHTML = h
 
@@ -389,7 +392,7 @@ async function connectToClient(hostcode: string, clientID: number) {
 
   // TODO: handle disconnect.
   let c = new client(conn, channel)
-  channel.send("hello world")
+  channel.send("q" + [`card ${g.filteredIndex + 1}/${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
   g.clients.push(c)
 }
 
@@ -499,6 +502,13 @@ async function join() {
     channel.onmessage = (ev) => {
       let msg = (ev as MessageEvent).data
       console.log(msg)
+      if (msg.startsWith("q")) {
+        let parts = msg.split("@")
+        if (parts.length <= 2) return
+        g.currentPos = parts[0]
+        g.currentQuestion = parts.slice(1)
+        renderQuestion()
+      }
     }
 
     hNetwork.hidden = true
