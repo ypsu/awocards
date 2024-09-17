@@ -6,6 +6,7 @@ declare var hFullscreen: HTMLInputElement
 declare var hGameUI: HTMLElement
 declare var hGameScreen: HTMLElement
 declare var hHostGame: HTMLInputElement
+declare var hHostURL: HTMLElement
 declare var hNetwork: HTMLElement
 declare var hHostcode: HTMLInputElement
 declare var hIntro: HTMLElement
@@ -452,11 +453,18 @@ async function handleHost() {
   if (!hHostGame.checked) {
     if (g.aborter != null) g.aborter.abort()
     setNetworkStatus("")
+    hHostcode.disabled = false
+    hHostURL.hidden = true
     return
   }
 
   let hostcode = hHostcode.value
   localStorage.setItem("Hostcode", hHostcode.value)
+
+  let href = location.origin + `/#join-${hostcode}`
+  hHostcode.disabled = true
+  hHostURL.innerHTML = `<br>join link: <a href='${href}'>${href}</a>`
+  hHostURL.hidden = false
 
   setNetworkStatus("initializing")
   g.aborter = new AbortController()

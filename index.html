@@ -380,7 +380,7 @@ This should work well for custom questions too.
     <ul>
       <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
       <li>Jump to question: <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump()>Jump</button>
-      <li><input type=checkbox id=hHostGame onclick=handleHost()><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode onchange='hHostGame.checked=false;handleHost()'>
+      <li><input type=checkbox id=hHostGame onclick=handleHost()><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode> <span id=hHostURL hidden></span>
     </ul>
   </details>
 </div>
