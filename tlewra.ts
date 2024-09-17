@@ -27,14 +27,16 @@ declare var hqDaresSpicy: HTMLInputElement
 declare var questionsdata: string
 
 class client {
+  clientID: number
   username: string
-  status: string
+  networkStatus: string
   conn: RTCPeerConnection
   channel: RTCDataChannel
 
-  constructor(conn: RTCPeerConnection, ch: RTCDataChannel) {
+  constructor(clientID: number, conn: RTCPeerConnection, ch: RTCDataChannel) {
+    this.clientID = clientID
     this.username = ""
-    this.status = ""
+    this.networkStatus = ""
     this.conn = conn
     this.channel = ch
   }
@@ -68,11 +70,13 @@ let g = {
   // All the currently connected clients when hosting.
   clients: [] as client[],
 
+  // Just to have insight into what's happening.
+  networkStatus: "",
+
   // Clients only: connection data towards the host.
   clientMode: false as boolean,
   conn: null as RTCPeerConnection | null,
   channel: null as RTCDataChannel | null,
-  status: "" as string,
 }
 
 function escapehtml(unsafe: string) {
@@ -343,55 +347,95 @@ function eventPromise(obj: EventTarget, eventName: string) {
 const signalingServer = "https://iio.ie/sig"
 const rtcConfig = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] }
 
+function updateNetworkStatus() {
+  if (g.clientMode) {
+    if (g.networkStatus != "") {
+      hNetwork.hidden = false
+      hNetwork.innerText = "network: " + g.networkStatus
+    } else {
+      hNetwork.hidden = true
+    }
+    return
+  }
+
+  let parts = []
+  if (g.networkStatus != "") parts.push(g.networkStatus)
+  for (let c of g.clients) {
+    if (c.networkStatus != "") parts.push(`client ${c.clientID}: ${c.networkStatus}`)
+  }
+  if (parts.length != 0) {
+    hNetwork.hidden = false
+    hNetwork.innerText = "network: " + parts.join("; ")
+  } else {
+    hNetwork.hidden = true
+  }
+}
+
+function setNetworkStatus(s: string) {
+  g.networkStatus = s
+  updateNetworkStatus()
+}
+
 async function connectToClient(hostcode: string, clientID: number) {
   // Create a description offer and upload it to the signaling service.
   let response
   let conn = new RTCPeerConnection(rtcConfig)
   let channel = conn.createDataChannel("datachannel")
-  hNetwork.innerText = "hosting: creating local offer..."
+  let c = new client(clientID, conn, channel)
+  g.clients.push(c)
+  let updateStatus = (msg: string) => {
+    c.networkStatus = msg
+    updateNetworkStatus()
+  }
+  let error = async (msg: string) => {
+    updateStatus(msg)
+    await new Promise((resolve) => setTimeout(resolve, 5000))
+    conn.close()
+    g.clients.splice(g.clients.indexOf(c), 1)
+    updateNetworkStatus()
+  }
+
+  updateStatus("creating local offer")
   let offer = await conn.createOffer()
   conn.setLocalDescription(offer)
-  hNetwork.innerText = "hosting: awaiting icegatheringstatechange == 'completed'..."
+  updateStatus("awaiting iceGatherState completion")
   do {
     await eventPromise(conn, "icegatheringstatechange")
   } while (conn.iceGatheringState != "complete")
-  hNetwork.innerText = "hosting: waiting for a client to connect..."
+  updateStatus("uploading offer")
   try {
     response = await fetch(`${signalingServer}?set=tlewra-${hostcode}-${clientID}-offer&timeoutms=5000`, {
       method: "POST",
       body: conn.localDescription?.sdp,
     })
   } catch (e) {
-    conn.close()
-    hNetwork.innerText = `hosting: error: upload offer to signaling server: ${e} (will try again soon)`
-    await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+    error(`error: upload offer: ${e} (client has to try again)`)
     return
   }
   if (response.status == 204) {
-    conn.close()
+    error("error: client didn't read offer")
     return
   }
 
   // Establish the connection to the connecting client.
-  hNetwork.innerText = "hosting: awaiting client's signal..."
+  updateStatus("awaiting client's answer")
   try {
     response = await fetch(`${signalingServer}?get=tlewra-${hostcode}-${clientID}-answer&timeoutms=5000`, { method: "POST" })
   } catch (e) {
-    conn.close()
+    error(`error: await client's answer: ${e} (client has to try again)`)
     return
   }
   if (response.status == 204) {
-    conn.close()
+    error(`error: client didn't answer (client has to try again)`)
     return
   }
-  hNetwork.innerText = "hosting: awaiting client's sdp answer..."
   let sdp = await response.text()
   conn.setRemoteDescription({ type: "answer", sdp: sdp })
-  hNetwork.innerText = "hosting: connecting to the new client..."
+  updateStatus("establishing connection")
   await eventPromise(channel, "open")
+  updateStatus("")
 
   // TODO: handle disconnect.
-  let c = new client(conn, channel)
   channel.send("q" + [`card ${g.filteredIndex + 1}/${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
   g.clients.push(c)
 }
@@ -399,21 +443,20 @@ async function connectToClient(hostcode: string, clientID: number) {
 async function handleHost() {
   if (!hHostGame.checked) {
     if (g.aborter != null) g.aborter.abort()
-    hNetwork.hidden = true
+    setNetworkStatus("")
     return
   }
 
   let hostcode = hHostcode.value
   localStorage.setItem("Hostcode", hHostcode.value)
 
-  hNetwork.hidden = false
-  hNetwork.innerText = "hosting: initializing..."
+  setNetworkStatus("initializing")
   g.aborter = new AbortController()
 
   for (let clientID = 1; ; clientID++) {
     let response
     // Advertise the next client ID.
-    hNetwork.innerText = `hosting: waiting for next client...`
+    setNetworkStatus("waiting for next client")
     try {
       response = await fetch(`${signalingServer}?set=tlewra-${hostcode}-nextid`, {
         method: "POST",
@@ -424,7 +467,7 @@ async function handleHost() {
       if (g.aborter.signal.aborted) {
         return
       }
-      hNetwork.innerText = `hosting: error: upload offer to signaling server: ${e} (will try again soon)`
+      setNetworkStatus(`error: upload offer to signaling server: ${e} (will try again soon)`)
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
@@ -444,48 +487,47 @@ function handleJoin() {
 }
 
 async function join() {
-  hNetwork.hidden = false
   let joincode = location.hash.substr(6)
   localStorage.setItem("Joincode", joincode)
 
   while (true) {
     let response
-    hNetwork.innerText = "joining: awaiting server's signal..."
+    setNetworkStatus("awaiting server's signal")
     try {
       response = await fetch(`${signalingServer}?get=tlewra-${joincode}-nextid&timeoutms=600000`, { method: "POST" })
     } catch (e) {
-      hNetwork.innerText = `joining: error: await server's signal: ${e} (will try again soon)`
+      setNetworkStatus(`error: await server's signal: ${e} (will try again soon`)
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
     let clientID = await response.text()
 
-    hNetwork.innerText = "joining: awaiting server's offer..."
+    setNetworkStatus("awaiting server's offer")
     try {
       response = await fetch(`${signalingServer}?get=tlewra-${joincode}-${clientID}-offer&timeoutms=5000`, { method: "POST" })
     } catch (e) {
-      hNetwork.innerText = `joining: error: await server's signal: ${e} (will try again soon)`
+      setNetworkStatus(`error: await server's offer: ${e} (will try again soon`)
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
     let offer = await response.text()
     let conn = new RTCPeerConnection(rtcConfig)
 
-    hNetwork.innerText = "joining: awaiting icegatheringstatechange == 'complete'..."
+    setNetworkStatus("awaiting iceGatherState completion")
     await conn.setRemoteDescription({ type: "offer", sdp: offer })
     conn.setLocalDescription(await conn.createAnswer())
     do {
       await eventPromise(conn, "icegatheringstatechange")
     } while (conn.iceGatheringState != "complete")
 
-    hNetwork.innerText = "joining: sending answer..."
+    setNetworkStatus("sending answer")
     try {
       response = await fetch(`${signalingServer}?set=tlewra-${joincode}-${clientID}-answer`, {
         method: "POST",
         body: conn.localDescription?.sdp,
       })
     } catch (e) {
-      hNetwork.innerText = `joining: error: sending answer: ${e} (will try again soon)`
+      setNetworkStatus("error: send answer: ${e} (will try again soon)")
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
@@ -493,8 +535,7 @@ async function join() {
 
     conn.oniceconnectionstatechange = async (ev) => {
       if (conn.iceConnectionState != "disconnected") return
-      hNetwork.hidden = false
-      hNetwork.innerText = "joining: lost connection, will retry connection soon..."
+      setNetworkStatus("error: lost connection (will try again soon)")
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       join()
     }
@@ -511,11 +552,11 @@ async function join() {
       }
     }
 
-    hNetwork.hidden = true
     g.conn = conn
     g.channel = channel
     break
   }
+  setNetworkStatus("")
 }
 
 function seterror(msg: string) {
