@@ -239,11 +239,27 @@ function handleNext() {
   sendQuestion()
 }
 
+function renderStatus() {
+  let stat = `${g.currentPos}, category ${g.currentQuestion[0]}`
+  if (g.clients.length > 0) {
+    let [players, followers, pending] = [0, 0, 0]
+    for (let c of g.clients) {
+      if (c.networkStatus != "") pending++
+      if (c.networkStatus == "" && c.username == "") followers++
+      if (c.networkStatus == "" && c.username != "") players++
+    }
+    if (followers > 0) stat += `, ${followers} followers`
+    if (players > 0) stat += `, ${players} players`
+    if (pending > 0) stat += `, ${pending} pending`
+  }
+  hStat.innerText = stat
+}
+
 function renderQuestion() {
+  renderStatus()
   let h = ""
   h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
   h += makeQuestionHTML(g.currentQuestion)
-  hStat.innerText = `${g.currentPos}, category ${g.currentQuestion[0]}`
   hGameScreen.innerHTML = h
 
   let fsz = 300
@@ -357,7 +373,7 @@ function eventPromise(obj: EventTarget, eventName: string) {
 const signalingServer = "https://iio.ie/sig"
 const rtcConfig = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] }
 
-function updateNetworkStatus() {
+function renderNetworkStatus() {
   if (g.clientMode) {
     if (g.networkStatus != "") {
       hNetwork.hidden = false
@@ -379,11 +395,12 @@ function updateNetworkStatus() {
   } else {
     hNetwork.hidden = true
   }
+  renderStatus()
 }
 
 function setNetworkStatus(s: string) {
   g.networkStatus = s
-  updateNetworkStatus()
+  renderNetworkStatus()
 }
 
 async function connectToClient(hostcode: string, clientID: number) {
@@ -395,14 +412,14 @@ async function connectToClient(hostcode: string, clientID: number) {
   g.clients.push(c)
   let updateStatus = (msg: string) => {
     c.networkStatus = msg
-    updateNetworkStatus()
+    renderNetworkStatus()
   }
   let error = async (msg: string) => {
     updateStatus(msg)
     await new Promise((resolve) => setTimeout(resolve, 5000))
     conn.close()
     g.clients.splice(g.clients.indexOf(c), 1)
-    updateNetworkStatus()
+    renderNetworkStatus()
   }
 
   updateStatus("creating local offer")
@@ -445,7 +462,10 @@ async function connectToClient(hostcode: string, clientID: number) {
   await eventPromise(channel, "open")
   updateStatus("")
 
-  // TODO: handle disconnect.
+  conn.oniceconnectionstatechange = async (ev) => {
+    if (conn.iceConnectionState != "disconnected") return
+    error(`error: lost connection to ${c.username == "" ? " a follower" : c.username}`)
+  }
   channel.send("q" + [`card ${g.filteredIndex + 1}/${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
 }
 
@@ -586,6 +606,7 @@ async function join() {
 
     conn.oniceconnectionstatechange = async (ev) => {
       if (conn.iceConnectionState != "disconnected") return
+      conn.close()
       setNetworkStatus("error: lost connection (will try again soon)")
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       join()
