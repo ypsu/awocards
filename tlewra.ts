@@ -1,3 +1,23 @@
+// This file contains the logic for tlewra.
+//
+// The network works in the following way:
+//
+// - Each game needs a single host.
+// - The host advertises that it's waiting for clients via advertising its ...-nextid signal.
+// - A client reads that then an webrtc offer/answer exchange happens through the signaling server.
+// - The host/client communicate via messages.
+//
+// All network messages are in the form of [cmd][param] where cmd is a one letter code and param can be arbitrary string.
+// E.g. "a2" from a client means they are answering "2".
+//
+// Host->client commands:
+//
+// - q: Set the current question.
+//
+// Client->host commands:
+//
+// - n: Set the username of the client. Empty param resets the client to a follower.
+
 declare var hCustomDB: HTMLInputElement
 declare var hCustomQuestionsReport: HTMLElement
 declare var hCustomText: HTMLTextAreaElement
