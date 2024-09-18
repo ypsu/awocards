@@ -13,10 +13,12 @@
 // Host->client commands:
 //
 // - q: Set the current question.
+// - x: Host abandoned the game.
 //
 // Client->host commands:
 //
 // - n: Set the username of the client. Empty param resets the client to a follower.
+// - x: Client leaves.
 
 declare var hAnswererMark: HTMLElement
 declare var hCustomDB: HTMLInputElement
@@ -226,7 +228,7 @@ function handleStart() {
   g.questionIndex = -1
   g.filteredIndex = -1
   handleNext()
-  location.hash = "#play"
+  handleHost()
 }
 
 function sendQuestion() {
@@ -267,7 +269,7 @@ function renderStatus() {
   if (g.clients.length > 0) {
     let [players, followers, pending] = [0, 0, 0]
     for (let c of g.clients) {
-      if (c.networkStatus != "") pending++
+      if (c.networkStatus != "" && c.conn != null) pending++
       if (c.networkStatus == "" && c.username == "") followers++
       if (c.networkStatus == "" && c.username != "") players++
     }
@@ -293,16 +295,12 @@ function renderQuestion() {
   }
 }
 
-function handleHash() {
-  hIntro.hidden = true
-  hSeedPreview.hidden = true
-  hPrintable.hidden = true
-  hGameUI.hidden = true
-
-  // Close all connections.
+function disconnectAll() {
+  g.aborter?.abort()
   g.clientMode = false
   if (g.conn != null && g.channel != null) {
     g.channel.onmessage = null
+    g.channel.send("x")
     g.channel = null
     g.conn.oniceconnectionstatechange = null
     g.conn.close()
@@ -311,6 +309,7 @@ function handleHash() {
   for (let c of g.clients) {
     if (c.conn != null && c.channel != null) {
       c.channel.onmessage = null
+      c.channel.send("x")
       c.channel = null
       c.conn.oniceconnectionstatechange = null
       c.conn.close()
@@ -318,6 +317,16 @@ function handleHash() {
     }
   }
   g.clients = []
+}
+
+function handleHash() {
+  hIntro.hidden = true
+  hSeedPreview.hidden = true
+  hPrintable.hidden = true
+  hGameUI.hidden = true
+
+  // Close all connections.
+  disconnectAll()
 
   if (location.hash == "#preview") {
     handleSeedPreview()
@@ -470,6 +479,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   let conn = new RTCPeerConnection(rtcConfig)
   let channel = conn.createDataChannel("datachannel")
   let c = new client(clientID, conn, channel)
+
   g.clients.push(c)
   let updateStatus = (msg: string) => {
     c.networkStatus = msg
@@ -477,14 +487,27 @@ async function connectToClient(hostcode: string, clientID: number) {
   }
   let error = async (msg: string) => {
     updateStatus(msg)
-    await new Promise((resolve) => setTimeout(resolve, 5000))
     conn.oniceconnectionstatechange = null
     channel.onmessage = null
     conn.close()
     c.conn = null
     c.channel = null
+    renderStatus()
+    await new Promise((resolve) => setTimeout(resolve, 5000))
     g.clients.splice(g.clients.indexOf(c), 1)
     renderNetworkStatus()
+  }
+
+  conn.oniceconnectionstatechange = async (ev) => {
+    if (conn.iceConnectionState != "disconnected") return
+    error(`error: lost connection to ${c.username == "" ? "a follower" : c.username}`)
+  }
+  channel.onmessage = async (ev) => {
+    let msg = (ev as MessageEvent).data
+    if (msg.startsWith("x")) {
+      error(`${c.username == "" ? "a follower" : c.username} exited`)
+      return
+    }
   }
 
   updateStatus("creating local offer")
@@ -526,17 +549,12 @@ async function connectToClient(hostcode: string, clientID: number) {
   updateStatus("establishing connection")
   await eventPromise(channel, "open")
   updateStatus("")
-
-  conn.oniceconnectionstatechange = async (ev) => {
-    if (conn.iceConnectionState != "disconnected") return
-    error(`error: lost connection to ${c.username == "" ? " a follower" : c.username}`)
-  }
   channel.send("q" + [`card ${g.filteredIndex + 1}/${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
 }
 
 async function handleHost() {
   if (!hHostGame.checked) {
-    if (g.aborter != null) g.aborter.abort()
+    g.aborter?.abort()
     setNetworkStatus("")
     hHostcode.disabled = false
     hHostURL.hidden = true
@@ -605,6 +623,7 @@ async function join() {
   let joincode = location.hash.substr(6)
   localStorage.setItem("Joincode", joincode)
 
+  g.aborter = new AbortController()
   while (true) {
     let response
     setNetworkStatus("awaiting server's signal")
@@ -643,6 +662,50 @@ async function join() {
     let offer = await response.text()
     let conn = new RTCPeerConnection(rtcConfig)
 
+    conn.oniceconnectionstatechange = async (ev) => {
+      if (conn.iceConnectionState != "disconnected") return
+      conn.oniceconnectionstatechange = null
+      if (g.channel != null) g.channel.onmessage = null
+      conn.close()
+      g.conn = null
+      g.channel = null
+      setNetworkStatus("error: lost connection (will try reconnecting soon)")
+      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      join()
+    }
+
+    conn.ondatachannel = (ev) => {
+      let channel = (ev as RTCDataChannelEvent).channel
+      if (g.aborter?.signal.aborted) {
+        channel.send("x")
+        conn.close()
+        return
+      }
+      g.conn = conn
+      g.channel = channel
+      channel.onmessage = async (ev) => {
+        let msg = (ev as MessageEvent).data
+        if (msg.startsWith("q")) {
+          let parts = msg.split("@")
+          if (parts.length <= 2) return
+          g.currentPos = parts[0].substr(1)
+          g.currentQuestion = parts.slice(1)
+          renderQuestion()
+          return
+        }
+        if (msg.startsWith("x")) {
+          conn.oniceconnectionstatechange = null
+          channel.onmessage = null
+          conn.close()
+          g.conn = null
+          g.channel = null
+          setNetworkStatus("error: host abandoned the game (will try reconnecting soon)")
+          await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+          join()
+        }
+      }
+    }
+
     setNetworkStatus("awaiting iceGatherState completion")
     await conn.setRemoteDescription({ type: "offer", sdp: offer })
     conn.setLocalDescription(await conn.createAnswer())
@@ -667,33 +730,6 @@ async function join() {
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       continue
     }
-    let channel = ((await eventPromise(conn, "datachannel")) as RTCDataChannelEvent).channel
-
-    conn.oniceconnectionstatechange = async (ev) => {
-      if (conn.iceConnectionState != "disconnected") return
-      conn.oniceconnectionstatechange = null
-      channel.onmessage = null
-      conn.close()
-      g.conn = null
-      g.channel = null
-      setNetworkStatus("error: lost connection (will try again soon)")
-      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
-      join()
-    }
-
-    channel.onmessage = (ev) => {
-      let msg = (ev as MessageEvent).data
-      if (msg.startsWith("q")) {
-        let parts = msg.split("@")
-        if (parts.length <= 2) return
-        g.currentPos = parts[0].substr(1)
-        g.currentQuestion = parts.slice(1)
-        renderQuestion()
-      }
-    }
-
-    g.conn = conn
-    g.channel = channel
     break
   }
   setNetworkStatus("")
@@ -710,6 +746,7 @@ function main() {
   window.onerror = (msg, src, line) => seterror(`${src}:${line} ${msg}`)
   window.onunhandledrejection = (e) => seterror(e.reason)
   window.onhashchange = handleHash
+  window.onbeforeunload = disconnectAll
   window.onresize = () => {
     if (location.hash == "#play" || location.hash.startsWith("#join-")) renderQuestion()
   }
@@ -738,7 +775,6 @@ function main() {
   }
 
   handleParse()
-  handleHost()
   handleHash()
 }
 
