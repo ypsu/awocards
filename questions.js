@@ -60,6 +60,7 @@ What would you do if you suddenly became bedridden for life? @ stay at home and 
 How satisfied are you with your life in general? @ happy as I am @ I'm a bit unhappy but not sure what I want @ I wish I could try or achieve certain things
 What's your most favorite exercise? @ pushups @ pullups @ sit-ups @ squats
 What's your least favorite exercise? @ pushups @ pullups @ sit-ups @ squats
+Who cuts your hair? @ I do @ my hairdresser @ my partner/friend/family @ my hair needs no cutting
 
 @divisive
 What's your opinion on abortions? @ should be easy to get @ should be hard to get @ should be completely illegal @ should be illegal but the people should be able to give the baby to government no questions asked and then the government would give the orphans high quality care
@@ -200,16 +201,16 @@ Can someone lick your teeth?
 Can someone suck your finger?
 Can someone suck your toe?
 Can someone suck your tongue?
+Can someone scratch your back?
+Can someone take off all your upper body clothing and see you topless?
+Can someone pull all your bottom body clothing and see you bottomless?
+Can someone take off all your clothing and see you fully naked?
 
 @dares-spicy
 Can someone drink something from your mouth?
 Can someone eat something from your mouth after you pre-chewed it?
 Can someone french kiss you?
 Can someone slap your naked ass?
-Can someone scratch your naked back?
-Can someone take off all your clothing and see you fully naked?
-Can someone take off all your upper body clothing and see you topless?
-Can someone pull all your bottom body clothing and see you bottomless?
 Can someone have a naked hug with you?
 Can someone give you a short breast massage? (topless version)
 Can someone take a photo of your bare chest / breasts and keep it?
