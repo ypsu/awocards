@@ -241,9 +241,9 @@ function handleNext() {
 
 function renderQuestion() {
   let h = ""
+  h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
   h += makeQuestionHTML(g.currentQuestion)
   hStat.innerText = `${g.currentPos}, category ${g.currentQuestion[0]}`
-  h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
   hGameScreen.innerHTML = h
 
   let fsz = 300
