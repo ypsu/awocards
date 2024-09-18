@@ -52,12 +52,11 @@
 .cfgSpecial   { color: var(--fg-special); }
 .cfgInverted  { color: var(--fg-inverted); }
 
-body { font-family: sans-serif; }
+body { font-family: sans-serif; cursor: default; }
 #hIntro { max-width: 50em; margin: 0 auto; padding: 0 8px; }
 #hGameUI { margin: 0 auto; padding: 0 8px; }
 button { padding-left: 1ch; padding-right: 1ch; font-size: inherit; }
 #hGameUI p { margin: 0 0; }
-ol { margin-left: 2ch; }
-summary { cursor: default; }
+ol, ul { margin-left: 2ch; }
 textarea { width: 100%; }
 .hPrintableCard { border: 1px solid black; display: inline-block; width: 51mm; height: 37mm; padding: 1em; overflow: hidden; line-height: normal; }

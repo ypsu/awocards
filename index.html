@@ -371,7 +371,14 @@ This should work well for custom questions too.
 <div id=hPrintable hidden></div>
 
 <div id=hGameUI hidden>
-  <div id=hGameScreen></div>
+  <div id=hGameScreen>
+    <div id=hQuestion></div>
+    <hr>
+    <ul>
+      <li onclick=handleAnswererMarkClick()><code id=hAnswererMark>[ ]</code> mark me as answerer
+      <li onclick=handleNextMarkClick()><code id=hNextMark>[x]</code> next question (needs 2 players)
+    </ul>
+  </div>
   <hr>
   <p id=hStat></p>
   <p id=hNetwork hidden></p>

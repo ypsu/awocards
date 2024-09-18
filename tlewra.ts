@@ -18,6 +18,7 @@
 //
 // - n: Set the username of the client. Empty param resets the client to a follower.
 
+declare var hAnswererMark: HTMLElement
 declare var hCustomDB: HTMLInputElement
 declare var hCustomQuestionsReport: HTMLElement
 declare var hCustomText: HTMLTextAreaElement
@@ -28,12 +29,14 @@ declare var hGameScreen: HTMLElement
 declare var hHostGame: HTMLInputElement
 declare var hHostURL: HTMLElement
 declare var hNetwork: HTMLElement
+declare var hNextMark: HTMLElement
 declare var hHostcode: HTMLInputElement
 declare var hIntro: HTMLElement
 declare var hJoincode: HTMLInputElement
 declare var hJumpIndex: HTMLInputElement
 declare var hNeedJS: HTMLElement
 declare var hPrintable: HTMLElement
+declare var hQuestion: HTMLElement
 declare var hSeed: HTMLInputElement
 declare var hSeedPreview: HTMLElement
 declare var hStat: HTMLInputElement
@@ -280,7 +283,7 @@ function renderQuestion() {
   let h = ""
   h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
   h += makeQuestionHTML(g.currentQuestion)
-  hGameScreen.innerHTML = h
+  hQuestion.innerHTML = h
 
   let fsz = 300
   hGameScreen.style.fontSize = `${fsz}px`
@@ -319,6 +322,24 @@ function handleHash() {
   }
 
   hIntro.hidden = false
+}
+
+function handleAnswererMarkClick() {
+  if (hAnswererMark.innerText == '[x]') {
+    hAnswererMark.innerText = '[ ]'
+    document.body.className = ''
+  } else {
+    hAnswererMark.innerText = '[x]'
+    document.body.className = 'cbgReference'
+  }
+}
+
+function handleNextMarkClick() {
+  if (hNextMark.innerText == '[x]') {
+    hNextMark.innerText = '[ ]'
+  } else {
+    hNextMark.innerText = '[x]'
+  }
 }
 
 function handleFullscreen() {
