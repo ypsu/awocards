@@ -54,8 +54,8 @@ class client {
   clientID: number
   username: string
   networkStatus: string
-  conn: RTCPeerConnection
-  channel: RTCDataChannel
+  conn: RTCPeerConnection | null
+  channel: RTCDataChannel | null
 
   constructor(clientID: number, conn: RTCPeerConnection, ch: RTCDataChannel) {
     this.clientID = clientID
@@ -232,7 +232,7 @@ function handleStart() {
 function sendQuestion() {
   let msg = "q" + [`card ${g.filteredIndex + 1}/${g.filteredQuestions}`].concat(g.currentQuestion).join("@")
   for (let c of g.clients) {
-    if (c.networkStatus == "") c.channel.send(msg)
+    if (c.networkStatus == "") c.channel?.send(msg)
   }
 }
 
@@ -299,6 +299,26 @@ function handleHash() {
   hPrintable.hidden = true
   hGameUI.hidden = true
 
+  // Close all connections.
+  g.clientMode = false
+  if (g.conn != null && g.channel != null) {
+    g.channel.onmessage = null
+    g.channel = null
+    g.conn.oniceconnectionstatechange = null
+    g.conn.close()
+    g.conn = null
+  }
+  for (let c of g.clients) {
+    if (c.conn != null && c.channel != null) {
+      c.channel.onmessage = null
+      c.channel = null
+      c.conn.oniceconnectionstatechange = null
+      c.conn.close()
+      c.conn = null
+    }
+  }
+  g.clients = []
+
   if (location.hash == "#preview") {
     handleSeedPreview()
     hSeedPreview.hidden = false
@@ -325,20 +345,20 @@ function handleHash() {
 }
 
 function handleAnswererMarkClick() {
-  if (hAnswererMark.innerText == '[x]') {
-    hAnswererMark.innerText = '[ ]'
-    document.body.className = ''
+  if (hAnswererMark.innerText == "[x]") {
+    hAnswererMark.innerText = "[ ]"
+    document.body.className = ""
   } else {
-    hAnswererMark.innerText = '[x]'
-    document.body.className = 'cbgReference'
+    hAnswererMark.innerText = "[x]"
+    document.body.className = "cbgReference"
   }
 }
 
 function handleNextMarkClick() {
-  if (hNextMark.innerText == '[x]') {
-    hNextMark.innerText = '[ ]'
+  if (hNextMark.innerText == "[x]") {
+    hNextMark.innerText = "[ ]"
   } else {
-    hNextMark.innerText = '[x]'
+    hNextMark.innerText = "[x]"
   }
 }
 
@@ -458,7 +478,11 @@ async function connectToClient(hostcode: string, clientID: number) {
   let error = async (msg: string) => {
     updateStatus(msg)
     await new Promise((resolve) => setTimeout(resolve, 5000))
+    conn.oniceconnectionstatechange = null
+    channel.onmessage = null
     conn.close()
+    c.conn = null
+    c.channel = null
     g.clients.splice(g.clients.indexOf(c), 1)
     renderNetworkStatus()
   }
@@ -647,7 +671,11 @@ async function join() {
 
     conn.oniceconnectionstatechange = async (ev) => {
       if (conn.iceConnectionState != "disconnected") return
+      conn.oniceconnectionstatechange = null
+      channel.onmessage = null
       conn.close()
+      g.conn = null
+      g.channel = null
       setNetworkStatus("error: lost connection (will try again soon)")
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       join()
@@ -655,7 +683,6 @@ async function join() {
 
     channel.onmessage = (ev) => {
       let msg = (ev as MessageEvent).data
-      console.log(msg)
       if (msg.startsWith("q")) {
         let parts = msg.split("@")
         if (parts.length <= 2) return
@@ -684,7 +711,7 @@ function main() {
   window.onunhandledrejection = (e) => seterror(e.reason)
   window.onhashchange = handleHash
   window.onresize = () => {
-    if (location.hash == "#play") renderQuestion()
+    if (location.hash == "#play" || location.hash.startsWith("#join-")) renderQuestion()
   }
 
   // Init seed with current day.
