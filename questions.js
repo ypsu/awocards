@@ -172,6 +172,7 @@ Would you mind breast implants? @ I don't mind them if my partner wants them @ I
 Would you mind lip filling? @ I don't mind them if my partner wants them @ I'd prefer to not have them for me or for my partner
 How often do you fight with your partner on average? @ daily @ weekly @ monthly @ never, we live in a harmony
 What way of your partner getting more sex would annoy you the least? @ transactional sex with an escort @ sex in a secondary relationship @ threesome sex with you present @ your partner can't ever have sex with other people even if that means depression and suffering for them
+What way of your partner getting more sex would annoy you the most? @ transactional sex with an escort @ sex in a secondary relationship @ threesome sex with you present @ your partner can't ever have sex with other people even if that means depression and suffering for them
 How would you prefer your partner to sleep? @ naked @ in underwear @ in an oversized t-shirt @ in pyjamas with separate pants
 What would you do if your partner suddenly became bedridden for life? @ stay with them and take care of them forever @ start a new life but take care of them @ start a new life without them
 Would you watch your partner having sex with someone else? @ no, I wouldn't allow my partner to have sex with others @ I don't want to be present @ sure, I'd be happy to watch @ sure, I'd be happy to record it even
@@ -181,19 +182,24 @@ Can someone pour a glass of water over your head?
 Can someone kiss your cheek?
 Can someone kiss your hand?
 Can someone kiss your sole?
+Can someone french kiss you?
+Can someone drink something from your mouth?
 Can someone bite your ear?
 Can someone bite your neck?
-Can someone slap your ass?
+Can someone slap your clothed ass?
 Can someone slap your face?
 Can someone have their hands go through your hair?
 Can someone hug you?
 Can someone put their ear on your chest and listen to your heartbeat?
-Can someone give you a short feet massage?
-Can someone give you a short breast massage? (clothed version)
+Can someone give you a feet massage?
+Can someone give you a shoulder massage?
+Can someone scratch your back?
+Can someone tickle your armpits?
+Can someone tickle your feet?
 Can someone lick your armpit?
 Can someone lick your cheek?
-Can someone lick your ear?
-Can someone lick your lips?
+Can someone lick or bite your ear?
+Can someone lick or bite your lips?
 Can someone lick your navel?
 Can someone lick your palm?
 Can someone lick your sole?
@@ -201,18 +207,15 @@ Can someone lick your teeth?
 Can someone suck your finger?
 Can someone suck your toe?
 Can someone suck your tongue?
-Can someone scratch your back?
 Can someone take off all your upper body clothing and see you topless?
 Can someone pull all your bottom body clothing and see you bottomless?
 Can someone take off all your clothing and see you fully naked?
+Can someone put their hands under your t-shirt and feel out your chests or breasts?
+Can someone put their hands into your pants and feel what's between your legs?
+Can someone slap your naked ass?
 
 @dares-spicy
-Can someone drink something from your mouth?
-Can someone eat something from your mouth after you pre-chewed it?
-Can someone french kiss you?
-Can someone slap your naked ass?
 Can someone have a naked hug with you?
-Can someone give you a short breast massage? (topless version)
 Can someone take a photo of your bare chest / breasts and keep it?
 Can someone take a photo of your genital and keep it?
 Can someone take a photo of your asshole and keep it?
@@ -223,8 +226,9 @@ Can someone lick your genital?
 Can someone lick your nipple?
 Can someone suck your genital?
 Can someone suck your nipple?
-Can someone stroke your genital?
+Can someone massage your bare chest / breasts?
+Can someone massage your genital?
+Can someone massage your asshole?
 Can someone have their genital touch your genital?
-Can someone inspect your genital up close ("play doctor")?
-Can someone finger your asshole?
+Can someone inspect your genital up close and play doctor?
 `
