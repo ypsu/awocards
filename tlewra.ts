@@ -102,8 +102,6 @@ let g = {
 
   // Clients only: connection data towards the host.
   clientMode: false as boolean,
-  conn: null as RTCPeerConnection | null,
-  channel: null as RTCDataChannel | null,
 }
 
 function escapehtml(unsafe: string) {
@@ -185,6 +183,9 @@ function handleSeedPreview() {
 }
 
 function makeQuestionHTML(q: question) {
+  if (q.length == 0) {
+    return "loading..."
+  }
   let h = `<p>${escapehtml(q[1])}</p>\n<ol>\n`
   if (q.length == 2) {
     h += "<li>no<li>yes</ol>\n"
@@ -235,7 +236,7 @@ function handleStart() {
 function handlePrev() {
   if (g.filteredIndex == 0) return
   if (g.clientMode) {
-    g.channel?.send(`j${g.filteredIndex}`)
+    if (g.clients.length >= 1) g.clients[0].channel?.send(`j${g.filteredIndex}`)
     return
   }
   g.filteredIndex--
@@ -250,7 +251,7 @@ function handlePrev() {
 function handleNext() {
   if (g.filteredIndex == g.filteredQuestions) return
   if (g.clientMode) {
-    g.channel?.send(`j${g.filteredIndex + 2}`)
+    if (g.clients.length >= 1) g.clients[0].channel?.send(`j${g.filteredIndex + 2}`)
     return
   }
   g.filteredIndex++
@@ -304,14 +305,6 @@ function renderQuestion() {
 function disconnectAll() {
   g.aborter?.abort()
   g.clientMode = false
-  if (g.conn != null && g.channel != null) {
-    g.channel.onmessage = null
-    g.channel.send("x")
-    g.channel = null
-    g.conn.oniceconnectionstatechange = null
-    g.conn.close()
-    g.conn = null
-  }
   for (let c of g.clients) {
     if (c.conn != null && c.channel != null) {
       c.channel.onmessage = null
@@ -391,7 +384,7 @@ function handleJump(v: string) {
   let [idx, total] = [parseInt(v), 0]
   if (idx <= 0 || idx > g.filteredQuestions + 1) return
   if (g.clientMode) {
-    g.channel?.send(`j${idx}`)
+    if (g.clients.length >= 1) g.clients[0].channel?.send(`j${idx}`)
     return
   }
   g.questionIndex = g.shuffledqs.length
@@ -684,10 +677,8 @@ async function join() {
     conn.oniceconnectionstatechange = async (ev) => {
       if (conn.iceConnectionState != "disconnected") return
       conn.oniceconnectionstatechange = null
-      if (g.channel != null) g.channel.onmessage = null
       conn.close()
-      g.conn = null
-      g.channel = null
+      g.clients = []
       setNetworkStatus("error: lost connection (will try reconnecting soon)")
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
       join()
@@ -700,8 +691,7 @@ async function join() {
         conn.close()
         return
       }
-      g.conn = conn
-      g.channel = channel
+      g.clients = [new client(0, conn, channel)]
       channel.onmessage = async (ev) => {
         let msg = (ev as MessageEvent).data
         if (msg.startsWith("q")) {
@@ -717,8 +707,7 @@ async function join() {
           conn.oniceconnectionstatechange = null
           channel.onmessage = null
           conn.close()
-          g.conn = null
-          g.channel = null
+          g.clients = []
           setNetworkStatus("error: host abandoned the game (will try reconnecting soon)")
           await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
           join()
