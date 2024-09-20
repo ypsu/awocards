@@ -19,6 +19,7 @@
 //
 // - n: Set the username of the client. Empty param resets the client to a follower.
 // - x: Client leaves.
+// - j: Jump to specific question. Param is the new card index (1 based).
 
 declare var hAnswererMark: HTMLElement
 declare var hCustomDB: HTMLInputElement
@@ -231,15 +232,12 @@ function handleStart() {
   handleHost()
 }
 
-function sendQuestion() {
-  let msg = "q" + [`card ${g.filteredIndex + 1}/${g.filteredQuestions}`].concat(g.currentQuestion).join("@")
-  for (let c of g.clients) {
-    if (c.networkStatus == "") c.channel?.send(msg)
-  }
-}
-
 function handlePrev() {
   if (g.filteredIndex == 0) return
+  if (g.clientMode) {
+    g.channel?.send(`j${g.filteredIndex}`)
+    return
+  }
   g.filteredIndex--
   g.questionIndex--
   while (g.questionIndex > 0 && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex--
@@ -247,17 +245,19 @@ function handlePrev() {
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
   updateCurrentQuestion()
   renderQuestion()
-  sendQuestion()
 }
 
 function handleNext() {
   if (g.filteredIndex == g.filteredQuestions) return
+  if (g.clientMode) {
+    g.channel?.send(`j${g.filteredIndex + 2}`)
+    return
+  }
   g.filteredIndex++
   g.questionIndex++
   while (g.questionIndex < g.shuffledqs.length && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex++
   updateCurrentQuestion()
   renderQuestion()
-  sendQuestion()
 }
 
 function updateCurrentQuestion() {
@@ -267,6 +267,7 @@ function updateCurrentQuestion() {
     g.currentQuestion = g.shuffledqs[g.questionIndex]
   }
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
+  for (let c of g.clients) c.channel?.send("q" + [`${g.filteredIndex}`, `${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
 }
 
 function renderStatus() {
@@ -386,9 +387,13 @@ function handleFullscreen() {
   renderQuestion()
 }
 
-function handleJump() {
-  let [idx, total] = [parseInt(hJumpIndex.value), 0]
+function handleJump(v: string) {
+  let [idx, total] = [parseInt(v), 0]
   if (idx <= 0 || idx > g.filteredQuestions + 1) return
+  if (g.clientMode) {
+    g.channel?.send(`j${idx}`)
+    return
+  }
   g.questionIndex = g.shuffledqs.length
   g.filteredIndex = g.filteredQuestions
   for (let i = 0; i < g.shuffledqs.length; i++) {
@@ -513,6 +518,10 @@ async function connectToClient(hostcode: string, clientID: number) {
   }
   channel.onmessage = async (ev) => {
     let msg = (ev as MessageEvent).data
+    if (msg.startsWith("j")) {
+      handleJump(msg.substr(1))
+      return
+    }
     if (msg.startsWith("x")) {
       error(`${c.username == "" ? "a follower" : c.username} exited`)
       return
@@ -558,7 +567,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   updateStatus("establishing connection")
   await eventPromise(channel, "open")
   updateStatus("")
-  channel.send("q" + [`card ${g.filteredIndex + 1}/${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
+  channel.send("q" + [`${g.filteredIndex}`, `${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
 }
 
 async function handleHost() {
@@ -632,6 +641,7 @@ async function join() {
   let joincode = location.hash.substr(6)
   localStorage.setItem("Joincode", joincode)
 
+  g.clientMode = true
   g.aborter = new AbortController()
   while (true) {
     let response
@@ -695,10 +705,11 @@ async function join() {
       channel.onmessage = async (ev) => {
         let msg = (ev as MessageEvent).data
         if (msg.startsWith("q")) {
-          let parts = msg.split("@")
-          if (parts.length <= 2) return
-          g.currentPos = parts[0].substr(1)
-          g.currentQuestion = parts.slice(1)
+          let parts = msg.substr(1).split("@")
+          if (parts.length <= 3) return
+          ;[g.filteredIndex, g.filteredQuestions] = [parseInt(parts[0]), parseInt(parts[1])]
+          g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
+          g.currentQuestion = parts.slice(2)
           renderQuestion()
           return
         }
