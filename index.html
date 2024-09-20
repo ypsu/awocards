@@ -376,17 +376,20 @@ This should work well for custom questions too.
     <div id=hQuestion></div>
     <hr>
     <ul>
+      <li>Answerer: ?
       <li onclick=handleAnswererMarkClick()><code id=hAnswererMark>[ ]</code> mark me as answerer
       <li onclick=handleNextMarkClick()><code id=hNextMark>[x]</code> next question (needs 2 players)
     </ul>
   </div>
   <hr>
   <p id=hStat></p>
+  <p id=hPlayers>Players:</p>
   <p id=hNetwork hidden></p>
   <details ontoggle=renderQuestion()>
     <summary>Settings</summary>
     <ul>
       <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
+      <li>Your name (leave empty to follow only): <input id=hName size=12 oninput=handleNameChange(hName.value)> <em id=hNameErr class=cfgNegative></em>
       <li>Jump to question: <button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button> <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump(hJumpIndex.value)>Jump</button>
       <li><input type=checkbox id=hHostGame onclick=handleHost()><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode> <span id=hHostURL hidden></span>
       <li><button onclick="location.href='#'">Back to menu</button>

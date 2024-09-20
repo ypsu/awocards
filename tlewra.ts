@@ -17,7 +17,7 @@
 //
 // Client->host commands:
 //
-// - n: Set the username of the client. Empty param resets the client to a follower.
+// - n: Set the username of the client. Empty or invalid param resets the client to a follower.
 // - x: Client leaves.
 // - j: Jump to specific question. Param is the new card index (1 based).
 
@@ -31,6 +31,8 @@ declare var hGameUI: HTMLElement
 declare var hGameScreen: HTMLElement
 declare var hHostGame: HTMLInputElement
 declare var hHostURL: HTMLElement
+declare var hName: HTMLInputElement
+declare var hNameErr: HTMLElement
 declare var hNetwork: HTMLElement
 declare var hNextMark: HTMLElement
 declare var hHostcode: HTMLInputElement
@@ -38,6 +40,7 @@ declare var hIntro: HTMLElement
 declare var hJoincode: HTMLInputElement
 declare var hJumpIndex: HTMLInputElement
 declare var hNeedJS: HTMLElement
+declare var hPlayers: HTMLElement
 declare var hPrintable: HTMLElement
 declare var hQuestion: HTMLElement
 declare var hSeed: HTMLInputElement
@@ -60,7 +63,7 @@ class client {
   conn: RTCPeerConnection | null
   channel: RTCDataChannel | null
 
-  constructor(clientID: number, conn: RTCPeerConnection, ch: RTCDataChannel) {
+  constructor(clientID: number, conn: RTCPeerConnection | null, ch: RTCDataChannel | null) {
     this.clientID = clientID
     this.username = ""
     this.networkStatus = ""
@@ -106,6 +109,11 @@ let g = {
 
 function escapehtml(unsafe: string) {
   return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;")
+}
+
+let nameRE = /^[\p{Letter}\p{Mark}\p{Number}.-]{2,12}$/u
+function validateName(n: string) {
+  return nameRE.test(n)
 }
 
 function saveCustomQuestions() {
@@ -226,6 +234,8 @@ function handlePrint() {
 }
 
 function handleStart() {
+  g.clients = [new client(-1, null, null)]
+  handleNameChange(hName.value)
   selectQuestions()
   g.questionIndex = -1
   g.filteredIndex = -1
@@ -273,18 +283,24 @@ function updateCurrentQuestion() {
 
 function renderStatus() {
   let stat = `${g.currentPos}, category ${g.currentQuestion[0]}`
-  if (g.clients.length > 0) {
+  let names = []
+  if (!g.clientMode) {
     let [players, followers, pending] = [0, 0, 0]
     for (let c of g.clients) {
       if (c.networkStatus != "" && c.conn != null) pending++
       if (c.networkStatus == "" && c.username == "") followers++
-      if (c.networkStatus == "" && c.username != "") players++
+      if (c.networkStatus == "" && c.username != "") {
+        players++
+        names.push(c.username)
+      }
     }
+    if (g.clients[0].username == "") followers--
     if (followers > 0) stat += `, ${followers} followers`
     if (players > 0) stat += `, ${players} players`
     if (pending > 0) stat += `, ${pending} pending`
   }
   hStat.innerText = stat
+  hPlayers.innerText = `Players: ${names.join(", ")}`
 }
 
 function renderQuestion() {
@@ -447,6 +463,24 @@ function eventPromise(obj: EventTarget, eventName: string) {
   })
 }
 
+function handleNameChange(s: string) {
+  if (s != "" && !validateName(s)) {
+    hName.className = "cbgNegative"
+    hNameErr.innerText = "invalid name, must be at least 2, at most 12 alphanumeric characters"
+    s = ""
+  } else {
+    hName.className = ""
+    hNameErr.innerText = ""
+  }
+  localStorage.setItem("Username", s)
+  if (g.clientMode) {
+    if (g.clients.length >= 0) g.clients[0].channel?.send("n" + s)
+    return
+  }
+  g.clients[0].username = s
+  renderStatus()
+}
+
 const signalingServer = "https://iio.ie/sig"
 const rtcConfig = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] }
 
@@ -511,14 +545,21 @@ async function connectToClient(hostcode: string, clientID: number) {
   }
   channel.onmessage = async (ev) => {
     let msg = (ev as MessageEvent).data
-    if (msg.startsWith("j")) {
-      handleJump(msg.substr(1))
-      return
+    if (msg.length == 0) return
+    let param = msg.substr(1)
+    switch (msg[0]) {
+      case "j":
+        handleJump(param)
+        break
+      case "n":
+        if (!validateName(param)) param = ""
+        c.username = param
+        break
+      case "x":
+        error(`${c.username == "" ? "a follower" : c.username} exited`)
+        break
     }
-    if (msg.startsWith("x")) {
-      error(`${c.username == "" ? "a follower" : c.username} exited`)
-      return
-    }
+    renderQuestion()
   }
 
   updateStatus("creating local offer")
@@ -692,6 +733,7 @@ async function join() {
         return
       }
       g.clients = [new client(0, conn, channel)]
+      handleNameChange(hName.value)
       channel.onmessage = async (ev) => {
         let msg = (ev as MessageEvent).data
         if (msg.startsWith("q")) {
@@ -774,13 +816,19 @@ function main() {
     let hostcode = Math.round(1000 + Math.random() * (9999 - 1000))
     hHostcode.value = `${hostcode}`
   } else if (storedHostcode != null) {
-    hHostcode.value = `${storedHostcode}`
+    hHostcode.value = storedHostcode
   }
 
   // Load join code if stored.
   let storedJoincode = localStorage.getItem("Joincode")
-  if (storedHostcode != null && hJoincode.value == "") {
-    hJoincode.value = `${storedJoincode}`
+  if (storedJoincode != null && hJoincode.value == "") {
+    hJoincode.value = storedJoincode
+  }
+
+  // Load name if stored.
+  let storedName = localStorage.getItem("Username")
+  if (storedName != null && hName.value == "") {
+    hName.value = storedName
   }
 
   handleParse()
