@@ -245,6 +245,7 @@ function handlePrev() {
   while (g.questionIndex > 0 && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex--
   g.currentQuestion = g.shuffledqs[g.questionIndex]
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
+  updateCurrentQuestion()
   renderQuestion()
   sendQuestion()
 }
@@ -254,14 +255,18 @@ function handleNext() {
   g.filteredIndex++
   g.questionIndex++
   while (g.questionIndex < g.shuffledqs.length && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex++
+  updateCurrentQuestion()
+  renderQuestion()
+  sendQuestion()
+}
+
+function updateCurrentQuestion() {
   if (g.questionIndex == g.shuffledqs.length) {
     g.currentQuestion = ["none", "Game over because out of questions. What now?", "go home", "play again with spicier categories", "play something else"]
   } else {
     g.currentQuestion = g.shuffledqs[g.questionIndex]
   }
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
-  renderQuestion()
-  sendQuestion()
 }
 
 function renderStatus() {
@@ -382,16 +387,20 @@ function handleFullscreen() {
 }
 
 function handleJump() {
-  g.questionIndex = g.shuffledqs.length
   let [idx, total] = [parseInt(hJumpIndex.value), 0]
+  if (idx <= 0 || idx > g.filteredQuestions + 1) return
+  g.questionIndex = g.shuffledqs.length
+  g.filteredIndex = g.filteredQuestions
   for (let i = 0; i < g.shuffledqs.length; i++) {
     if (!g.categories[g.shuffledqs[i][0]]) continue
     total++
     if (total == idx) {
+      g.filteredIndex = total - 1
       g.questionIndex = i
       break
     }
   }
+  updateCurrentQuestion()
   renderQuestion()
 }
 
