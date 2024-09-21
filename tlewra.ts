@@ -616,7 +616,7 @@ async function handleHost() {
   let hostcode = hHostcode.value
   localStorage.setItem("Hostcode", hHostcode.value)
 
-  let href = location.origin + `/#join-${hostcode}`
+  let href = location.origin + location.pathname + `#join-${hostcode}`
   hHostcode.disabled = true
   hHostURL.innerHTML = `<br>join link: <a href='${href}'>${href}</a>`
   hHostURL.hidden = false
