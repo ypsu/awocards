@@ -29,6 +29,7 @@ declare var hError: HTMLElement
 declare var hFullscreen: HTMLInputElement
 declare var hGameUI: HTMLElement
 declare var hGameScreen: HTMLElement
+declare var hGroupControl: HTMLElement
 declare var hHostGame: HTMLInputElement
 declare var hHostURL: HTMLElement
 declare var hName: HTMLInputElement
@@ -284,7 +285,8 @@ function updateCurrentQuestion() {
   for (let c of g.clients) c.channel?.send("q" + [`${g.filteredIndex}`, `${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
 }
 
-function renderStatus() {
+// Returns the number of players.
+function renderStatus(): number {
   let stat = `${g.currentPos}, category ${g.currentQuestion[0]}`
   let names = []
   if (!g.clientMode) {
@@ -297,13 +299,16 @@ function renderStatus() {
         names.push(c.username)
       }
     }
-    if (g.clients[0].username == "") followers--
-    if (followers > 0) stat += `, ${followers} followers`
-    if (players > 0) stat += `, ${players} players`
-    if (pending > 0) stat += `, ${pending} pending`
+    if (g.clients.length >= 2) {
+      if (g.clients[0].username == "") followers--
+      if (followers > 0) stat += `, ${followers} followers`
+      if (players > 0) stat += `, ${players} players`
+      if (pending > 0) stat += `, ${pending} pending`
+      hPlayers.innerText = `Players: ${names.join(", ")}`
+    }
   }
   hStat.innerText = stat
-  hPlayers.innerText = `Players: ${names.join(", ")}`
+  return names.length
 }
 
 enum rendermode {
@@ -312,7 +317,7 @@ enum rendermode {
 }
 
 function renderQuestion(mode: rendermode) {
-  renderStatus()
+  let playercnt = renderStatus()
 
   if (mode == rendermode.full) {
     let h = ""
@@ -321,6 +326,18 @@ function renderQuestion(mode: rendermode) {
     hQuestion.innerHTML = h
     g.fontsize = 300
     hGameScreen.style.fontSize = `300px`
+
+    // Update player count based parts of the interface.
+    if (playercnt <= 1) {
+      hGroupControl.hidden = true
+      hPlayers.hidden = true
+    } else if (playercnt == 2) {
+      hGroupControl.hidden = true
+      hPlayers.hidden = false
+    } else {
+      hGroupControl.hidden = false
+      hPlayers.hidden = false
+    }
   }
 
   // Shrink to fit.
@@ -566,12 +583,13 @@ async function connectToClient(hostcode: string, clientID: number) {
       case "n":
         if (!validateName(param)) param = ""
         c.username = param
+        renderQuestion(rendermode.full)
         break
       case "x":
         error(`${c.username == "" ? "a follower" : c.username} exited`)
+        renderQuestion(rendermode.full)
         break
     }
-    renderQuestion(rendermode.quick)
   }
 
   updateStatus("creating local offer")
