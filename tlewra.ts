@@ -515,11 +515,11 @@ const rtcConfig = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] }
 
 function renderNetworkStatus() {
   if (g.clientMode) {
+    hNetwork.hidden = false
     if (g.networkStatus != "") {
-      hNetwork.hidden = false
-      hNetwork.innerText = "network: " + g.networkStatus
+      hNetwork.innerText = "Network status: " + g.networkStatus
     } else {
-      hNetwork.hidden = true
+      hNetwork.innerText = "Network status: connected"
     }
     return
   }
@@ -531,7 +531,7 @@ function renderNetworkStatus() {
   }
   if (parts.length != 0) {
     hNetwork.hidden = false
-    hNetwork.innerText = "network: " + parts.join("; ")
+    hNetwork.innerText = "Network status: " + parts.join("; ")
   } else {
     hNetwork.hidden = true
   }

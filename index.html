@@ -386,10 +386,10 @@ This should work well for custom questions too.
   <hr>
   <p id=hStat></p>
   <p id=hPlayers>Players:</p>
-  <p id=hNetwork hidden></p>
   <details ontoggle=renderQuestion(rendermode.quick)>
     <summary>Settings</summary>
     <ul>
+      <li id=hNetwork hidden>
       <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
       <li>Your name (leave empty to follow only): <input id=hName size=12 oninput=handleNameChange(hName.value)> <em id=hNameErr class=cfgNegative></em>
       <li>Jump to question: <button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button> <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump(hJumpIndex.value)>Jump</button>
