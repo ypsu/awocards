@@ -105,6 +105,9 @@ let g = {
 
   // Clients only: connection data towards the host.
   clientMode: false as boolean,
+
+  // The fontsize of the question currently show such that it fits the screen.
+  fontsize: 0 as number,
 }
 
 function escapehtml(unsafe: string) {
@@ -255,7 +258,7 @@ function handlePrev() {
   g.currentQuestion = g.shuffledqs[g.questionIndex]
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
   updateCurrentQuestion()
-  renderQuestion()
+  renderQuestion(rendermode.full)
 }
 
 function handleNext() {
@@ -268,7 +271,7 @@ function handleNext() {
   g.questionIndex++
   while (g.questionIndex < g.shuffledqs.length && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex++
   updateCurrentQuestion()
-  renderQuestion()
+  renderQuestion(rendermode.full)
 }
 
 function updateCurrentQuestion() {
@@ -303,18 +306,27 @@ function renderStatus() {
   hPlayers.innerText = `Players: ${names.join(", ")}`
 }
 
-function renderQuestion() {
-  renderStatus()
-  let h = ""
-  h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
-  h += makeQuestionHTML(g.currentQuestion)
-  hQuestion.innerHTML = h
+enum rendermode {
+  quick,
+  full,
+}
 
-  let fsz = 300
-  hGameScreen.style.fontSize = `${fsz}px`
-  while (fsz >= 12 && (hGameUI.scrollWidth + hGameUI.offsetLeft > innerWidth || hGameUI.scrollHeight + hGameUI.offsetTop > innerHeight)) {
-    fsz = Math.floor(0.9 * fsz)
-    hGameScreen.style.fontSize = `${fsz}px`
+function renderQuestion(mode: rendermode) {
+  renderStatus()
+
+  if (mode == rendermode.full) {
+    let h = ""
+    h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
+    h += makeQuestionHTML(g.currentQuestion)
+    hQuestion.innerHTML = h
+    g.fontsize = 300
+    hGameScreen.style.fontSize = `300px`
+  }
+
+  // Shrink to fit.
+  while (g.fontsize >= 12 && (hGameUI.scrollWidth + hGameUI.offsetLeft > innerWidth || hGameUI.scrollHeight + hGameUI.offsetTop > innerHeight)) {
+    g.fontsize = Math.floor(0.9 * g.fontsize)
+    hGameScreen.style.fontSize = `${g.fontsize}px`
   }
 }
 
@@ -356,7 +368,7 @@ function handleHash() {
   if (location.hash == "#play") {
     handleStart()
     hGameUI.hidden = false
-    renderQuestion()
+    renderQuestion(rendermode.full)
     return
   }
   if (location.hash.startsWith("#join-")) {
@@ -393,7 +405,7 @@ function handleFullscreen() {
   } else {
     document.exitFullscreen().catch(() => {})
   }
-  renderQuestion()
+  renderQuestion(rendermode.full)
 }
 
 function handleJump(v: string) {
@@ -415,7 +427,7 @@ function handleJump(v: string) {
     }
   }
   updateCurrentQuestion()
-  renderQuestion()
+  renderQuestion(rendermode.full)
 }
 
 // Parses data into g.questionsDB.
@@ -559,7 +571,7 @@ async function connectToClient(hostcode: string, clientID: number) {
         error(`${c.username == "" ? "a follower" : c.username} exited`)
         break
     }
-    renderQuestion()
+    renderQuestion(rendermode.quick)
   }
 
   updateStatus("creating local offer")
@@ -742,7 +754,7 @@ async function join() {
           ;[g.filteredIndex, g.filteredQuestions] = [parseInt(parts[0]), parseInt(parts[1])]
           g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
           g.currentQuestion = parts.slice(2)
-          renderQuestion()
+          renderQuestion(rendermode.full)
           return
         }
         if (msg.startsWith("x")) {
@@ -799,7 +811,7 @@ function main() {
   window.onhashchange = handleHash
   window.onbeforeunload = disconnectAll
   window.onresize = () => {
-    if (location.hash == "#play" || location.hash.startsWith("#join-")) renderQuestion()
+    if (location.hash == "#play" || location.hash.startsWith("#join-")) renderQuestion(rendermode.full)
   }
 
   // Init seed with current day.

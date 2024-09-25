@@ -179,6 +179,7 @@ Would you watch your partner having sex with someone else? @ no, I wouldn't allo
 
 @dares-light
 Can someone pour a glass of water over your head?
+Can someone pour a glass of water over your t-shirt?
 Can someone kiss your cheek?
 Can someone kiss your hand?
 Can someone kiss your sole?
