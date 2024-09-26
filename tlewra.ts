@@ -12,6 +12,9 @@
 //
 // Host->client commands:
 //
+// - p: Set player statuses and names separated via @.
+//      Status w means waiting for answer, a means answered.
+//      "paalice@wbob" means 2 players, alice has already answered, but bob's answer is pending.
 // - q: Set the current question.
 // - x: Host abandoned the game.
 //
@@ -104,6 +107,9 @@ let g = {
   // Just to have insight into what's happening.
   networkStatus: "",
 
+  // Player statuses as described in p host->client message.
+  playerStatuses: [] as string[],
+
   // Clients only: connection data towards the host.
   clientMode: false as boolean,
 
@@ -115,7 +121,7 @@ function escapehtml(unsafe: string) {
   return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;")
 }
 
-let nameRE = /^[\p{Letter}\p{Mark}\p{Number}.-]{2,12}$/u
+let nameRE = /^[\p{Letter}\p{Mark}\p{Number}.-]{1,12}$/u
 function validateName(n: string) {
   return nameRE.test(n)
 }
@@ -285,10 +291,33 @@ function updateCurrentQuestion() {
   for (let c of g.clients) c.channel?.send("q" + [`${g.filteredIndex}`, `${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
 }
 
-// Returns the number of players.
-function renderStatus(): number {
+function isEqualArray<T>(a: T[], b: T[]) {
+  if (a.length != b.length) return false
+  return a.every((v, i) => b[i] == v)
+}
+
+function updatePlayerStatus() {
+  if (g.clientMode) return
+  let status = []
+  for (let c of g.clients) {
+    if (c.networkStatus == "" && c.username != "") {
+      status.push("w" + c.username)
+    }
+  }
+  status.sort((a, b) => {
+    if (a < b) return -1
+    if (a > b) return +1
+    return 0
+  })
+  if (!isEqualArray(g.playerStatuses, status)) {
+    g.playerStatuses = status
+    let msg = "p" + status.join("@")
+    for (let c of g.clients) c.channel?.send(msg)
+  }
+}
+
+function renderStatus() {
   let stat = `${g.currentPos}, category ${g.currentQuestion[0]}`
-  let names = []
   if (!g.clientMode) {
     let [players, followers, pending] = [0, 0, 0]
     for (let c of g.clients) {
@@ -296,7 +325,6 @@ function renderStatus(): number {
       if (c.networkStatus == "" && c.username == "") followers++
       if (c.networkStatus == "" && c.username != "") {
         players++
-        names.push(c.username)
       }
     }
     if (g.clients.length >= 2) {
@@ -304,11 +332,16 @@ function renderStatus(): number {
       if (followers > 0) stat += `, ${followers} followers`
       if (players > 0) stat += `, ${players} players`
       if (pending > 0) stat += `, ${pending} pending`
-      hPlayers.innerText = `Players: ${names.join(", ")}`
     }
   }
   hStat.innerText = stat
-  return names.length
+
+  let h = ""
+  for (let ps of g.playerStatuses) {
+    if (h != "") h += ", "
+    h += ps.slice(1)
+  }
+  hPlayers.innerHTML = "Players: " + h
 }
 
 enum rendermode {
@@ -317,7 +350,7 @@ enum rendermode {
 }
 
 function renderQuestion(mode: rendermode) {
-  let playercnt = renderStatus()
+  renderStatus()
 
   if (mode == rendermode.full) {
     let h = ""
@@ -328,6 +361,7 @@ function renderQuestion(mode: rendermode) {
     hGameScreen.style.fontSize = `300px`
 
     // Update player count based parts of the interface.
+    let playercnt = g.playerStatuses.length
     if (playercnt <= 1) {
       hGroupControl.hidden = true
       hPlayers.hidden = true
@@ -351,10 +385,12 @@ function disconnectAll() {
   g.aborter?.abort()
   g.clientMode = false
   for (let c of g.clients) {
-    if (c.conn != null && c.channel != null) {
-      c.channel.onmessage = null
-      c.channel.send("x")
-      c.channel = null
+    if (c.conn != null) {
+      if (c.channel != null) {
+        c.channel.onmessage = null
+        c.channel.send("x")
+        c.channel = null
+      }
       c.conn.oniceconnectionstatechange = null
       c.conn.close()
       c.conn = null
@@ -495,7 +531,7 @@ function eventPromise(obj: EventTarget, eventName: string) {
 function handleNameChange(s: string) {
   if (s != "" && !validateName(s)) {
     hName.className = "cbgNegative"
-    hNameErr.innerText = "invalid name, must be at least 2, at most 12 alphanumeric characters"
+    hNameErr.innerText = "invalid name, must be at most 12 alphanumeric characters"
     s = ""
   } else {
     hName.className = ""
@@ -507,6 +543,7 @@ function handleNameChange(s: string) {
     return
   }
   g.clients[0].username = s
+  updatePlayerStatus()
   renderStatus()
 }
 
@@ -548,7 +585,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   let response
   let conn = new RTCPeerConnection(rtcConfig)
   let channel = conn.createDataChannel("datachannel")
-  let c = new client(clientID, conn, channel)
+  let c = new client(clientID, conn, null)
 
   g.clients.push(c)
   let updateStatus = (msg: string) => {
@@ -583,10 +620,12 @@ async function connectToClient(hostcode: string, clientID: number) {
       case "n":
         if (!validateName(param)) param = ""
         c.username = param
+        updatePlayerStatus()
         renderQuestion(rendermode.full)
         break
       case "x":
         error(`${c.username == "" ? "a follower" : c.username} exited`)
+        updatePlayerStatus()
         renderQuestion(rendermode.full)
         break
     }
@@ -630,6 +669,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   conn.setRemoteDescription({ type: "answer", sdp: sdp })
   updateStatus("establishing connection")
   await eventPromise(channel, "open")
+  c.channel = channel
   updateStatus("")
   channel.send("q" + [`${g.filteredIndex}`, `${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
 }
@@ -766,8 +806,15 @@ async function join() {
       handleNameChange(hName.value)
       channel.onmessage = async (ev) => {
         let msg = (ev as MessageEvent).data
-        if (msg.startsWith("q")) {
-          let parts = msg.substr(1).split("@")
+        if (msg.length == 0) return
+        let [cmd, param] = [msg[0], msg.slice(1)]
+        if (cmd == "p") {
+          g.playerStatuses = param.split("@")
+          renderQuestion(rendermode.full)
+          return
+        }
+        if (cmd == "q") {
+          let parts = param.split("@")
           if (parts.length <= 3) return
           ;[g.filteredIndex, g.filteredQuestions] = [parseInt(parts[0]), parseInt(parts[1])]
           g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
@@ -775,7 +822,7 @@ async function join() {
           renderQuestion(rendermode.full)
           return
         }
-        if (msg.startsWith("x")) {
+        if (cmd == "x") {
           conn.oniceconnectionstatechange = null
           channel.onmessage = null
           conn.close()
