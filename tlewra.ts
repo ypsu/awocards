@@ -51,13 +51,6 @@ declare var hSeed: HTMLInputElement
 declare var hSeedPreview: HTMLElement
 declare var hStat: HTMLInputElement
 
-declare var hqPersonal: HTMLInputElement
-declare var hqDivisive: HTMLInputElement
-declare var hqSpicy: HTMLInputElement
-declare var hqPartner: HTMLInputElement
-declare var hqDaresLight: HTMLInputElement
-declare var hqDaresSpicy: HTMLInputElement
-
 declare var questionsdata: string
 
 class client {
@@ -158,18 +151,13 @@ function random() {
 }
 
 function selectQuestions() {
-  let cats = {} as Record<string, boolean>
-  if (hqPersonal.checked) cats["personal"] = true
-  if (hqDivisive.checked) cats["divisive"] = true
-  if (hqSpicy.checked) cats["spicy"] = true
-  if (hqPartner.checked) cats["partner"] = true
-  if (hqDaresLight.checked) cats["dares-light"] = true
-  if (hqDaresSpicy.checked) cats["dares-spicy"] = true
+  for (let cat in g.categories) {
+    g.categories[cat] = (document.getElementById("hq" + cat[0]) as HTMLInputElement).checked
+  }
   let cnt = 0
   for (let q of g.shuffledqs) {
-    if (cats[q[0]]) cnt++
+    if (g.categories[q[0]]) cnt++
   }
-  g.categories = cats
   g.filteredQuestions = cnt
 }
 
@@ -201,16 +189,21 @@ function handleSeedPreview() {
 }
 
 function makeQuestionHTML(q: question) {
-  if (q.length == 0) {
+  if (q.length <= 1) {
     return "loading..."
   }
-  let h = `<p>${escapehtml(q[1])}</p>\n<ol>\n`
-  if (q.length == 2) {
-    h += "<li>no<li>yes</ol>\n"
-    h += "<p>Others: would you want to do that to the answerer?</p>\n"
-    h += "<ol><li>no<li>I can<li>I want to</ol>\n"
+  if (q[1].startsWith("vote: ")) {
+    let h = `<p>Group vote: ${escapehtml(q[1].slice(6))}</p>\n`
+    h += "<ol><li>definitely not<li>can be talked into it<li>happy to try<li>definitely yes</ol>\n"
     return h
   }
+  if (q[1].startsWith("dare: ")) {
+    let qt = q[1].slice(6).replaceAll("X", "[answerer]")
+    let h = `<p>Dare: ${escapehtml(qt)}</p>\n`
+    h += "<ol><li>no<li>can be talked into it<li>I don't mind trying<li>yes</ol>\n"
+    return h
+  }
+  let h = `<p>${escapehtml(q[1])}</p>\n<ol>\n`
   for (let i = 2; i < q.length; i++) h += `<li>${escapehtml(q[i])}\n`
   h += "</ol>\n"
   return h
@@ -489,12 +482,18 @@ function handleParse() {
   let data = questionsdata
   if (hCustomDB.checked) data = hCustomText.value
   let category = "unset-category"
-  let knownCategories = new Set(["personal", "divisive", "spicy", "partner", "dares-light", "dares-spicy"])
   let invalidCategories = new Set()
+  let badcards = 0
+  let badcard = ""
+  let badreason = ""
   let qs = []
+  let knownCategories = new Set()
+  for (let cat in g.categories) knownCategories.add(cat)
   for (let line of data.split("\n")) {
+    let hashidx = line.indexOf("#")
+    if (hashidx != -1) line = line.slice(0, hashidx)
     line = line.trim()
-    if (line == "" || line.startsWith("#")) continue
+    if (line == "") continue
     if (line.startsWith("@")) {
       category = line.substr(1)
       if (!knownCategories.has(category)) invalidCategories.add(category)
@@ -502,17 +501,47 @@ function handleParse() {
     }
     let parts = line.split("@")
     for (let i in parts) parts[i] = parts[i].trim()
-    qs.push([category].concat(parts))
+    let special = parts[0].startsWith("dare: ") || parts[0].startsWith("vote: ")
+    let x = parts[0].indexOf("X")
+    if (!knownCategories.has(category)) {
+      badcards++
+      badcard = line
+      badreason = "invalid category"
+    } else if (special && parts.length != 1) {
+      badcards++
+      badcard = line
+      badreason = "needs no answers"
+    } else if (!special && !(2 <= parts.length - 1 && parts.length - 1 <= 4)) {
+      badcards++
+      badcard = line
+      badreason = `got ${parts.length - 1} answers, want 2-4`
+    } else if (parts[0].startsWith("dare: ") && (x == -1 || parts[0].lastIndexOf("X") != x)) {
+      badcards++
+      badcard = line
+      badreason = "needs exactly one 1 X"
+    } else {
+      qs.push([category].concat(parts))
+    }
   }
   g.questions = qs
   shuffle()
 
+  let err = ""
+  if (invalidCategories.size > 0) {
+    err = `found invalid categories: ${Array.from(invalidCategories.values()).join(", ")}`
+  } else if (badcards > 0) {
+    err = `found ${badcards} bad cards, last one is "${badcard}", reason: ${badreason}`
+  }
+
   if (!hCustomDB.checked) {
-    hCustomQuestionsReport.innerText = `custom questions not enabled`
-  } else if (invalidCategories.size > 0) {
-    hCustomQuestionsReport.innerText = `found invalid categories: ${Array.from(invalidCategories.values()).join(", ")}`
+    hCustomQuestionsReport.innerText = ""
+    if (err != "") seterror(err)
   } else {
-    hCustomQuestionsReport.innerText = `found ${qs.length} entries`
+    if (err != "") {
+      hCustomQuestionsReport.innerText = `Error: ${err}.`
+    } else {
+      hCustomQuestionsReport.innerText = `Found ${qs.length} entries.`
+    }
   }
 }
 
@@ -877,6 +906,11 @@ function main() {
   window.onbeforeunload = disconnectAll
   window.onresize = () => {
     if (location.hash == "#play" || location.hash.startsWith("#join-")) renderQuestion(rendermode.full)
+  }
+
+  // Init category names.
+  for (let cat of ["softball", "divisive", "intimate", "partner", "light-dares", "hot-dares", "activities", "naughty-activities"]) {
+    g.categories[cat] = false
   }
 
   // Init seed with current day.

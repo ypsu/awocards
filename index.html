@@ -34,26 +34,28 @@ There are 4 question categories:
 </p>
 
 <ul>
-  <li><input type=checkbox id=hqPersonal checked> <label for=hqPersonal>personal: easy, family friendly questions; can be used as a gentle intro into the game.</label>
-  <li><input type=checkbox id=hqDivisive> <label for=hqDivisive>divisive: political questions; ideal for turning friends into enemies.</label>
-  <li><input type=checkbox id=hqSpicy> <label for=hqSpicy>spicy: nsfw questions; ideal for making people regret coming to your drinking party.</label>
-  <li><input type=checkbox id=hqPartner> <label for=hqPartner>partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
+  <li><input type=checkbox id=hqs checked> <label for=hqs>softball: easy, family friendly questions; can be used as a gentle intro into the game.</label>
+  <li><input type=checkbox id=hqd> <label for=hqd>divisive: political questions; ideal for turning friends into enemies.</label>
+  <li><input type=checkbox id=hqi> <label for=hqi>intimate: embarrassing, very private questions; ideal for making people regret coming to your drinking party.</label>
+  <li><input type=checkbox id=hqp> <label for=hqp>partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
 </ul>
 
 <p>
-The game supports dares too.
-Special rules apply for those, see the <a href=#dares>#dares</a> section below.
-There also 2 dare categories. 
+Just answering questions is boring?
+The game supports two special type of cards: dares and activity voting.
+See the #dares and #votes doc sections below how to play these before selecting them.
 </p>
 
 <ul>
-  <li><input type=checkbox id=hqDaresLight> <label for=hqDaresLight>dares-light: nsfw but still a relatively gentle intro into dares.</label>
-  <li><input type=checkbox id=hqDaresSpicy> <label for=hqDaresSpicy>dares-spicy: sexual in nature; ideal for having a night with nude action that will be forever regretted.</label>
+  <li><input type=checkbox id=hql> <label for=hql>light-dares: semi-naughty but still a relatively gentle intro into dares.</label>
+  <li><input type=checkbox id=hqh> <label for=hqh>hot-dares: naughty dares in case you are all butt naked already; ideal as a warmup for your umm... hot party.</label>
+  <li><input type=checkbox id=hqa> <label for=hqa>activities: vote about vanilla activities to avoid just sitting home all the time.</label>
+  <li><input type=checkbox id=hqn> <label for=hqn>naughty-activities: vote about naughty activities to spice up life a bit.</label>
 </ul>
 
 <p>
 Select the ones you want to play with.
-Spoilers: see <a href="questions.js">the source code</a> to see what the questions and dares are.
+Spoilers: see <a href="questions.js">the source code</a> to see what cards there are in all categories.
 </p>
 
 <p>
@@ -70,21 +72,27 @@ Start game:
   <summary>Advanced settings</summary>
   <ul>
     <li>Game seed: <input type=number size=6 id=hSeed placeholder=SEED> <button onclick=handleSeedPreview()>Preview</button> (see <a href=#seed>Game Seed</a> below)
-    <li><input type=checkbox id=hCustomDB onclick=handleParse()> <label for=hCustomDB>Use custom database, see <a href=#customdb>Custom questions</a> below (<span id=hCustomQuestionsReport>?</span>):</label><br>
-        <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># One question per line.
-# Separate answers via @.
-# Lines starting with # are comments.
-# Lines starting with @ set the question category.
-# Category must be one of personal, divisive, spicy, partner, dares-light, dares-spicy.
+    <li><input type=checkbox id=hCustomDB onclick=handleParse()> <label for=hCustomDB>Use custom database, see <a href=#customdb>Custom questions</a> below:</label><br>
+        <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># One card per line.
+# Separate answers via @ for questions, dares and votes can't have answer.
+# Prefix the card with "dare: " or "vote: " to treat them as such.
+# Dares must contain exactly one X character as a placeholder.
+# Characters after # are comments and thus ignored.
+# Lines starting with @ set the question category for the subsequent lines.
 
-# Question example:
-@personal
-Who is your favorite superhero? @ Superman @ Batman @ Ironman @ Spiderman
-
-# Omit adding @ answers to create a dare.
-# Dare example:
-@dares-light
-Can someone slap your face?</textarea><br>
+@softball
+Who is your favorite superhero? @ Superman @ Batman @ Ironman @ Spiderman  # example
+@divisive
+@intimate
+@partner
+@light-dares
+dare: Do you want to kiss X's cheek?  # example
+@hot-dares
+@activities
+vote: Should we go for a hike?  # example
+@naughty-activities
+</textarea><br>
+<span id=hCustomQuestionsReport></span>
   </ul>
 </details>
 
@@ -390,8 +398,8 @@ This should work well for custom questions too.
     <summary>Settings</summary>
     <ul>
       <li id=hNetwork hidden>
+      <li>Your name (set to empty to present/follow): <input id=hName size=12 oninput=handleNameChange(hName.value)> <em id=hNameErr class=cfgNegative></em>
       <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
-      <li>Your name (leave empty to present): <input id=hName size=12 oninput=handleNameChange(hName.value)> <em id=hNameErr class=cfgNegative></em>
       <li>Jump to question: <button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button> <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump(hJumpIndex.value)>Jump</button>
       <li><input type=checkbox id=hHostGame onclick=handleHost()><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode> <span id=hHostURL hidden></span>
       <li><button onclick="location.href='#'">Back to menu</button>

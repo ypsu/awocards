@@ -1,5 +1,5 @@
 let questionsdata = `
-@personal
+@softball
 Who is your favorite superhero? @ Superman @ Batman @ Ironman @ Spiderman
 What's the best pet? @ cat @ dog @ fish @ hamster
 Which type of car you like the best? @ small, smart cars @ medium ones, sedans @ big ones, SUVs
@@ -94,8 +94,8 @@ What should be done with robots if they could think and act like humans and we c
 Should vaccination be mandated? @ no @ only a few select vaccines, much fewer than what is mandatory today @ yes
 What's your stance on vaccinating yourself? @ avoid vaccination wherever possible @ only the mandatory ones @ only mandatory and the highly recommended ones @ I like vaccines, it's a good exercise for the immune system
 
-@spicy
-Have you ever sexually fantasized about someone here other than your partner? @ no @ yes @ multiple people even
+@intimate
+Have you ever sexually fantasized about someone here other than your partner? @ no @ yes
 Do you like being tickled? @ no @ just a little bit @ I want to be tickle-tortured
 What's your opinion on peeing during a shower? @ it's gross @ it's OK @ it's the best way to pee
 Would you swap your life with someone in this room? @ no @ yes but only for a little while @ yes, forever even
@@ -124,7 +124,6 @@ Which penis do you find more aesthetically pleasing? @ circumcised @ intact
 Would you enter a couple's relationship as a third party? @ sure, no problem @ only for an experiment, not for long term @ no
 What's your preferred sex position? @ missionary @ cowgirl @ doggy @ standing sex, e.g. in shower
 Do you mind receiving dick picks? @ I like them @ I don't mind them @ I hate them
-Would you participate in a nude group photo if everyone else in this group would want one? @ yes @ only if it's truly me who would be missing @ no
 Would you participate in porn? @ sure, no problem, sex is fun @ only for ton of money @ private sex tape is OK, but it shouldn't be shared @ no
 How much porn do you watch? @ none @ a little now and then @ too much
 What do you wish you had more from your parents during your childhood? @ love @ freedom @ discipline @ money
@@ -177,59 +176,107 @@ How would you prefer your partner to sleep? @ naked @ in underwear @ in an overs
 What would you do if your partner suddenly became bedridden for life? @ stay with them and take care of them forever @ start a new life but take care of them @ start a new life without them
 Would you watch your partner having sex with someone else? @ no, I wouldn't allow my partner to have sex with others @ I don't want to be present @ sure, I'd be happy to watch @ sure, I'd be happy to record it even
 
-@dares-light
-Can someone pour a glass of water over your head?
-Can someone pour a glass of water over your t-shirt?
-Can someone kiss your cheek?
-Can someone kiss your hand?
-Can someone kiss your sole?
-Can someone french kiss you?
-Can someone drink something from your mouth?
-Can someone bite your ear?
-Can someone bite your neck?
-Can someone slap your clothed ass?
-Can someone slap your face?
-Can someone have their hands go through your hair?
-Can someone hug you?
-Can someone put their ear on your chest and listen to your heartbeat?
-Can someone give you a feet massage?
-Can someone give you a shoulder massage?
-Can someone scratch your back?
-Can someone tickle your armpits?
-Can someone tickle your feet?
-Can someone lick your armpit?
-Can someone lick your cheek?
-Can someone lick or bite your ear?
-Can someone lick or bite your lips?
-Can someone lick your navel?
-Can someone lick your palm?
-Can someone lick your sole?
-Can someone lick your teeth?
-Can someone suck your finger?
-Can someone suck your toe?
-Can someone suck your tongue?
-Can someone take off all your upper body clothing and see you topless?
-Can someone pull all your bottom body clothing and see you bottomless?
-Can someone take off all your clothing and see you fully naked?
-Can someone put their hands under your t-shirt and feel out your chests or breasts?
-Can someone put their hands into your pants and feel what's between your legs?
-Can someone slap your naked ass?
+@light-dares
+dare: Do you want to pour a glass of water over X's head?
+dare: Do you want to pour a glass of water over X's t-shirt?
+dare: Do you want to kiss X's cheek?
+dare: Do you want to kiss X's hand?
+dare: Do you want to kiss X's sole?
+dare: Do you want to french kiss X?
+dare: Do you want to drink something from X's mouth?
+dare: Do you want to bite X's ear?
+dare: Do you want to bite X's neck?
+dare: Do you want to slap X's clothed ass?
+dare: Do you want to slap X's face?
+dare: Do you want to have your hands go through X's hair?
+dare: Do you want to hug X?
+dare: Do you want to put your ear on X's chest and listen to their heartbeat?
+dare: Do you want to give X a feet massage?
+dare: Do you want to give X a shoulder massage?
+dare: Do you want to scratch X's back?
+dare: Do you want to tickle X's armpits?
+dare: Do you want to tickle X's feet?
+dare: Do you want to lick X's armpit?
+dare: Do you want to lick X's cheek?
+dare: Do you want to lick or bite X's ear?
+dare: Do you want to lick or bite X's lips?
+dare: Do you want to lick X's navel?
+dare: Do you want to lick X's palm?
+dare: Do you want to lick X's sole?
+dare: Do you want to lick X's teeth?
+dare: Do you want to suck X's finger?
+dare: Do you want to suck X's toe?
+dare: Do you want to suck X's tongue?
+dare: Do you want to take off all X's upper body clothing and see them topless?
+dare: Do you want to pull all X's bottom body clothing and see them bottomless?
+dare: Do you want to take off all X's clothing and see them fully naked?
+dare: Do you want to put your hands under X's t-shirt and feel out their chests or breasts?
+dare: Do you want to put your hands into X's pants and feel what's between their legs?
+dare: Do you want to slap X's naked ass?
 
-@dares-spicy
-Can someone have a naked hug with you?
-Can someone take a photo of your bare chest / breasts and keep it?
-Can someone take a photo of your genital and keep it?
-Can someone take a photo of your asshole and keep it?
-Can someone take a photo of your fully naked body without face and keep it?
-Can someone take a photo of your fully naked body with face and keep it?
-Can someone lick your asshole?
-Can someone lick your genital?
-Can someone lick your nipple?
-Can someone suck your genital?
-Can someone suck your nipple?
-Can someone massage your bare chest / breasts?
-Can someone massage your genital?
-Can someone massage your asshole?
-Can someone have their genital touch your genital?
-Can someone inspect your genital up close and play doctor?
+@hot-dares
+dare: Do you want to have a naked hug with X?
+dare: Do you want to take a photo of X's bare chest / breasts and keep it?
+dare: Do you want to take a photo of X's genital and keep it?
+dare: Do you want to take a photo of X's asshole and keep it?
+dare: Do you want to take a photo of X's fully naked body without face and keep it?
+dare: Do you want to take a photo of X's fully naked body with face and keep it?
+dare: Do you want to lick X's asshole?
+dare: Do you want to lick X's genital?
+dare: Do you want to lick X's nipple?
+dare: Do you want to suck X's genital?
+dare: Do you want to suck X's nipple?
+dare: Do you want to massage X's bare chest / breasts?
+dare: Do you want to massage X's genital?
+dare: Do you want to massage X's asshole?
+dare: Do you want to have your genital touch X's genital?
+dare: Do you want to inspect X's genital up close and play doctor?
+
+@activities
+vote: Should we go for a boat tour?
+vote: Should we go for a hike?
+vote: Should we go for a handcuffed hike? (handcuff or tie ourselves together into a chain to make the hike more challenging)
+vote: Should we go for a picnic?
+vote: Should we go for a road trip?
+vote: Should we go for a run?
+vote: Should we go for a swim?
+vote: Should we go for a weekend getaway somewhere?
+vote: Should we go camping?
+vote: Should we go kayaking?
+vote: Should we go volunteer together somewhere?
+vote: Should we have a movie night?
+vote: Should we have a board game night?
+vote: Should we do a video game night?
+vote: Should we try a gym together?
+vote: Should we do a bike tour?
+vote: Should we go to a disco?
+vote: Should we go to cinema?
+vote: Should we go to a concert?
+vote: Should we go to a museum?
+vote: Should we go to theatre?
+vote: Should we go to standup comedy event?
+vote: Should we take a gardening class together?
+vote: Should we take a meditation class together?
+vote: Should we take a cooking class together?
+vote: Should we take a woodworking class together?
+vote: Should we take a yoga class together?
+vote: Should we do a group hug?
+vote: Should we do a karaoke night?
+vote: Should we play blindfolded face recognition? One person is blindfolded, another person gets in front of them, and they have to guess who they are solely by touching the face.
+
+@naughty-activities
+vote: Should we go to a naked sauna?
+vote: Should we do a naked hike?
+vote: Should we have a cozy group shower and clean each other? (the smaller the shower cabin the better)
+vote: Should we try masturbating together?
+vote: Should we try doing an oral sex circle? (lie in a circle, heads between the next person's legs)
+vote: Should we try doing a hand sex circle? (stand or sit in a circle, each person's hand between the legs of the person on right)
+vote: Should we have a sleep-together-in-one-big-bed night?
+vote: Should we have a who-can-piss-most-far contest? (ladies would be the judges)
+vote: Should we watch some porn together?
+vote: Should we take a nude group photo?
+vote: Should we do a naked group hug?
+vote: Should we do a group kiss? (basically put all our tongues together)
+vote: Should we do a partner swap for a night? (assuming 2 couples are playing, skip to next otherwise)
+vote: Should we play blindfolded genital recognition? One person is blindfolded, another person gets in front of them, and they have to guess who they are solely by touching the genitals.
 `
