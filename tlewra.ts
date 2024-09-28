@@ -59,6 +59,9 @@ declare var hStat: HTMLInputElement
 
 declare var questionsdata: string
 
+// How long keep an answer greyed after the user clicks on it.
+const feedbackTimeMS = 300
+
 class client {
   clientID: number
   username: string
@@ -103,6 +106,8 @@ let g = {
   aborter: null as AbortController | null,
 
   // All the currently connected clients when hosting.
+  // In client mode clients[0] contains the connection to the host.
+  // In host mode clients[0] has null connection.
   clients: [] as client[],
 
   // Just to have insight into what's happening.
@@ -111,11 +116,16 @@ let g = {
   // Player statuses as described in p host->client message.
   playerStatuses: [] as string[],
 
-  // Clients only: connection data towards the host.
+  // Whether hosting or just connected to the client.
+  // In client mode the client's connection to host is in clients[0].
   clientMode: false as boolean,
 
   // The fontsize of the question currently show such that it fits the screen.
   fontsize: 0 as number,
+
+  // Time when the user clicked the answer.
+  // Used to render short feedback.
+  answerTime: 0 as number,
 }
 
 function escapehtml(unsafe: string) {
@@ -295,11 +305,17 @@ function handleNext() {
 
 function handleGameClick(v: number) {
   if (1 <= v && v <= 9) {
-    let elem = document.getElementById(`ha${v}`)
-    if (elem != null) {
-      elem.className = "cfgNeutral"
-      setTimeout(() => (elem.className = ""), 500)
-    }
+    // Clear previous highlight if there was one.
+    let elem = document.getElementById(`ha${g.clients[0].response & 15}`)
+    if (elem != null) elem.className = ""
+
+    elem = document.getElementById(`ha${v}`)
+    if (elem == null) return
+    elem.className = "cfgNeutral"
+    g.clients[0].response = (g.clients[0].response & ~15) | v
+    g.answerTime = Date.now()
+    if (g.clientMode) g.clients[0].channel?.send(`r${g.clients[0].response}`)
+    setTimeout(() => renderQuestion(rendermode.quick), feedbackTimeMS + 1)
   }
 }
 
@@ -323,7 +339,9 @@ function updatePlayerStatus() {
   let status = []
   for (let c of g.clients) {
     if (c.networkStatus == "" && c.username != "") {
-      status.push("w" + c.username)
+      let st = "w"
+      if (c.response != 0) st = "a"
+      status.push(st + c.username)
     }
   }
   status.sort((a, b) => {
@@ -394,6 +412,17 @@ function renderQuestion(mode: rendermode) {
       hGroupControl.hidden = false
       hPlayers.hidden = false
     }
+  }
+
+  // Highlight player response for a short moment if needed.
+  if (g.clients[0].response != 0) {
+    let elem = document.getElementById(`ha${g.clients[0].response & 15}`)
+    if (elem != null) {
+      elem.className = Date.now() - g.answerTime < feedbackTimeMS ? "cfgNeutral" : ""
+    }
+  }
+  if (Date.now() - g.answerTime >= feedbackTimeMS) {
+    document.body.className = (g.clients[0].response & 15) == 0 ? "" : "cbgNotice"
   }
 
   // Shrink to fit.
@@ -675,6 +704,13 @@ async function connectToClient(hostcode: string, clientID: number) {
       case "j":
         handleJump(param)
         break
+      case "r":
+        let r = parseInt(param)
+        if (r != r) break
+        c.response = r
+        updatePlayerStatus()
+        renderQuestion(rendermode.quick)
+        break
       case "n":
         if (!validateName(param)) param = ""
         c.username = param
@@ -685,6 +721,9 @@ async function connectToClient(hostcode: string, clientID: number) {
         error(`${c.username == "" ? "a follower" : c.username} exited`)
         updatePlayerStatus()
         renderQuestion(rendermode.full)
+        break
+      default:
+        console.log("Unhandled message:", msg)
         break
     }
   }
@@ -866,28 +905,31 @@ async function join() {
         let msg = (ev as MessageEvent).data
         if (msg.length == 0) return
         let [cmd, param] = [msg[0], msg.slice(1)]
-        if (cmd == "p") {
-          g.playerStatuses = param.split("@")
-          renderQuestion(rendermode.full)
-          return
-        }
-        if (cmd == "q") {
-          let parts = param.split("@")
-          if (parts.length <= 3) return
-          ;[g.filteredIndex, g.filteredQuestions] = [parseInt(parts[0]), parseInt(parts[1])]
-          g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
-          g.currentQuestion = parts.slice(2)
-          renderQuestion(rendermode.full)
-          return
-        }
-        if (cmd == "x") {
-          conn.oniceconnectionstatechange = null
-          channel.onmessage = null
-          conn.close()
-          g.clients = []
-          setNetworkStatus("error: host abandoned the game (will try reconnecting soon)")
-          await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
-          join()
+        switch (cmd) {
+          case "p":
+            g.playerStatuses = param.split("@")
+            renderQuestion(rendermode.full)
+            return
+          case "q":
+            let parts = param.split("@")
+            if (parts.length <= 3) return
+            ;[g.filteredIndex, g.filteredQuestions] = [parseInt(parts[0]), parseInt(parts[1])]
+            g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
+            g.currentQuestion = parts.slice(2)
+            renderQuestion(rendermode.full)
+            return
+          case "x":
+            conn.oniceconnectionstatechange = null
+            channel.onmessage = null
+            conn.close()
+            g.clients = []
+            setNetworkStatus("error: host abandoned the game (will try reconnecting soon)")
+            await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+            join()
+            return
+          default:
+            console.log("Unhandled message:", msg)
+            break
         }
       }
     }
