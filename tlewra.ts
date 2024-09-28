@@ -21,8 +21,14 @@
 // Client->host commands:
 //
 // - n: Set the username of the client. Empty or invalid param resets the client to a follower.
-// - x: Client leaves.
 // - j: Jump to specific question. Param is the new card index (1 based).
+// - r: Mark the response status.
+//      param means a number.
+//      0 means no answer at all.
+//      +1-4 means the given answer is selected.
+//     +16 means the person is the answerer.
+//     +32 means the person clicked next question.
+// - x: Client leaves.
 
 declare var hAnswererMark: HTMLElement
 declare var hCustomDB: HTMLInputElement
@@ -56,6 +62,7 @@ declare var questionsdata: string
 class client {
   clientID: number
   username: string
+  response: number // see the r client->host command
   networkStatus: string
   conn: RTCPeerConnection | null
   channel: RTCDataChannel | null
@@ -63,6 +70,7 @@ class client {
   constructor(clientID: number, conn: RTCPeerConnection | null, ch: RTCDataChannel | null) {
     this.clientID = clientID
     this.username = ""
+    this.response = 0
     this.networkStatus = ""
     this.conn = conn
     this.channel = ch
@@ -192,20 +200,31 @@ function makeQuestionHTML(q: question) {
   if (q.length <= 1) {
     return "loading..."
   }
+  let answerid = 0
+  let a = () => {
+    answerid++
+    return `id=ha${answerid} onclick=handleGameClick(${answerid})`
+  }
+
   if (q[1].startsWith("vote: ")) {
-    let h = `<p>Group vote: ${escapehtml(q[1].slice(6))}</p>\n`
-    h += "<ol><li>definitely not<li>can be talked into it<li>happy to try<li>definitely yes</ol>\n"
+    let h = `<p>Group vote: ${escapehtml(q[1].slice(6))}</p><br>\n`
+    h += `<p ${a()}>1. definitely not</p>\n`
+    h += `<p ${a()}>2. can be talked into it</p>\n`
+    h += `<p ${a()}>3. I don't mind trying</p>\n`
+    h += `<p ${a()}>4. definitely yes</p>\n`
     return h
   }
   if (q[1].startsWith("dare: ")) {
     let qt = q[1].slice(6).replaceAll("X", "[answerer]")
-    let h = `<p>Dare: ${escapehtml(qt)}</p>\n`
-    h += "<ol><li>no<li>can be talked into it<li>I don't mind trying<li>yes</ol>\n"
+    let h = `<p>Dare: ${escapehtml(qt)}</p><br>\n`
+    h += `<p ${a()}>1. no</p>\n`
+    h += `<p ${a()}>2. can be talked into it</p>\n`
+    h += `<p ${a()}>3. I don't mind trying</p>\n`
+    h += `<p ${a()}>4. yes</p>\n`
     return h
   }
-  let h = `<p>${escapehtml(q[1])}</p>\n<ol>\n`
-  for (let i = 2; i < q.length; i++) h += `<li>${escapehtml(q[i])}\n`
-  h += "</ol>\n"
+  let h = `<p>${escapehtml(q[1])}</p><br>`
+  for (let i = 2; i < q.length; i++) h += `<p ${a()}>${i - 1}. ${escapehtml(q[i])}</p>\n`
   return h
 }
 
@@ -272,6 +291,16 @@ function handleNext() {
   while (g.questionIndex < g.shuffledqs.length && !g.categories[g.shuffledqs[g.questionIndex][0]]) g.questionIndex++
   updateCurrentQuestion()
   renderQuestion(rendermode.full)
+}
+
+function handleGameClick(v: number) {
+  if (1 <= v && v <= 9) {
+    let elem = document.getElementById(`ha${v}`)
+    if (elem != null) {
+      elem.className = "cfgNeutral"
+      setTimeout(() => (elem.className = ""), 500)
+    }
+  }
 }
 
 function updateCurrentQuestion() {
