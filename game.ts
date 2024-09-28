@@ -394,7 +394,7 @@ function renderQuestion(mode: rendermode) {
 
   if (mode == rendermode.full) {
     let h = ""
-    h += "<button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button>\n"
+    h += "<button onclick=handlePrev() style=width:45%>Prev</button> <button onclick=handleNext() style=width:45%>Next</button>\n"
     h += makeQuestionHTML(g.currentQuestion)
     hQuestion.innerHTML = h
     g.fontsize = 300
