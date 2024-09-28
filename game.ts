@@ -304,6 +304,8 @@ function handleNext() {
 }
 
 function handleGameClick(v: number) {
+  if (g.clients.length == 0) return // client not connected
+
   if (1 <= v && v <= 9) {
     // Clear previous highlight if there was one.
     let elem = document.getElementById(`ha${g.clients[0].response & 15}`)
@@ -415,14 +417,18 @@ function renderQuestion(mode: rendermode) {
   }
 
   // Highlight player response for a short moment if needed.
-  if (g.clients[0].response != 0) {
-    let elem = document.getElementById(`ha${g.clients[0].response & 15}`)
-    if (elem != null) {
-      elem.className = Date.now() - g.answerTime < feedbackTimeMS ? "cfgNeutral" : ""
+  if (g.clients.length >= 1) {
+    if (g.clients[0].response != 0) {
+      let elem = document.getElementById(`ha${g.clients[0].response & 15}`)
+      if (elem != null) {
+        elem.className = Date.now() - g.answerTime < feedbackTimeMS ? "cfgNeutral" : ""
+      }
     }
-  }
-  if (Date.now() - g.answerTime >= feedbackTimeMS) {
-    document.body.className = (g.clients[0].response & 15) == 0 ? "" : "cbgNotice"
+    if (Date.now() - g.answerTime >= feedbackTimeMS) {
+      document.body.className = (g.clients[0].response & 15) == 0 ? "" : "cbgNotice"
+    }
+  } else {
+    document.body.className = "cbgNeutral"
   }
 
   // Shrink to fit.
@@ -695,6 +701,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   conn.oniceconnectionstatechange = async (ev) => {
     if (conn.iceConnectionState != "disconnected") return
     error(`error: lost connection to ${c.username == "" ? "a follower" : c.username}`)
+    updatePlayerStatus()
   }
   channel.onmessage = async (ev) => {
     let msg = (ev as MessageEvent).data
@@ -924,6 +931,7 @@ async function join() {
             conn.close()
             g.clients = []
             setNetworkStatus("error: host abandoned the game (will try reconnecting soon)")
+            renderQuestion(rendermode.quick)
             await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
             join()
             return
