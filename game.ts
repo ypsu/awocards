@@ -290,6 +290,28 @@ function handlePrev() {
   renderQuestion(rendermode.full)
 }
 
+function handleJump(v: string) {
+  let [idx, total] = [parseInt(v), 0]
+  if (idx <= 0 || idx > g.filteredQuestions + 1) return
+  if (g.clientMode) {
+    if (g.clients.length >= 1) g.clients[0].channel?.send(`j${idx}`)
+    return
+  }
+  g.questionIndex = g.shuffledqs.length
+  g.filteredIndex = g.filteredQuestions
+  for (let i = 0; i < g.shuffledqs.length; i++) {
+    if (!g.categories[g.shuffledqs[i][0]]) continue
+    total++
+    if (total == idx) {
+      g.filteredIndex = total - 1
+      g.questionIndex = i
+      break
+    }
+  }
+  updateCurrentQuestion()
+  renderQuestion(rendermode.full)
+}
+
 function handleNext() {
   if (g.filteredIndex == g.filteredQuestions) return
   if (g.clientMode) {
@@ -515,28 +537,6 @@ function handleFullscreen() {
   } else {
     document.exitFullscreen().catch(() => {})
   }
-  renderQuestion(rendermode.full)
-}
-
-function handleJump(v: string) {
-  let [idx, total] = [parseInt(v), 0]
-  if (idx <= 0 || idx > g.filteredQuestions + 1) return
-  if (g.clientMode) {
-    if (g.clients.length >= 1) g.clients[0].channel?.send(`j${idx}`)
-    return
-  }
-  g.questionIndex = g.shuffledqs.length
-  g.filteredIndex = g.filteredQuestions
-  for (let i = 0; i < g.shuffledqs.length; i++) {
-    if (!g.categories[g.shuffledqs[i][0]]) continue
-    total++
-    if (total == idx) {
-      g.filteredIndex = total - 1
-      g.questionIndex = i
-      break
-    }
-  }
-  updateCurrentQuestion()
   renderQuestion(rendermode.full)
 }
 
