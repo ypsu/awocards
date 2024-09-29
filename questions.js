@@ -265,7 +265,8 @@ vote: Should we do a karaoke night?
 vote: Should we play blindfolded face recognition? One person is blindfolded, another person gets in front of them, and they have to guess who they are solely by touching the face.
 
 @naughty-activities
-vote: Should we go to a naked sauna?
+vote: Should we go to a nudist beach?
+vote: Should we go to a nudist sauna?
 vote: Should we do a naked hike?
 vote: Should we have a cozy group shower and clean each other? (the smaller the shower cabin the better)
 vote: Should we try masturbating together?

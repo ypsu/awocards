@@ -12,9 +12,7 @@
 //
 // Host->client commands:
 //
-// - p: Set player statuses and names separated via @.
-//      Status w means waiting for answer, a means answered.
-//      "paalice@wbob" means 2 players, alice has already answered, but bob's answer is pending.
+// - p: Set player statuses and names separated via @. Each entry is "playername responsebits_number".
 // - q: Set the current question.
 // - x: Host abandoned the game.
 //
@@ -22,12 +20,7 @@
 //
 // - n: Set the username of the client. Empty or invalid param resets the client to a follower.
 // - j: Jump to specific question. Param is the new card index (1 based).
-// - r: Mark the response status.
-//      param means a number.
-//      0 means no answer at all.
-//      +1-4 means the given answer is selected.
-//     +16 means the person is the answerer.
-//     +32 means the person clicked next question.
+// - r: Mark the response status. Param is a responsebits number.
 // - x: Client leaves.
 
 declare var hAnswererMark: HTMLElement
@@ -62,10 +55,18 @@ declare var questionsdata: string
 // How long keep an answer greyed after the user clicks on it.
 const feedbackTimeMS = 300
 
+enum responsebits {
+  empty = 0,
+  answermask = 7, // lower bits are reserved for the answer id with a range of up to 7 answers, 0 means no answer
+  answered = 8, // only used when client->host to signal whether answermask bits contains an answer or not
+  answerermarker = 16, // marks the player as the answerer
+  nextmarker = 32, // means the player voted for jumping on the next question
+  revealmarker = 64, // means the player voted on revealing the answer in the activity vote game
+}
+
 class client {
   clientID: number
   username: string
-  response: number // see the r client->host command
   networkStatus: string
   conn: RTCPeerConnection | null
   channel: RTCDataChannel | null
@@ -73,10 +74,19 @@ class client {
   constructor(clientID: number, conn: RTCPeerConnection | null, ch: RTCDataChannel | null) {
     this.clientID = clientID
     this.username = ""
-    this.response = 0
     this.networkStatus = ""
     this.conn = conn
     this.channel = ch
+  }
+}
+
+class userstatus {
+  active: boolean // true iff there's an active client behind this user
+  response: responsebits
+
+  constructor() {
+    this.active = true
+    this.response = 0
   }
 }
 
@@ -113,8 +123,8 @@ let g = {
   // Just to have insight into what's happening.
   networkStatus: "",
 
-  // Player statuses as described in p host->client message.
-  playerStatuses: [] as string[],
+  // Player statuses as received by the p host->client message.
+  playerStatuses: new Map<string, userstatus>(),
 
   // Whether hosting or just connected to the client.
   // In client mode the client's connection to host is in clients[0].
@@ -126,6 +136,7 @@ let g = {
   // Time when the user clicked the answer.
   // Used to render short feedback.
   answerTime: 0 as number,
+  answerID: 0 as number,
 }
 
 function escapehtml(unsafe: string) {
@@ -267,6 +278,7 @@ function handlePrint() {
 
 function handleStart() {
   g.clients = [new client(-1, null, null)]
+  g.playerStatuses.clear()
   handleNameChange(hName.value)
   selectQuestions()
   g.questionIndex = -1
@@ -326,31 +338,31 @@ function handleNext() {
 }
 
 function handleGameClick(v: number) {
-  if (g.clients.length == 0) return // client not connected
+  if (g.clients.length == 0 || hName.value == "") return // client not connected or follower mode
 
-  if (1 <= v && v <= 9) {
+  if (1 <= v && v <= 7) {
     // Clear previous highlight if there was one.
-    let elem = document.getElementById(`ha${g.clients[0].response & 15}`)
-    if (elem != null) elem.className = ""
+    let prevElem = document.getElementById(`ha${g.answerID}`)
+    if (prevElem != null && prevElem.className == "cfgNotice") prevElem.className = ""
 
-    elem = document.getElementById(`ha${v}`)
-    if (elem == null) return
-    elem.className = "cfgNeutral"
-    g.clients[0].response = (g.clients[0].response & ~15) | v
     g.answerTime = Date.now()
+    g.answerID = v
     if (g.clientMode) {
-      g.clients[0].channel?.send(`r${g.clients[0].response}`)
+      g.clients[0].channel?.send(`r${v | responsebits.answered}`)
     } else {
-      updatePlayerStatus()
-      renderQuestion(rendermode.quick)
+      let st = g.playerStatuses.get(hName.value)
+      if (st == undefined) return
+      st.response = (st.response & ~responsebits.answermask) | v
     }
+    updatePlayerStatus()
+    renderQuestion(rendermode.quick)
     setTimeout(() => renderQuestion(rendermode.quick), feedbackTimeMS + 1)
   }
 }
 
 function updateCurrentQuestion() {
   // Reset responses.
-  for (let c of g.clients) c.response = 0
+  g.playerStatuses.forEach((st) => (st.response = responsebits.empty))
   updatePlayerStatus()
 
   if (g.questionIndex == g.shuffledqs.length) {
@@ -360,61 +372,67 @@ function updateCurrentQuestion() {
   }
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
   for (let c of g.clients) c.channel?.send("q" + [`${g.filteredIndex}`, `${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
-}
 
-function isEqualArray<T>(a: T[], b: T[]) {
-  if (a.length != b.length) return false
-  return a.every((v, i) => b[i] == v)
+  // Remove inactive players here, good point as any.
+  g.playerStatuses.forEach((st, name) => {
+    if (!st.active) g.playerStatuses.delete(name)
+  })
 }
 
 function updatePlayerStatus() {
   if (g.clientMode) return
-  let status = []
+  g.playerStatuses.forEach((st) => (st.active = false))
   for (let c of g.clients) {
     if (c.networkStatus == "" && c.username != "") {
-      let st = "w"
-      if (c.response != 0) st = "a"
-      status.push(st + c.username)
+      let st = g.playerStatuses.get(c.username)
+      if (st != undefined) {
+        st.active = true
+      } else {
+        g.playerStatuses.set(c.username, new userstatus())
+      }
     }
   }
-  status.sort((a, b) => {
+  let statusmsg = [] as string[]
+  g.playerStatuses.forEach((st, name) => {
+    if (st.active) statusmsg.push(`${name} ${st.response}`)
+  })
+  statusmsg.sort((a, b) => {
     if (a < b) return -1
     if (a > b) return +1
     return 0
   })
-  if (!isEqualArray(g.playerStatuses, status)) {
-    g.playerStatuses = status
-    let msg = "p" + status.join("@")
-    for (let c of g.clients) c.channel?.send(msg)
-  }
+  let msg = "p" + statusmsg.join("@")
+  for (let c of g.clients) c.channel?.send(msg)
 }
 
 function renderStatus() {
   let stat = `${g.currentPos}, category ${g.currentQuestion[0]}`
   if (!g.clientMode) {
-    let [players, followers, pending] = [0, 0, 0]
+    let [clients, players, followers, pending] = [0, 0, 0, 0]
     for (let c of g.clients) {
       if (c.networkStatus != "" && c.conn != null) pending++
       if (c.networkStatus == "" && c.username == "") followers++
-      if (c.networkStatus == "" && c.username != "") {
-        players++
-      }
+      if (c.networkStatus == "" && c.username != "") clients++
     }
+    g.playerStatuses.forEach((st) => {
+      if (st.active) players++
+    })
     if (g.clients.length >= 2) {
       if (g.clients[0].username == "") followers--
       if (followers > 0) stat += `, ${followers} followers`
       if (players > 0) stat += `, ${players} players`
+      if (clients != players) stat += `, ${clients} clients (some players have multiple clients)`
       if (pending > 0) stat += `, ${pending} pending`
     }
   }
   hStat.innerText = stat
 
-  let h = ""
-  for (let ps of g.playerStatuses) {
-    if (h != "") h += ", "
-    h += ps.slice(1)
-  }
-  hPlayers.innerHTML = "Players: " + h
+  let players = [] as string[]
+  g.playerStatuses.forEach((st, name) => {
+    if (st.active) players.push(name)
+  })
+  players.sort()
+  hPlayers.innerHTML = "Players: " + players.join(", ")
 }
 
 enum rendermode {
@@ -434,7 +452,7 @@ function renderQuestion(mode: rendermode) {
     hGameScreen.style.fontSize = `300px`
 
     // Update player count based parts of the interface.
-    let playercnt = g.playerStatuses.length
+    let playercnt = g.playerStatuses.size
     if (playercnt <= 1) {
       hGroupControl.hidden = true
       hPlayers.hidden = true
@@ -461,38 +479,28 @@ function renderQuestion(mode: rendermode) {
   }
 
   // Highlight player response for a short moment if needed.
-  let elem = document.getElementById(`ha${g.clients[0].response & 15}`)
-  if (g.clients[0].response != 0 && Date.now() - g.answerTime < feedbackTimeMS && elem != null) {
-    elem.className = "cfgNeutral"
-    return
+  let answerElem = document.getElementById(`ha${g.answerID}`)
+  if (answerElem != null) {
+    if (Date.now() - g.answerTime < feedbackTimeMS) {
+      answerElem.className = "cfgNeutral"
+      return
+    }
+    answerElem.className = ""
   }
 
   // Otherwise render the interface according to server state.
-  if (elem != null) elem.className = ""
-  let mystatus = ""
-  for (let st of g.playerStatuses) {
-    if (st == "") continue
-    if (st.slice(1) == hName.value) {
-      mystatus = st[0]
-      break
-    }
+  let r = g.playerStatuses.get(hName.value)
+  if (r == undefined || !r.active) {
+    // This is a follower client.
+    document.body.className = ""
+    return
   }
-  switch (mystatus) {
-    case "":
-      // This is a follower client.
-      document.body.className = ""
-      break
-    case "a":
-      // Answered, waiting for reveal.
-      document.body.className = "cbgNotice"
-      break
-    case "w":
-      // Waiting for answer.
-      document.body.className = ""
-      break
-    default:
-      seterror(`invalid player status: ${mystatus}`)
-      break
+  if ((r.response & responsebits.answermask) > 0) {
+    // Answered, waiting for reveal.
+    document.body.className = "cbgNotice"
+  } else {
+    // Waiting for answer.
+    document.body.className = ""
   }
 }
 
@@ -519,6 +527,7 @@ function handleHash() {
   hSeedPreview.hidden = true
   hPrintable.hidden = true
   hGameUI.hidden = true
+  document.body.className = ""
 
   // Close all connections.
   disconnectAll()
@@ -749,8 +758,14 @@ async function connectToClient(hostcode: string, clientID: number) {
         break
       case "r":
         let r = parseInt(param)
-        if (r != r) break
-        c.response = r
+        if (r != r || c.username == "") break
+        let st = g.playerStatuses.get(c.username)
+        if (st != undefined) {
+          // Take non-answer bits from r, answer bits from r iff answered bit is set.
+          let nr = r & ~(responsebits.answermask | responsebits.answered)
+          nr |= r & responsebits.answered ? r & responsebits.answermask : st.response & responsebits.answermask
+          st.response = nr
+        }
         updatePlayerStatus()
         renderQuestion(rendermode.quick)
         break
@@ -886,6 +901,7 @@ async function join() {
   localStorage.setItem("Joincode", joincode)
 
   g.clientMode = true
+  g.playerStatuses.clear()
   g.aborter = new AbortController()
   while (true) {
     let response
@@ -950,7 +966,15 @@ async function join() {
         let [cmd, param] = [msg[0], msg.slice(1)]
         switch (cmd) {
           case "p":
-            g.playerStatuses = param.split("@")
+            g.playerStatuses.clear()
+            for (let s of param.split("@")) {
+              let sp = s.split(" ")
+              if (sp.length != 2) continue
+              let st = new userstatus()
+              st.response = parseInt(sp[1])
+              if (!st.response) st.response = 0
+              g.playerStatuses.set(sp[0], st)
+            }
             renderQuestion(rendermode.full)
             return
           case "q":
