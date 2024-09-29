@@ -52,9 +52,6 @@ declare var hStat: HTMLInputElement
 
 declare var questionsdata: string
 
-// How long keep an answer greyed after the user clicks on it.
-const feedbackTimeMS = 300
-
 enum responsebits {
   empty = 0,
   answermask = 7, // lower bits are reserved for the answer id with a range of up to 7 answers, 0 means no answer
@@ -133,10 +130,8 @@ let g = {
   // The fontsize of the question currently show such that it fits the screen.
   fontsize: 0 as number,
 
-  // Time when the user clicked the answer.
-  // Used to render short feedback.
-  answerTime: 0 as number,
-  answerID: 0 as number,
+  // The focused answer ID, the answer being pushed down.
+  focusedAnswerID: 0 as number,
 }
 
 function escapehtml(unsafe: string) {
@@ -224,7 +219,14 @@ function makeQuestionHTML(q: question) {
   let answerid = 0
   let a = () => {
     answerid++
-    return `id=ha${answerid} onclick=handleGameClick(${answerid})`
+    let props = `id=ha${answerid}`
+    for (let ev of ["mousedown", "mouseup", "mouseleave"]) {
+      props += ` on${ev}=handleMouse(event,${answerid})`
+    }
+    for (let ev of ["touchstart", "touchend", "touchcancel"]) {
+      props += ` on${ev}=handleTouch(event,${answerid})`
+    }
+    return props
   }
 
   if (q[1].startsWith("vote: ")) {
@@ -337,27 +339,49 @@ function handleNext() {
   renderQuestion(rendermode.full)
 }
 
-function handleGameClick(v: number) {
-  if (g.clients.length == 0 || hName.value == "") return // client not connected or follower mode
-
-  if (1 <= v && v <= 7) {
-    // Clear previous highlight if there was one.
-    let prevElem = document.getElementById(`ha${g.answerID}`)
-    if (prevElem != null && prevElem.className == "cfgNotice") prevElem.className = ""
-
-    g.answerTime = Date.now()
-    g.answerID = v
-    if (g.clientMode) {
-      g.clients[0].channel?.send(`r${v | responsebits.answered}`)
-    } else {
-      let st = g.playerStatuses.get(hName.value)
-      if (st == undefined) return
-      st.response = (st.response & ~responsebits.answermask) | v
+function handleMouse(event: MouseEvent, v: number) {
+  if (g.playerStatuses.size <= 1 || g.clients.length == 0 || hName.value == "") {
+    // single player mode, client not connected, or follower mode
+    return
+  } else if (event.type == "mouseleave") {
+    g.focusedAnswerID = 0
+  } else if (event.type == "mouseup") {
+    if (v == g.focusedAnswerID) {
+      if (g.clientMode) {
+        g.clients[0].channel?.send(`r${v | responsebits.answered}`)
+      } else {
+        let st = g.playerStatuses.get(hName.value)
+        if (st == undefined) return
+        st.response = (st.response & ~responsebits.answermask) | v
+      }
     }
-    updatePlayerStatus()
-    renderQuestion(rendermode.quick)
-    setTimeout(() => renderQuestion(rendermode.quick), feedbackTimeMS + 1)
+    g.focusedAnswerID = 0
+  } else if (event.type == "mousedown" && (event.buttons & 1) == 1) {
+    g.focusedAnswerID = v
   }
+  renderQuestion(rendermode.quick)
+}
+
+function handleTouch(event: TouchEvent, v: number) {
+  event.stopPropagation()
+  if (event.type == "touchstart") {
+    g.focusedAnswerID = v
+  } else if (event.type == "touchcancel") {
+    g.focusedAnswerID = 0
+  } else if (event.type == "touchend") {
+    // xxx
+    if (v == g.focusedAnswerID) {
+      if (g.clientMode) {
+        g.clients[0].channel?.send(`r${v | responsebits.answered}`)
+      } else {
+        let st = g.playerStatuses.get(hName.value)
+        if (st == undefined) return
+        st.response = (st.response & ~responsebits.answermask) | v
+      }
+    }
+    g.focusedAnswerID = 0
+  }
+  renderQuestion(rendermode.quick)
 }
 
 function updateCurrentQuestion() {
@@ -478,17 +502,15 @@ function renderQuestion(mode: rendermode) {
     return
   }
 
-  // Highlight player response for a short moment if needed.
-  let answerElem = document.getElementById(`ha${g.answerID}`)
-  if (answerElem != null) {
-    if (Date.now() - g.answerTime < feedbackTimeMS) {
-      answerElem.className = "cfgNeutral"
-      return
-    }
-    answerElem.className = ""
+  // Color answers as needed.
+  let answerClass = ["", "", "", "", "", ""]
+  answerClass[g.focusedAnswerID] = "cfgNeutral"
+  for (let id = 1; id <= 4; id++) {
+    let elem = document.getElementById(`ha${id}`)
+    if (elem != null) elem.className = answerClass[id]
   }
 
-  // Otherwise render the interface according to server state.
+  // Color the background as needed.
   let r = g.playerStatuses.get(hName.value)
   if (r == undefined || !r.active) {
     // This is a follower client.
