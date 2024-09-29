@@ -527,14 +527,28 @@ function renderQuestion(mode: rendermode) {
     if (elem != null) elem.className = answerClass[id]
   }
 
+  let revealclass = ""
+  let allanswers: number[] = []
+  let playercnt = 0
+  g.playerStatuses.forEach((st) => {
+    if (st.active) playercnt++
+    if (st.active && (st.response & responsebits.answermask) > 0) allanswers.push(st.response & responsebits.answermask)
+  })
+  if (allanswers.length == 2 && playercnt == 2) {
+    revealclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
+  }
+
   // Color the background as needed.
   let r = g.playerStatuses.get(hName.value)
   if (r == undefined || !r.active) {
     // This is a follower client.
-    document.body.className = ""
+    document.body.className = revealclass
     return
   }
-  if ((r.response & responsebits.answermask) > 0) {
+  if (revealclass != "") {
+    // Result ready.
+    document.body.className = revealclass
+  } else if ((r.response & responsebits.answermask) > 0) {
     // Answered, waiting for reveal.
     document.body.className = "cbgNotice"
   } else {
