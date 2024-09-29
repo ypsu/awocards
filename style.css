@@ -58,6 +58,7 @@ body { font-family: sans-serif; cursor: default; }
 button { padding-left: 1ch; padding-right: 1ch; font-size: inherit; }
 #hGameUI p { margin: 0 0; user-select: none; }
 textarea { width: 100%; }
+ol, ul { margin-left: 2ch; }
 .hPrintableCard { border: 1px solid black; display: inline-block; width: 51mm; height: 37mm; padding: 1em; overflow: hidden; line-height: normal; }
 .hIdlink { text-decoration: none; opacity: 0; }
 h2 a { opacity: 0; text-decoration: none; color: var(--fg-neutral); }

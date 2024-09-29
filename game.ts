@@ -229,29 +229,29 @@ function makeQuestionHTML(q: question) {
     return props
   }
   let p = () => {
-    return ` <em id=hp${answerid}></em>`
+    return `<br><em id=hp${answerid}></em>`
   }
 
   if (q[1].startsWith("vote: ")) {
-    let h = `<p>Group vote: ${escapehtml(q[1].slice(6))}</p><br>\n`
-    h += `<p ${a()}>1. definitely not ${p()}</p>\n`
-    h += `<p ${a()}>2. can be talked into it ${p()}</p>\n`
-    h += `<p ${a()}>3. I don't mind trying ${p()}</p>\n`
-    h += `<p ${a()}>4. definitely yes ${p()}</p>\n`
+    let h = `<p>Group vote: ${escapehtml(q[1].slice(6))}</p><ol>\n`
+    h += `<li ${a()}>definitely not ${p()}</li>\n`
+    h += `<li ${a()}>can be talked into it ${p()}</li>\n`
+    h += `<li ${a()}>I don't mind trying ${p()}</li>\n`
+    h += `<li ${a()}>definitely yes ${p()}</li>\n`
     return h
   }
   if (q[1].startsWith("dare: ")) {
     let qt = q[1].slice(6).replaceAll("X", "[answerer]")
-    let h = `<p>Dare: ${escapehtml(qt)}</p><br>\n`
-    h += `<p ${a()}>1. no ${p()}</p>\n`
-    h += `<p ${a()}>2. can be talked into it ${p()}</p>\n`
-    h += `<p ${a()}>3. I don't mind trying ${p()}</p>\n`
-    h += `<p ${a()}>4. yes ${p()}</p>\n`
-    return h
+    let h = `<p>Dare: ${escapehtml(qt)}</li><ol>\n`
+    h += `<li ${a()}>no ${p()}</li>\n`
+    h += `<li ${a()}>can be talked into it ${p()}</li>\n`
+    h += `<li ${a()}>I don't mind trying ${p()}</li>\n`
+    h += `<li ${a()}>yes ${p()}</li>\n`
+    return h + "</ol>"
   }
-  let h = `<p>${escapehtml(q[1])}</p><br>`
-  for (let i = 2; i < q.length; i++) h += `<p ${a()}>${i - 1}. ${escapehtml(q[i])} ${p()}</p>\n`
-  return h
+  let h = `<p>${escapehtml(q[1])}</p><ol>`
+  for (let i = 2; i < q.length; i++) h += `<li ${a()}>${escapehtml(q[i])} ${p()}</li>\n`
+  return h + "</ol>"
 }
 
 function handlePrint() {
@@ -356,6 +356,7 @@ function handleMouse(event: MouseEvent, v: number) {
         let st = g.playerStatuses.get(hName.value)
         if (st == undefined) return
         st.response = (st.response & ~responsebits.answermask) | v
+        updatePlayerStatus()
       }
     }
     g.focusedAnswerID = 0
@@ -372,7 +373,6 @@ function handleTouch(event: TouchEvent, v: number) {
   } else if (event.type == "touchcancel") {
     g.focusedAnswerID = 0
   } else if (event.type == "touchend") {
-    // xxx
     if (v == g.focusedAnswerID) {
       if (g.clientMode) {
         g.clients[0].channel?.send(`r${v | responsebits.answered}`)
@@ -380,6 +380,7 @@ function handleTouch(event: TouchEvent, v: number) {
         let st = g.playerStatuses.get(hName.value)
         if (st == undefined) return
         st.response = (st.response & ~responsebits.answermask) | v
+        updatePlayerStatus()
       }
     }
     g.focusedAnswerID = 0
@@ -499,7 +500,10 @@ function renderQuestion(mode: rendermode) {
   })
   for (let i = 1; i <= 4; i++) {
     let e = document.getElementById(`hp${i}`)
-    if (e != null && answerNames[i].length > 0) e.innerHTML = `<br>[${answerNames[i].join(", ")}]`
+    answerNames[i].sort()
+    let namelist = "&nbsp;"
+    if (answerNames[i].length > 0) namelist = `[${answerNames[i].join(", ")}]`
+    if (e != null) e.innerHTML = namelist
   }
 
   // Shrink to fit.
