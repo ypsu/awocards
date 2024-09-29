@@ -228,26 +228,29 @@ function makeQuestionHTML(q: question) {
     }
     return props
   }
+  let p = () => {
+    return ` <em id=hp${answerid}></em>`
+  }
 
   if (q[1].startsWith("vote: ")) {
     let h = `<p>Group vote: ${escapehtml(q[1].slice(6))}</p><br>\n`
-    h += `<p ${a()}>1. definitely not</p>\n`
-    h += `<p ${a()}>2. can be talked into it</p>\n`
-    h += `<p ${a()}>3. I don't mind trying</p>\n`
-    h += `<p ${a()}>4. definitely yes</p>\n`
+    h += `<p ${a()}>1. definitely not ${p()}</p>\n`
+    h += `<p ${a()}>2. can be talked into it ${p()}</p>\n`
+    h += `<p ${a()}>3. I don't mind trying ${p()}</p>\n`
+    h += `<p ${a()}>4. definitely yes ${p()}</p>\n`
     return h
   }
   if (q[1].startsWith("dare: ")) {
     let qt = q[1].slice(6).replaceAll("X", "[answerer]")
     let h = `<p>Dare: ${escapehtml(qt)}</p><br>\n`
-    h += `<p ${a()}>1. no</p>\n`
-    h += `<p ${a()}>2. can be talked into it</p>\n`
-    h += `<p ${a()}>3. I don't mind trying</p>\n`
-    h += `<p ${a()}>4. yes</p>\n`
+    h += `<p ${a()}>1. no ${p()}</p>\n`
+    h += `<p ${a()}>2. can be talked into it ${p()}</p>\n`
+    h += `<p ${a()}>3. I don't mind trying ${p()}</p>\n`
+    h += `<p ${a()}>4. yes ${p()}</p>\n`
     return h
   }
   let h = `<p>${escapehtml(q[1])}</p><br>`
-  for (let i = 2; i < q.length; i++) h += `<p ${a()}>${i - 1}. ${escapehtml(q[i])}</p>\n`
+  for (let i = 2; i < q.length; i++) h += `<p ${a()}>${i - 1}. ${escapehtml(q[i])} ${p()}</p>\n`
   return h
 }
 
@@ -487,6 +490,16 @@ function renderQuestion(mode: rendermode) {
       hGroupControl.hidden = false
       hPlayers.hidden = false
     }
+  }
+
+  // Render player names.
+  let answerNames: string[][] = [[], [], [], [], []]
+  g.playerStatuses.forEach((st, name) => {
+    if (st.active) answerNames[st.response & responsebits.answermask].push(name)
+  })
+  for (let i = 1; i <= 4; i++) {
+    let e = document.getElementById(`hp${i}`)
+    if (e != null && answerNames[i].length > 0) e.innerHTML = `<br>[${answerNames[i].join(", ")}]`
   }
 
   // Shrink to fit.
