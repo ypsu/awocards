@@ -338,12 +338,21 @@ function handleGameClick(v: number) {
     elem.className = "cfgNeutral"
     g.clients[0].response = (g.clients[0].response & ~15) | v
     g.answerTime = Date.now()
-    if (g.clientMode) g.clients[0].channel?.send(`r${g.clients[0].response}`)
+    if (g.clientMode) {
+      g.clients[0].channel?.send(`r${g.clients[0].response}`)
+    } else {
+      updatePlayerStatus()
+      renderQuestion(rendermode.quick)
+    }
     setTimeout(() => renderQuestion(rendermode.quick), feedbackTimeMS + 1)
   }
 }
 
 function updateCurrentQuestion() {
+  // Reset responses.
+  for (let c of g.clients) c.response = 0
+  updatePlayerStatus()
+
   if (g.questionIndex == g.shuffledqs.length) {
     g.currentQuestion = ["none", "Game over because out of questions. What now?", "go home", "play again with spicier categories", "play something else"]
   } else {
@@ -438,25 +447,52 @@ function renderQuestion(mode: rendermode) {
     }
   }
 
-  // Highlight player response for a short moment if needed.
-  if (g.clients.length >= 1) {
-    if (g.clients[0].response != 0) {
-      let elem = document.getElementById(`ha${g.clients[0].response & 15}`)
-      if (elem != null) {
-        elem.className = Date.now() - g.answerTime < feedbackTimeMS ? "cfgNeutral" : ""
-      }
-    }
-    if (Date.now() - g.answerTime >= feedbackTimeMS) {
-      document.body.className = (g.clients[0].response & 15) == 0 ? "" : "cbgNotice"
-    }
-  } else {
-    document.body.className = "cbgNeutral"
-  }
-
   // Shrink to fit.
   while (g.fontsize >= 12 && (hGameUI.scrollWidth + hGameUI.offsetLeft > innerWidth || hGameUI.scrollHeight + hGameUI.offsetTop > innerHeight)) {
     g.fontsize = Math.floor(0.9 * g.fontsize)
     hGameScreen.style.fontSize = `${g.fontsize}px`
+  }
+
+  // Not connected to host yet, that's the only case where the clients array can be empty.
+  // Ignore that, the interface doesn't have to be interactible in that case.
+  if (g.clients.length == 0) {
+    document.body.className = "cbgNeutral"
+    return
+  }
+
+  // Highlight player response for a short moment if needed.
+  let elem = document.getElementById(`ha${g.clients[0].response & 15}`)
+  if (g.clients[0].response != 0 && Date.now() - g.answerTime < feedbackTimeMS && elem != null) {
+    elem.className = "cfgNeutral"
+    return
+  }
+
+  // Otherwise render the interface according to server state.
+  if (elem != null) elem.className = ""
+  let mystatus = ""
+  for (let st of g.playerStatuses) {
+    if (st == "") continue
+    if (st.slice(1) == hName.value) {
+      mystatus = st[0]
+      break
+    }
+  }
+  switch (mystatus) {
+    case "":
+      // This is a follower client.
+      document.body.className = ""
+      break
+    case "a":
+      // Answered, waiting for reveal.
+      document.body.className = "cbgNotice"
+      break
+    case "w":
+      // Waiting for answer.
+      document.body.className = ""
+      break
+    default:
+      seterror(`invalid player status: ${mystatus}`)
+      break
   }
 }
 
