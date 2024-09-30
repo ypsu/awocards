@@ -12,12 +12,14 @@
 //
 // Host->client commands:
 //
+// - l: Log param on the client. For debugging.
 // - p: Set player statuses and names separated via @. Each entry is "playername responsebits_number".
 // - q: Set the current question.
 // - x: Host abandoned the game.
 //
 // Client->host commands:
 //
+// - l: Log param on the host. For debugging.
 // - n: Set the username of the client. Empty or invalid param resets the client to a follower.
 // - j: Jump to specific question. Param is the new card index (1 based).
 // - r: Mark the response status. Param is a responsebits number.
@@ -352,17 +354,22 @@ function reportAnswer(v: number) {
   if (g.clientMode) {
     g.clients[0].channel?.send(`r${v | responsebits.answered}`)
   } else {
-    let st = g.playerStatuses.get(hName.value)
-    if (st == undefined) return
     st.response = (st.response & ~responsebits.answermask) | v
     updatePlayerStatus()
   }
 }
 
+function countPlayers() {
+  let c = 0
+  g.playerStatuses.forEach((st) => {
+    if (st.active) c++
+  })
+  return c
+}
+
 function handleMouse(event: MouseEvent, v: number) {
-  if (g.playerStatuses.size <= 1 || g.clients.length == 0 || hName.value == "") {
-    // single player mode, client not connected, or follower mode
-    return
+  if (g.clients.length == 0 || hName.value == "" || countPlayers() <= 1) {
+    // single player mode, client not connected, or follower mode, do nothing.
   } else if (event.type == "mouseleave") {
     g.focusedAnswerID = 0
   } else if (event.type == "mouseup") {
@@ -376,9 +383,9 @@ function handleMouse(event: MouseEvent, v: number) {
 
 function handleTouch(event: TouchEvent, v: number) {
   event.stopPropagation()
-  if (g.playerStatuses.size <= 1 || g.clients.length == 0 || hName.value == "") {
-    // single player mode, client not connected, or follower mode
-    return
+  event.preventDefault()
+  if (g.clients.length == 0 || hName.value == "" || countPlayers() <= 1) {
+    // single player mode, client not connected, or follower mode, do nothing.
   } else if (event.type == "touchstart") {
     g.focusedAnswerID = v
   } else if (event.type == "touchcancel") {
@@ -473,6 +480,13 @@ enum rendermode {
 function renderQuestion(mode: rendermode) {
   renderStatus()
 
+  // Not connected to host yet, that's the only case where the clients array can be empty.
+  // Ignore that, the interface doesn't have to be interactible in that case.
+  if (g.clients.length == 0) {
+    document.body.className = "cbgNeutral"
+    return
+  }
+
   if (mode == rendermode.full) {
     let h = ""
     h += "<button onclick=handlePrev() style=width:45%>Prev</button> <button onclick=handleNext() style=width:45%>Next</button>\n"
@@ -495,30 +509,33 @@ function renderQuestion(mode: rendermode) {
     }
   }
 
-  // Render player names.
-  let answerNames: string[][] = [[], [], [], [], []]
-  g.playerStatuses.forEach((st, name) => {
-    if (st.active) answerNames[st.response & responsebits.answermask].push(name)
+  // Determine whether the results should be shown or not and how.
+  let revealed = false
+  let revealclass = ""
+  let allanswers: number[] = []
+  let playercnt = 0
+  g.playerStatuses.forEach((st) => {
+    if (st.active) playercnt++
+    if (st.active && (st.response & responsebits.answermask) > 0) allanswers.push(st.response & responsebits.answermask)
   })
+  if (allanswers.length == 2 && playercnt == 2) {
+    revealed = true
+    revealclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
+  }
+
+  // Render player names if revealed.
+  let answerNames: string[][] = [[], [], [], [], []]
+  if (revealed) {
+    g.playerStatuses.forEach((st, name) => {
+      if (st.active) answerNames[st.response & responsebits.answermask].push(name)
+    })
+  }
   for (let i = 1; i <= 4; i++) {
     let e = document.getElementById(`hp${i}`)
     answerNames[i].sort()
     let namelist = "&nbsp;"
     if (answerNames[i].length > 0) namelist = `[${answerNames[i].join(", ")}]`
     if (e != null) e.innerHTML = namelist
-  }
-
-  // Shrink to fit.
-  while (g.fontsize >= 12 && (hGameUI.scrollWidth + hGameUI.offsetLeft > innerWidth || hGameUI.scrollHeight + hGameUI.offsetTop > innerHeight)) {
-    g.fontsize = Math.floor(0.9 * g.fontsize)
-    hGameScreen.style.fontSize = `${g.fontsize}px`
-  }
-
-  // Not connected to host yet, that's the only case where the clients array can be empty.
-  // Ignore that, the interface doesn't have to be interactible in that case.
-  if (g.clients.length == 0) {
-    document.body.className = "cbgNeutral"
-    return
   }
 
   // Color answers as needed.
@@ -529,25 +546,12 @@ function renderQuestion(mode: rendermode) {
     if (elem != null) elem.className = answerClass[id]
   }
 
-  let revealclass = ""
-  let allanswers: number[] = []
-  let playercnt = 0
-  g.playerStatuses.forEach((st) => {
-    if (st.active) playercnt++
-    if (st.active && (st.response & responsebits.answermask) > 0) allanswers.push(st.response & responsebits.answermask)
-  })
-  if (allanswers.length == 2 && playercnt == 2) {
-    revealclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
-  }
-
   // Color the background as needed.
   let r = g.playerStatuses.get(hName.value)
-  if (r == undefined || !r.active) {
+  if (r == undefined || !r.active || playercnt == 1) {
     // This is a follower client.
     document.body.className = revealclass
-    return
-  }
-  if (revealclass != "") {
+  } else if (revealclass != "") {
     // Result ready.
     document.body.className = revealclass
   } else if ((r.response & responsebits.answermask) > 0) {
@@ -556,6 +560,13 @@ function renderQuestion(mode: rendermode) {
   } else {
     // Waiting for answer.
     document.body.className = ""
+  }
+
+  // Shrink to fit.
+  let [w, h] = [innerWidth, 0.9 * innerHeight]
+  while (g.fontsize >= 12 && (hGameUI.scrollWidth + hGameUI.offsetLeft > w || hGameUI.scrollHeight + hGameUI.offsetTop > h)) {
+    g.fontsize = Math.floor(0.9 * g.fontsize)
+    hGameScreen.style.fontSize = `${g.fontsize}px`
   }
 }
 
@@ -811,6 +822,14 @@ async function connectToClient(hostcode: string, clientID: number) {
       case "j":
         handleJump(param)
         break
+      case "l":
+        console.log("Client log request:", param)
+      case "n":
+        if (!validateName(param)) param = ""
+        c.username = param
+        updatePlayerStatus()
+        renderQuestion(rendermode.full)
+        break
       case "r":
         let r = parseInt(param)
         if (r != r || c.username == "") break
@@ -823,12 +842,6 @@ async function connectToClient(hostcode: string, clientID: number) {
         }
         updatePlayerStatus()
         renderQuestion(rendermode.quick)
-        break
-      case "n":
-        if (!validateName(param)) param = ""
-        c.username = param
-        updatePlayerStatus()
-        renderQuestion(rendermode.full)
         break
       case "x":
         error(`${c.username == "" ? "a follower" : c.username} exited`)
@@ -1020,6 +1033,8 @@ async function join() {
         if (msg.length == 0) return
         let [cmd, param] = [msg[0], msg.slice(1)]
         switch (cmd) {
+          case "l":
+            console.log("Host log request:", param)
           case "p":
             g.playerStatuses.clear()
             for (let s of param.split("@")) {
