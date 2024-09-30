@@ -25,7 +25,8 @@
 // - r: Mark the response status. Param is a responsebits number.
 // - x: Client leaves.
 
-declare var hAnswererMark: HTMLElement
+declare var hAnswerer: HTMLElement
+declare var hBecomeAnswerer: HTMLElement
 declare var hCustomDB: HTMLInputElement
 declare var hCustomQuestionsReport: HTMLElement
 declare var hCustomText: HTMLTextAreaElement
@@ -134,6 +135,9 @@ let g = {
 
   // The focused answer ID, the answer being pushed down.
   focusedAnswerID: 0 as number,
+
+  // In host mode this tracks the current answerer's username if set.
+  answerer: "" as string,
 }
 
 function escapehtml(unsafe: string) {
@@ -368,7 +372,7 @@ function countPlayers() {
 }
 
 function handleMouse(event: MouseEvent, v: number) {
-  if (g.clients.length == 0 || hName.value == "" || countPlayers() <= 1) {
+  if (g.clients.length == 0 || !g.playerStatuses.has(hName.value) || countPlayers() <= 1) {
     // single player mode, client not connected, or follower mode, do nothing.
   } else if (event.type == "mouseleave") {
     g.focusedAnswerID = 0
@@ -384,7 +388,7 @@ function handleMouse(event: MouseEvent, v: number) {
 function handleTouch(event: TouchEvent, v: number) {
   event.stopPropagation()
   event.preventDefault()
-  if (g.clients.length == 0 || hName.value == "" || countPlayers() <= 1) {
+  if (g.clients.length == 0 || !g.playerStatuses.has(hName.value) || countPlayers() <= 1) {
     // single player mode, client not connected, or follower mode, do nothing.
   } else if (event.type == "touchstart") {
     g.focusedAnswerID = v
@@ -430,8 +434,10 @@ function updatePlayerStatus() {
     }
   }
   let statusmsg = [] as string[]
+  g.answerer = ""
   g.playerStatuses.forEach((st, name) => {
     if (st.active) statusmsg.push(`${name} ${st.response}`)
+    if (st.active && st.response & responsebits.answerermarker) g.answerer = name
   })
   statusmsg.sort((a, b) => {
     if (a < b) return -1
@@ -509,18 +515,43 @@ function renderQuestion(mode: rendermode) {
     }
   }
 
-  // Determine whether the results should be shown or not and how.
+  let isdare = g.currentQuestion[0].startsWith("dare: ")
+  let isvote = g.currentQuestion[0].startsWith("vote: ")
+  let isquestion = !isdare && !isvote
+
+  // Collect various data from which to compute and render the current game status.
   let revealed = false
   let revealclass = ""
   let allanswers: number[] = []
   let playercnt = 0
-  g.playerStatuses.forEach((st) => {
+  let answerer = ""
+  let isplayer = g.playerStatuses.has(hName.value)
+  g.playerStatuses.forEach((st, name) => {
     if (st.active) playercnt++
     if (st.active && (st.response & responsebits.answermask) > 0) allanswers.push(st.response & responsebits.answermask)
+    if (st.active && (st.response & responsebits.answerermarker) != 0) answerer = name
   })
-  if (allanswers.length == 2 && playercnt == 2) {
-    revealed = true
-    revealclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
+
+  // Compute the hGroupControl visibility status.
+  if (playercnt <= 1) {
+    hGroupControl.hidden = true
+  } else {
+    hGroupControl.hidden = false
+    hAnswerer.hidden = !isquestion || answerer == "" || answerer == hName.value
+    hBecomeAnswerer.hidden = !isquestion || (answerer != "" && answerer != hName.value)
+    hNextMark.hidden = !isplayer
+
+    let answerertype = isdare ? "receiver" : "answerer"
+    hAnswerer.innerText = `${answerertype}: ${answerer == "" ? "?" : answerer}`
+    hBecomeAnswerer.innerText = `${answerer == hName.value ? "[x]" : "[ ]"} become ${answerertype}`
+  }
+
+  // Compute status for questions.
+  if (isquestion) {
+    if (allanswers.length == 2 && playercnt == 2) {
+      revealed = true
+      revealclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
+    }
   }
 
   // Render player names if revealed.
@@ -624,12 +655,17 @@ function handleHash() {
 }
 
 function handleAnswererMarkClick() {
-  if (hAnswererMark.innerText == "[x]") {
-    hAnswererMark.innerText = "[ ]"
-    document.body.className = ""
+  // Find current response.
+  let response = null
+  let st = g.playerStatuses.get(hName.value)
+  if (g.clients.length == 0 || st == null) return
+  if (g.clientMode) {
+    g.clients[0].channel?.send(`r${st.response ^ responsebits.answerermarker}`)
   } else {
-    hAnswererMark.innerText = "[x]"
-    document.body.className = "cbgReference"
+    if (g.answerer != "" && g.answerer != hName.value) return
+    st.response ^= responsebits.answerermarker
+    updatePlayerStatus()
+    renderQuestion(rendermode.quick)
   }
 }
 
@@ -743,7 +779,7 @@ function handleNameChange(s: string) {
   }
   localStorage.setItem("Username", s)
   if (g.clientMode) {
-    if (g.clients.length >= 0) g.clients[0].channel?.send("n" + s)
+    if (g.clients.length >= 1) g.clients[0].channel?.send("n" + s)
     return
   }
   g.clients[0].username = s
@@ -836,6 +872,9 @@ async function connectToClient(hostcode: string, clientID: number) {
         if (r != r || c.username == "") break
         let st = g.playerStatuses.get(c.username)
         if (st != undefined) {
+          // Clear the answerer bit from the response if some other player is already the answerer.
+          if (r & responsebits.answerermarker && g.answerer != "" && g.answerer != c.username) r &= ~responsebits.answerermarker
+
           // Take non-answer bits from r, answer bits from r iff answered bit is set.
           let nr = r & ~(responsebits.answermask | responsebits.answered)
           nr |= r & responsebits.answered ? r & responsebits.answermask : st.response & responsebits.answermask

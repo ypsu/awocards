@@ -57,6 +57,7 @@ body { font-family: sans-serif; cursor: default; }
 #hGameUI { margin: 0 auto; padding: 0 8px; }
 button { padding-left: 1ch; padding-right: 1ch; font-size: inherit; }
 #hGameUI p { margin: 0 0; user-select: none; }
+#hGroupControl { user-select: none; }
 textarea { width: 100%; }
 ol, ul { margin-left: 2ch; }
 li+li { margin-top: 1.5ex; }
