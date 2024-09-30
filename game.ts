@@ -813,6 +813,7 @@ async function connectToClient(hostcode: string, clientID: number) {
     if (conn.iceConnectionState != "disconnected") return
     error(`error: lost connection to ${c.username == "" ? "a follower" : c.username}`)
     updatePlayerStatus()
+    renderQuestion(rendermode.full)
   }
   channel.onmessage = async (ev) => {
     let msg = (ev as MessageEvent).data

@@ -9,59 +9,14 @@
 
 <pre id=hError class=cbgNegative hidden></pre>
 <p id=hNeedJS><em>This page needs Javascript enabled to work.</em></p>
-
 <div id=hIntro>
+
 <h1>tlewra: The LEast WRong Answer game</h1>
 
 <p><em>
 WARNING: This game can cause emotional distress when played in a group.
 Read the full guide before running it for a group.
 </em></p>
-
-<p>
-This site provides bunch of personal questions and 2-4 answers for each.
-It's a make your own rules adult game.
-The general rule is that the players have to honestly answer the questions.
-If none of the answers feels right then they have to choose the <em>least wrong answer</em>.
-The other players try to guess what the answer will be.
-As a punishment for getting the guess wrong, they have to explain why they thought the answerer will choose their guess.
-It's a way to learn about each other for people who struggle with open ended questions.
-</p>
-
-<p>
-For example suppose the question is "Who is your favorite superhero?" and the answers are Superman, Batman, Ironman, Spiderman.
-If your favorite superhero is Deadpool then you might choose Spiderman as your favorite superhero because he's also a fun hero.
-You can always explain your real answer after the guessing round ends.
-</p>
-
-<p>
-There are 4 question categories:
-</p>
-
-<ul>
-  <li><input type=checkbox id=hqs checked> <label for=hqs>softball: easy, family friendly questions; can be used as a gentle intro into the game.</label>
-  <li><input type=checkbox id=hqd> <label for=hqd>divisive: political questions; ideal for turning friends into enemies.</label>
-  <li><input type=checkbox id=hqi> <label for=hqi>intimate: embarrassing, very private questions; ideal for making people regret coming to your drinking party.</label>
-  <li><input type=checkbox id=hqp> <label for=hqp>partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
-</ul>
-
-<p>
-Just answering questions is boring?
-The interface supports the "admit your fantasies" game too with two special type of cards: dares and activity voting.
-See the #dares and #votes doc sections below how to play these before selecting them.
-</p>
-
-<ul>
-  <li><input type=checkbox id=hql> <label for=hql>light-dares: semi-naughty but still a relatively gentle intro into dares.</label>
-  <li><input type=checkbox id=hqh> <label for=hqh>hot-dares: naughty dares in case you are all butt naked already; ideal as a warmup for your umm... hot party.</label>
-  <li><input type=checkbox id=hqa> <label for=hqa>activities: vote about vanilla activities to avoid just sitting home all the time.</label>
-  <li><input type=checkbox id=hqn> <label for=hqn>naughty-activities: vote about naughty activities to spice up life a bit.</label>
-</ul>
-
-<p>
-Select the ones you want to play with.
-Spoilers: see <a href="questions.js">the source code</a> to see what cards there are in all categories.
-</p>
 
 <p>
 Start game:
@@ -72,6 +27,33 @@ Start game:
   <li><input type=number size=6 placeholder=CODE id=hJoincode> <button onclick=handleJoin()>Join</button> (for joining an online version of the game or to present the questions on more screens)
   <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
 </ul>
+
+<p>
+The least wrong answer cards:
+</p>
+
+<ul>
+  <li><input type=checkbox id=hqs checked> <label for=hqs>softball: easy, family friendly questions; can be used as a gentle intro into the game.</label>
+  <li><input type=checkbox id=hqd> <label for=hqd>divisive: political questions; ideal for turning friends into enemies.</label>
+  <li><input type=checkbox id=hqi> <label for=hqi>intimate: embarrassing, very private questions; ideal for making people regret coming to your drinking party.</label>
+  <li><input type=checkbox id=hqp> <label for=hqp>partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
+</ul>
+
+<p>
+Admit your fantasies cards:
+</p>
+
+<ul>
+  <li><input type=checkbox id=hql> <label for=hql>light-dares: semi-naughty but still a relatively gentle intro into dares.</label>
+  <li><input type=checkbox id=hqh> <label for=hqh>hot-dares: naughty dares in case you are all butt naked already; ideal as a warmup for your umm... hot party.</label>
+  <li><input type=checkbox id=hqa> <label for=hqa>activities: vote about vanilla activities to avoid just sitting home all the time.</label>
+  <li><input type=checkbox id=hqn> <label for=hqn>naughty-activities: vote about naughty activities to spice up life a bit.</label>
+</ul>
+
+<p>
+Select the ones you want to play with before you start the game.
+See <a href="questions.js">the source code</a> to see what cards there are in each category.
+</p>
 
 <details>
   <summary>Advanced settings</summary>
@@ -102,6 +84,25 @@ vote: Should we go for a hike?  # example
 </details>
 
 <hr>
+
+<h2 id=intro>Intro</h2>
+
+<p>
+This site provides bunch of personal questions and 2-4 answers for each.
+It's a make your own rules adult game.
+The general rule is that the players have to honestly answer the questions.
+If none of the answers feels right then they have to choose the <em>least wrong answer</em>.
+The other players try to guess what the answer will be.
+As a punishment for getting the guess wrong, they have to explain why they thought the answerer will choose their guess.
+It's a way to learn about each other for people who struggle with open ended questions.
+</p>
+
+<p>
+For example suppose the question is "Who is your favorite superhero?" and the answers are Superman, Batman, Ironman, Spiderman.
+If your favorite superhero is Deadpool then you might choose Spiderman as your favorite superhero because he's also a fun hero.
+You can always explain your real answer after the guessing round ends.
+</p>
+
 
 <h2 id=couplesgame>Sample rules for a couples game <a href=#couplesgame>¶</a></h2>
 
