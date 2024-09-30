@@ -342,6 +342,23 @@ function handleNext() {
   renderQuestion(rendermode.full)
 }
 
+function reportAnswer(v: number) {
+  let st = g.playerStatuses.get(hName.value)
+  if (st == undefined) return
+  if (st.response & responsebits.answermask) {
+    // Already answered? Clear answer then.
+    v = 0
+  }
+  if (g.clientMode) {
+    g.clients[0].channel?.send(`r${v | responsebits.answered}`)
+  } else {
+    let st = g.playerStatuses.get(hName.value)
+    if (st == undefined) return
+    st.response = (st.response & ~responsebits.answermask) | v
+    updatePlayerStatus()
+  }
+}
+
 function handleMouse(event: MouseEvent, v: number) {
   if (g.playerStatuses.size <= 1 || g.clients.length == 0 || hName.value == "") {
     // single player mode, client not connected, or follower mode
@@ -349,16 +366,7 @@ function handleMouse(event: MouseEvent, v: number) {
   } else if (event.type == "mouseleave") {
     g.focusedAnswerID = 0
   } else if (event.type == "mouseup") {
-    if (v == g.focusedAnswerID) {
-      if (g.clientMode) {
-        g.clients[0].channel?.send(`r${v | responsebits.answered}`)
-      } else {
-        let st = g.playerStatuses.get(hName.value)
-        if (st == undefined) return
-        st.response = (st.response & ~responsebits.answermask) | v
-        updatePlayerStatus()
-      }
-    }
+    if (v == g.focusedAnswerID) reportAnswer(v)
     g.focusedAnswerID = 0
   } else if (event.type == "mousedown" && (event.buttons & 1) == 1) {
     g.focusedAnswerID = v
@@ -368,21 +376,15 @@ function handleMouse(event: MouseEvent, v: number) {
 
 function handleTouch(event: TouchEvent, v: number) {
   event.stopPropagation()
-  if (event.type == "touchstart") {
+  if (g.playerStatuses.size <= 1 || g.clients.length == 0 || hName.value == "") {
+    // single player mode, client not connected, or follower mode
+    return
+  } else if (event.type == "touchstart") {
     g.focusedAnswerID = v
   } else if (event.type == "touchcancel") {
     g.focusedAnswerID = 0
   } else if (event.type == "touchend") {
-    if (v == g.focusedAnswerID) {
-      if (g.clientMode) {
-        g.clients[0].channel?.send(`r${v | responsebits.answered}`)
-      } else {
-        let st = g.playerStatuses.get(hName.value)
-        if (st == undefined) return
-        st.response = (st.response & ~responsebits.answermask) | v
-        updatePlayerStatus()
-      }
-    }
+    if (v == g.focusedAnswerID) reportAnswer(v)
     g.focusedAnswerID = 0
   }
   renderQuestion(rendermode.quick)
