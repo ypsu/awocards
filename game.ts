@@ -219,13 +219,14 @@ function handleSeedPreview() {
   location.hash = "#preview"
 }
 
-function makeQuestionHTML(q: question) {
+function makeQuestionHTML(q: question, interactive: boolean) {
   if (q.length <= 1) {
     return "loading..."
   }
   let answerid = 0
   let a = () => {
     answerid++
+    if (!interactive) return ""
     let props = `id=ha${answerid}`
     for (let ev of ["mousedown", "mouseup", "mouseleave"]) {
       props += ` on${ev}=handleMouse(event,${answerid})`
@@ -265,7 +266,7 @@ function handlePrint() {
 
   let h = ""
   for (let q of g.questions) {
-    if (g.categories[q[0]]) h += `<div class=hPrintableCard><span>${makeQuestionHTML(q)}</span></div>`
+    if (g.categories[q[0]]) h += `<div class=hPrintableCard><span>${makeQuestionHTML(q, false)}</span></div>`
   }
   hPrintable.hidden = false
   hPrintable.innerHTML = h
@@ -512,7 +513,7 @@ function renderQuestion(mode: rendermode) {
   }
 
   if (mode == rendermode.full) {
-    hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion)
+    hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion, true)
     g.fontsize = 300
     hGameScreen.style.fontSize = `300px`
 
