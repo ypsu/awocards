@@ -486,7 +486,13 @@ function renderStatus() {
 
   let players = [] as string[]
   g.playerStatuses.forEach((st, name) => {
-    if (st.active) players.push(name)
+    if (!st.active) return
+    if ((st.response & responsebits.answermask) > 0) {
+      // TODO: do yellow for answered, green for correct, red for incorrect, blue for answerer.
+      players.push(`<span class=cfgPositive>${name}</span>`)
+    } else {
+      players.push(name)
+    }
   })
   players.sort()
   hPlayers.innerHTML = "Players: " + players.join(", ")
