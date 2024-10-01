@@ -543,11 +543,13 @@ function renderQuestion(mode: rendermode) {
   let [answerer, answer] = ["", 0]
   let isplayer = g.playerStatuses.has(hName.value)
   let playeranswer = 0
+  let pendingPlayers = 0
   g.playerStatuses.forEach((st, name) => {
     if (st.active) playercnt++
     if (st.active && (st.response & responsebits.answermask) > 0) allanswers.push(st.response & responsebits.answermask)
     if (st.active && (st.response & responsebits.answerermarker) != 0) [answerer, answer] = [name, st.response & responsebits.answermask]
     if (st.active && (st.response & responsebits.answermask) > 0 && name == hName.value) playeranswer = st.response & responsebits.answermask
+    if (st.active && name != answerer && (st.response & responsebits.answermask) == 0) pendingPlayers++
   })
   let isanswerer = hName.value == answerer
 
@@ -557,33 +559,35 @@ function renderQuestion(mode: rendermode) {
     hGroupControl.hidden = true
   } else {
     hGroupControl.hidden = false
-    hAnswerer.hidden = isvote || answerer == ""
+    hAnswerer.hidden = !isvote && answerer == ""
     hBecomeAnswerer.hidden = isvote || (answerer != "" && answerer != hName.value)
     hNextMark.hidden = !isplayer
 
     let answerertype = isdare ? "receiver" : "answerer"
-    let rem = playercnt - allanswers.length - 1
-    if (answer != 0) rem++
     if (isquestion) {
       if (isanswerer) {
-        if (rem == 0 && answer != 0) answererText = "round done"
-        if (rem == 0 && answer == 0) answererText = "all ready, answer now!"
-        if (rem > 0 && answer == 0) answererText = `wait, ${rem} guessers pending`
-        if (rem > 0 && answer != 0) answererText = `round done, ${rem} unanswered`
+        if (pendingPlayers == 0 && answer != 0) answererText = "round done"
+        if (pendingPlayers == 0 && answer == 0) answererText = "all ready, answer now!"
+        if (pendingPlayers > 0 && answer == 0) answererText = `wait, ${pendingPlayers} guessers pending`
+        if (pendingPlayers > 0 && answer != 0) answererText = `round done, ${pendingPlayers} unanswered`
       } else {
         if (answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
-        if (rem > 0 && answer == 0)
+        if (pendingPlayers > 0 && answer == 0) {
           answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} guessers pending`
-        if (rem == 0 && answer == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, waiting on answer`
+        }
+        if (pendingPlayers == 0 && answer == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, waiting on answer`
       }
     } else if (isdare) {
       if (isanswerer) {
-        if (rem == 0) answererText = "round done"
-        if (rem > 0) answererText = `${rem} responses pending`
+        if (pendingPlayers == 0) answererText = "round done"
+        if (pendingPlayers > 0) answererText = `${pendingPlayers} responses pending`
       } else {
-        if (rem > 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} responses pending`
-        if (rem == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
+        if (pendingPlayers > 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} responses pending`
+        if (pendingPlayers == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
       }
+    } else if (isvote) {
+      if (allanswers.length == playercnt) answererText = `round done`
+      if (allanswers.length != playercnt) answererText = `${playercnt - allanswers.length} responses pending`
     }
     hBecomeAnswerer.innerText = `${answerer == hName.value ? "[x]" : "[ ]"} become ${answerertype}`
   }
@@ -606,13 +610,12 @@ function renderQuestion(mode: rendermode) {
       } else if (playercnt == 2 && allanswers.length == 2) {
         revealed = true
         bgclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
+        hBecomeAnswerer.hidden = true
+        hAnswerer.hidden = false
+        answererText = allanswers[0] == allanswers[1] ? "you agree" : "you disagree"
       }
     } else if (isdare) {
-      let allanswered = g.playerStatuses.forEach((st, name) => {
-        if (st.active && name != answerer && (st.response & responsebits.answermask) == 0) return false
-        return true
-      })
-      if (answerer != "" && allanswered) {
+      if (answerer != "" && pendingPlayers == 0) {
         revealed = true
         let hasvolunteer = allanswers.some((v) => v >= 2)
         if (isanswerer || !isplayer) {
@@ -628,6 +631,17 @@ function renderQuestion(mode: rendermode) {
         revealed = true
         let [mn, mx] = [Math.min(...allanswers), Math.max(...allanswers)]
         bgclass = mn >= 2 && mx >= 3 ? "cbgPositive" : "cbgNegative"
+        hBecomeAnswerer.hidden = true
+        hAnswerer.hidden = false
+        answererText = mn >= 2 && mx >= 3 ? "go for the activity!" : "skip the activity"
+      }
+    } else if (isvote) {
+      if (allanswers.length == playercnt) {
+        revealed = true
+        let [mn, mx] = [Math.min(...allanswers), Math.max(...allanswers)]
+        let ok = mn >= 3 || (mn >= 2 && mx == 4)
+        bgclass = ok ? "cbgPositive" : "cbgNegative"
+        answererText += ok ? ", go for the activity!" : ", skip the activity"
       }
     }
   }
