@@ -8,7 +8,7 @@
 // - The host/client communicate via messages.
 //
 // All network messages are in the form of [cmd][param] where cmd is a one letter code and param can be arbitrary string.
-// E.g. "a2" from a client means they are answering "2".
+// E.g. "qalice 2@bob 3" from a client means "q" command, "alice 2@bob 3" as param.
 //
 // Host->client commands:
 //
@@ -58,10 +58,9 @@ declare var questionsdata: string
 enum responsebits {
   empty = 0,
   answermask = 7, // lower bits are reserved for the answer id with a range of up to 7 answers, 0 means no answer
-  answered = 8, // only used when client->host to signal whether answermask bits contains an answer or not
-  answerermarker = 16, // marks the player as the answerer
-  nextmarker = 32, // means the player voted for jumping on the next question
-  revealmarker = 64, // means the player voted on revealing the answer in the activity vote game
+  answerermarker = 8, // marks the player as the answerer
+  nextmarker = 16, // means the player voted for jumping on the next question
+  revealmarker = 32, // means the player voted on revealing the answer in the activity vote game
 }
 
 class client {
@@ -351,14 +350,17 @@ function handleNext() {
 function reportAnswer(v: number) {
   let st = g.playerStatuses.get(hName.value)
   if (st == undefined) return
-  if (st.response & responsebits.answermask) {
+  let r = st.response
+  if ((st.response & responsebits.answermask) > 0) {
     // Already answered? Clear answer then.
-    v = 0
+    r &= ~responsebits.answermask
+  } else {
+    r = (r & ~responsebits.answermask) | v
   }
   if (g.clientMode) {
-    g.clients[0].channel?.send(`r${v | responsebits.answered}`)
+    g.clients[0].channel?.send(`r${r}`)
   } else {
-    st.response = (st.response & ~responsebits.answermask) | v
+    st.response = r
     updatePlayerStatus()
   }
 }
@@ -521,38 +523,68 @@ function renderQuestion(mode: rendermode) {
 
   // Collect various data from which to compute and render the current game status.
   let revealed = false
-  let revealclass = ""
+  let bgclass = ""
   let allanswers: number[] = []
   let playercnt = 0
-  let answerer = ""
+  let [answerer, answer] = ["", 0]
   let isplayer = g.playerStatuses.has(hName.value)
+  let playeranswer = 0
   g.playerStatuses.forEach((st, name) => {
     if (st.active) playercnt++
     if (st.active && (st.response & responsebits.answermask) > 0) allanswers.push(st.response & responsebits.answermask)
-    if (st.active && (st.response & responsebits.answerermarker) != 0) answerer = name
+    if (st.active && (st.response & responsebits.answerermarker) != 0) [answerer, answer] = [name, st.response & responsebits.answermask]
+    if (st.active && (st.response & responsebits.answermask) > 0 && name == hName.value) playeranswer = st.response & responsebits.answermask
   })
+  let isanswerer = hName.value == answerer
 
   // Compute the hGroupControl visibility status.
+  let answererText = ""
   if (playercnt <= 1) {
     hGroupControl.hidden = true
   } else {
     hGroupControl.hidden = false
-    hAnswerer.hidden = !isquestion || answerer == "" || answerer == hName.value
+    hAnswerer.hidden = !isquestion || answerer == ""
     hBecomeAnswerer.hidden = !isquestion || (answerer != "" && answerer != hName.value)
     hNextMark.hidden = !isplayer
 
     let answerertype = isdare ? "receiver" : "answerer"
-    hAnswerer.innerText = `${answerertype}: ${answerer == "" ? "?" : answerer}`
+    let rem = playercnt - allanswers.length - 1
+    if (answer != 0) rem++
+    if (isanswerer) {
+      if (rem == 0 && answer != 0) answererText = "round done"
+      if (rem == 0 && answer == 0) answererText = "all ready, answer now!"
+      if (rem > 0 && answer == 0) answererText = `wait, ${rem} guessers pending`
+      if (rem > 0 && answer != 0) answererText = `round done, ${rem} unanswered`
+    } else {
+      if (answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
+      if (rem > 0 && answer == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} guessers pending`
+      if (rem == 0 && answer == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, waiting on answer`
+    }
     hBecomeAnswerer.innerText = `${answerer == hName.value ? "[x]" : "[ ]"} become ${answerertype}`
   }
 
-  // Compute status for questions.
-  if (isquestion) {
-    if (allanswers.length == 2 && playercnt == 2) {
-      revealed = true
-      revealclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
+  // Check win condition.
+  if (playercnt >= 2) {
+    if (isquestion) {
+      if (answer != 0) {
+        revealed = true
+        if (isanswerer || !isplayer) {
+          let allcorrect = allanswers.every((v) => v == answer)
+          bgclass = allcorrect ? "cbgPositive" : "cbgNegative"
+          answererText += allcorrect ? ", all correct" : ", some incorrect"
+        } else if (playeranswer != 0) {
+          bgclass = playeranswer == answer ? "cbgPositive" : "cbgNegative"
+          answererText += playeranswer == answer ? ", you guessed right!" : ", you guessed wrong!"
+        }
+      } else if (isanswerer) {
+        bgclass = allanswers.length == playercnt - 1 ? "cbgSpecial" : "cbgReference"
+      } else if (allanswers.length == 2 && playercnt == 2) {
+        revealed = true
+        bgclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
+      }
     }
   }
+  hAnswerer.innerText = answererText
 
   // Render player names if revealed.
   let answerNames: string[][] = [[], [], [], [], []]
@@ -581,10 +613,10 @@ function renderQuestion(mode: rendermode) {
   let r = g.playerStatuses.get(hName.value)
   if (r == undefined || !r.active || playercnt == 1) {
     // This is a follower client.
-    document.body.className = revealclass
-  } else if (revealclass != "") {
+    document.body.className = bgclass
+  } else if (bgclass != "") {
     // Result ready.
-    document.body.className = revealclass
+    document.body.className = bgclass
   } else if ((r.response & responsebits.answermask) > 0) {
     // Answered, waiting for reveal.
     document.body.className = "cbgNotice"
@@ -873,12 +905,8 @@ async function connectToClient(hostcode: string, clientID: number) {
         let st = g.playerStatuses.get(c.username)
         if (st != undefined) {
           // Clear the answerer bit from the response if some other player is already the answerer.
-          if (r & responsebits.answerermarker && g.answerer != "" && g.answerer != c.username) r &= ~responsebits.answerermarker
-
-          // Take non-answer bits from r, answer bits from r iff answered bit is set.
-          let nr = r & ~(responsebits.answermask | responsebits.answered)
-          nr |= r & responsebits.answered ? r & responsebits.answermask : st.response & responsebits.answermask
-          st.response = nr
+          if ((r & responsebits.answerermarker) > 0 && g.answerer != "" && g.answerer != c.username) r &= ~responsebits.answerermarker
+          st.response = r
         }
         updatePlayerStatus()
         renderQuestion(rendermode.quick)
