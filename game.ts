@@ -447,11 +447,14 @@ function updatePlayerStatus() {
       }
     }
   }
+
   let statusmsg = [] as string[]
+  let nextcnt = 0
   g.answerer = ""
   g.playerStatuses.forEach((st, name) => {
     if (st.active) statusmsg.push(`${name} ${st.response}`)
     if (st.active && st.response & responsebits.answerermarker) g.answerer = name
+    if (st.active && (st.response & responsebits.nextmarker) > 0) nextcnt++
   })
   statusmsg.sort((a, b) => {
     if (a < b) return -1
@@ -460,6 +463,7 @@ function updatePlayerStatus() {
   })
   let msg = "p" + statusmsg.join("@")
   for (let c of g.clients) c.channel?.send(msg)
+  if (nextcnt >= 2) handleNext()
 }
 
 function renderStatus() {
@@ -970,19 +974,9 @@ async function connectToClient(hostcode: string, clientID: number) {
         if (r != r || c.username == "") break
         let st = g.playerStatuses.get(c.username)
         if (st != undefined) {
-          // Jump to next if needed.
-          let next = false
-          if ((r & responsebits.nextmarker) > 0 && (st.response & responsebits.nextmarker) == 0) {
-            g.playerStatuses.forEach((st) => {
-              if (st.active && (st.response & responsebits.nextmarker) > 0) next = true
-            })
-          }
-
           // Clear the answerer bit from the response if some other player is already the answerer.
           if ((r & responsebits.answerermarker) > 0 && g.answerer != "" && g.answerer != c.username) r &= ~responsebits.answerermarker
           st.response = r
-
-          if (next) handleNext()
         }
         updatePlayerStatus()
         renderQuestion(rendermode.quick)
