@@ -40,7 +40,7 @@ declare var hHostURL: HTMLElement
 declare var hName: HTMLInputElement
 declare var hNameErr: HTMLElement
 declare var hNetwork: HTMLElement
-declare var hNextMark: HTMLElement
+declare var hNextMarker: HTMLElement
 declare var hHostcode: HTMLInputElement
 declare var hIntro: HTMLElement
 declare var hJoincode: HTMLInputElement
@@ -49,6 +49,7 @@ declare var hNeedJS: HTMLElement
 declare var hPlayers: HTMLElement
 declare var hPrintable: HTMLElement
 declare var hQuestion: HTMLElement
+declare var hRevealMarker: HTMLElement
 declare var hSeed: HTMLInputElement
 declare var hSeedPreview: HTMLElement
 declare var hStat: HTMLInputElement
@@ -543,11 +544,13 @@ function renderQuestion(mode: rendermode) {
   let [answerer, answer] = ["", 0]
   let isplayer = g.playerStatuses.has(hName.value)
   let playeranswer = 0
+  let playerresponse = 0
   let pendingPlayers = 0
   g.playerStatuses.forEach((st, name) => {
     if (st.active) playercnt++
     if (st.active && (st.response & responsebits.answermask) > 0) allanswers.push(st.response & responsebits.answermask)
     if (st.active && (st.response & responsebits.answerermarker) != 0) [answerer, answer] = [name, st.response & responsebits.answermask]
+    if (st.active && name == hName.value) playerresponse = st.response
     if (st.active && (st.response & responsebits.answermask) > 0 && name == hName.value) playeranswer = st.response & responsebits.answermask
     if (st.active && name != answerer && (st.response & responsebits.answermask) == 0) pendingPlayers++
   })
@@ -561,7 +564,11 @@ function renderQuestion(mode: rendermode) {
     hGroupControl.hidden = false
     hAnswerer.hidden = !isvote && answerer == ""
     hBecomeAnswerer.hidden = isvote || (answerer != "" && answerer != hName.value)
-    hNextMark.hidden = !isplayer
+    hRevealMarker.hidden = !isvote || playercnt < 3
+    hNextMarker.hidden = !isplayer
+
+    hRevealMarker.innerText = `${(playerresponse & responsebits.revealmarker) > 0 ? "[x]" : "[ ]"} force reveal (needs 2 players)`
+    hNextMarker.innerText = `${(playerresponse & responsebits.nextmarker) > 0 ? "[x]" : "[ ]"} next question (needs 2 players)`
 
     let answerertype = isdare ? "receiver" : "answerer"
     if (isquestion) {
@@ -748,26 +755,17 @@ function handleHash() {
   hIntro.hidden = false
 }
 
-function handleAnswererMarkClick() {
+function handleMarkerClick(bit: responsebits) {
   // Find current response.
   let response = null
   let st = g.playerStatuses.get(hName.value)
   if (g.clients.length == 0 || st == null) return
   if (g.clientMode) {
-    g.clients[0].channel?.send(`r${st.response ^ responsebits.answerermarker}`)
+    g.clients[0].channel?.send(`r${st.response ^ bit}`)
   } else {
-    if (g.answerer != "" && g.answerer != hName.value) return
-    st.response ^= responsebits.answerermarker
+    st.response ^= bit
     updatePlayerStatus()
     renderQuestion(rendermode.quick)
-  }
-}
-
-function handleNextMarkClick() {
-  if (hNextMark.innerText == "[x]") {
-    hNextMark.innerText = "[ ]"
-  } else {
-    hNextMark.innerText = "[x]"
   }
 }
 
