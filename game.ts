@@ -39,6 +39,7 @@ declare var hHostGame: HTMLInputElement
 declare var hHostURL: HTMLElement
 declare var hName: HTMLInputElement
 declare var hNameErr: HTMLElement
+declare var hNavbar: HTMLElement
 declare var hNetwork: HTMLElement
 declare var hNextMarker: HTMLElement
 declare var hHostcode: HTMLInputElement
@@ -419,7 +420,7 @@ function updateCurrentQuestion() {
   updatePlayerStatus()
 
   if (g.questionIndex == g.shuffledqs.length) {
-    g.currentQuestion = ["none", "Game over because out of questions. What now?", "go home", "play again with spicier categories", "play something else"]
+    g.currentQuestion = ["none", "vote: Game over because out of questions. Play again with spicier categories?"]
   } else {
     g.currentQuestion = g.shuffledqs[g.questionIndex]
   }
@@ -511,10 +512,7 @@ function renderQuestion(mode: rendermode) {
   }
 
   if (mode == rendermode.full) {
-    let h = ""
-    h += "<button onclick=handlePrev() style=width:45%>Prev</button> <button onclick=handleNext() style=width:45%>Next</button>\n"
-    h += makeQuestionHTML(g.currentQuestion)
-    hQuestion.innerHTML = h
+    hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion)
     g.fontsize = 300
     hGameScreen.style.fontSize = `300px`
 
@@ -560,6 +558,7 @@ function renderQuestion(mode: rendermode) {
 
   // Compute the hGroupControl visibility status and its text.
   let answererText = ""
+  hNavbar.hidden = isplayer && playercnt >= 2
   if (playercnt <= 1) {
     hGroupControl.hidden = true
   } else {
