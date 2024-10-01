@@ -554,7 +554,8 @@ function renderQuestion(mode: rendermode) {
     if (st.active && name != answerer && (st.response & responsebits.answermask) == 0) pendingPlayers++
     if (st.active && (st.response & responsebits.revealmarker) > 0) revealcnt++
   })
-  let isanswerer = hName.value == answerer
+  let isanswerer = hName.value != "" && hName.value == answerer
+  let isspectator = !isplayer
 
   // Compute the hGroupControl visibility status and its text.
   let answererText = ""
@@ -563,8 +564,8 @@ function renderQuestion(mode: rendermode) {
     hGroupControl.hidden = true
   } else {
     hGroupControl.hidden = false
-    hAnswerer.hidden = !isvote && answerer == ""
-    hBecomeAnswerer.hidden = isvote || (answerer != "" && answerer != hName.value)
+    hAnswerer.hidden = isplayer && !isvote && answerer == ""
+    hBecomeAnswerer.hidden = isspectator || isvote || (answerer != "" && answerer != hName.value)
     hRevealMarker.hidden = !isvote || playercnt < 3
     hNextMarker.hidden = !isplayer
 
@@ -614,7 +615,7 @@ function renderQuestion(mode: rendermode) {
           answererText += playeranswer == answer ? ", you guessed right!" : ", you guessed wrong!"
         }
       } else if (isanswerer) {
-        bgclass = allanswers.length == playercnt - 1 ? "cbgSpecial" : "cbgReference"
+        bgclass = pendingPlayers == 0 ? "cbgSpecial" : "cbgReference"
       } else if (playercnt == 2 && allanswers.length == 2) {
         revealed = true
         bgclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
