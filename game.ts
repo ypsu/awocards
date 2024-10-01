@@ -435,7 +435,13 @@ function updateCurrentQuestion() {
 }
 
 function updatePlayerStatus() {
-  if (g.clientMode) return
+  if (g.clientMode) {
+    g.answerer = ""
+    g.playerStatuses.forEach((st, name) => {
+      if (st.active && st.response & responsebits.answerermarker) g.answerer = name
+    })
+    return
+  }
   g.playerStatuses.forEach((st) => (st.active = false))
   for (let c of g.clients) {
     if (c.networkStatus == "" && c.username != "") {
@@ -491,9 +497,10 @@ function renderStatus() {
   let players = [] as string[]
   g.playerStatuses.forEach((st, name) => {
     if (!st.active) return
-    if ((st.response & responsebits.answermask) > 0) {
-      // TODO: do yellow for answered, green for correct, red for incorrect, blue for answerer.
-      players.push(`<span class=cfgPositive>${name}</span>`)
+    if (name == g.answerer) {
+      players.push(`<span  class=cfgReference>${name}</span>`)
+    } else if ((st.response & responsebits.answermask) > 0) {
+      players.push(`<span class=cfgNotice>${name}</span>`)
     } else {
       players.push(name)
     }
@@ -1183,6 +1190,7 @@ async function join() {
               if (!st.response) st.response = 0
               g.playerStatuses.set(sp[0], st)
             }
+            updatePlayerStatus()
             renderQuestion(rendermode.full)
             return
           case "q":
