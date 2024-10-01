@@ -177,60 +177,60 @@ What would you do if your partner suddenly became bedridden for life? @ stay wit
 Would you watch your partner having sex with someone else? @ no, I wouldn't allow my partner to have sex with others @ I don't want to be present @ sure, I'd be happy to watch @ sure, I'd be happy to record it even
 
 @light-dares
-dare: Do you want to pour a glass of water over X's head?
-dare: Do you want to pour a glass of water over X's t-shirt?
-dare: Do you want to kiss X's cheek?
-dare: Do you want to kiss X's hand?
-dare: Do you want to kiss X's sole?
-dare: Do you want to french kiss X?
-dare: Do you want to drink something from X's mouth?
-dare: Do you want to bite X's ear?
-dare: Do you want to bite X's neck?
-dare: Do you want to slap X's clothed ass?
-dare: Do you want to slap X's face?
-dare: Do you want to have your hands go through X's hair?
-dare: Do you want to hug X?
-dare: Do you want to put your ear on X's chest and listen to their heartbeat?
-dare: Do you want to give X a feet massage?
-dare: Do you want to give X a shoulder massage?
-dare: Do you want to scratch X's back?
-dare: Do you want to tickle X's armpits?
-dare: Do you want to tickle X's feet?
-dare: Do you want to lick X's armpit?
-dare: Do you want to lick X's cheek?
-dare: Do you want to lick or bite X's ear?
-dare: Do you want to lick or bite X's lips?
-dare: Do you want to lick X's navel?
-dare: Do you want to lick X's palm?
-dare: Do you want to lick X's sole?
-dare: Do you want to lick X's teeth?
-dare: Do you want to suck X's finger?
-dare: Do you want to suck X's toe?
-dare: Do you want to suck X's tongue?
-dare: Do you want to take off all X's upper body clothing and see them topless?
-dare: Do you want to pull all X's bottom body clothing and see them bottomless?
-dare: Do you want to take off all X's clothing and see them fully naked?
-dare: Do you want to put your hands under X's t-shirt and feel out their chests or breasts?
-dare: Do you want to put your hands into X's pants and feel what's between their legs?
-dare: Do you want to slap X's naked ass?
+dare: Do you want to pour a glass of water over their head?
+dare: Do you want to pour a glass of water over their t-shirt?
+dare: Do you want to kiss their cheek?
+dare: Do you want to kiss their hand?
+dare: Do you want to kiss their sole?
+dare: Do you want to french kiss them?
+dare: Do you want to drink something from their mouth?
+dare: Do you want to bite their ear?
+dare: Do you want to bite their neck?
+dare: Do you want to slap their clothed ass?
+dare: Do you want to slap their face?
+dare: Do you want to have your hands go through their hair?
+dare: Do you want to hug them?
+dare: Do you want to put your ear on their chest and listen to their heartbeat?
+dare: Do you want to give them a feet massage?
+dare: Do you want to give them a shoulder massage?
+dare: Do you want to scratch their back?
+dare: Do you want to tickle their armpits?
+dare: Do you want to tickle their feet?
+dare: Do you want to lick their armpit?
+dare: Do you want to lick their cheek?
+dare: Do you want to lick or bite their ear?
+dare: Do you want to lick or bite their lips?
+dare: Do you want to lick their navel?
+dare: Do you want to lick their palm?
+dare: Do you want to lick their sole?
+dare: Do you want to lick their teeth?
+dare: Do you want to suck their finger?
+dare: Do you want to suck their toe?
+dare: Do you want to suck their tongue?
+dare: Do you want to take off all their upper body clothing and see them topless?
+dare: Do you want to pull all their bottom body clothing and see them bottomless?
+dare: Do you want to take off all their clothing and see them fully naked?
+dare: Do you want to put your hands under their t-shirt and feel out their chests or breasts?
+dare: Do you want to put your hands into their pants and feel what's between their legs?
+dare: Do you want to slap their naked ass?
 
 @hot-dares
-dare: Do you want to have a naked hug with X?
-dare: Do you want to take a photo of X's bare chest / breasts and keep it?
-dare: Do you want to take a photo of X's genital and keep it?
-dare: Do you want to take a photo of X's asshole and keep it?
-dare: Do you want to take a photo of X's fully naked body without face and keep it?
-dare: Do you want to take a photo of X's fully naked body with face and keep it?
-dare: Do you want to lick X's asshole?
-dare: Do you want to lick X's genital?
-dare: Do you want to lick X's nipple?
-dare: Do you want to suck X's genital?
-dare: Do you want to suck X's nipple?
-dare: Do you want to massage X's bare chest / breasts?
-dare: Do you want to massage X's genital?
-dare: Do you want to massage X's asshole?
-dare: Do you want to have your genital touch X's genital?
-dare: Do you want to inspect X's genital up close and play doctor?
+dare: Do you want to have a naked hug with them?
+dare: Do you want to take a photo of their bare chest / breasts and keep it?
+dare: Do you want to take a photo of their genital and keep it?
+dare: Do you want to take a photo of their asshole and keep it?
+dare: Do you want to take a photo of their fully naked body without face and keep it?
+dare: Do you want to take a photo of their fully naked body with face and keep it?
+dare: Do you want to lick their asshole?
+dare: Do you want to lick their genital?
+dare: Do you want to lick their nipple?
+dare: Do you want to suck their genital?
+dare: Do you want to suck their nipple?
+dare: Do you want to massage their bare chest / breasts?
+dare: Do you want to massage their genital?
+dare: Do you want to massage their asshole?
+dare: Do you want to have your genital touch their genital?
+dare: Do you want to inspect their genital up close and play doctor?
 
 @activities
 vote: Should we go for a boat tour?

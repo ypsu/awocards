@@ -246,8 +246,7 @@ function makeQuestionHTML(q: question) {
     return h
   }
   if (q[1].startsWith("dare: ")) {
-    let qt = q[1].slice(6).replaceAll("X", "[answerer]")
-    let h = `<p>Dare: ${escapehtml(qt)}</li><ol>\n`
+    let h = `<p>Dare: ${escapehtml(q[1].slice(6))}</li><ol>\n`
     h += `<li ${a()}>no ${p()}</li>\n`
     h += `<li ${a()}>can be talked into it ${p()}</li>\n`
     h += `<li ${a()}>I don't mind trying ${p()}</li>\n`
@@ -374,7 +373,12 @@ function countPlayers() {
 }
 
 function handleMouse(event: MouseEvent, v: number) {
-  if (g.clients.length == 0 || !g.playerStatuses.has(hName.value) || countPlayers() <= 1) {
+  if (
+    g.clients.length == 0 ||
+    !g.playerStatuses.has(hName.value) ||
+    countPlayers() <= 1 ||
+    (g.answerer == hName.value && g.currentQuestion[1].startsWith("dare: "))
+  ) {
     // single player mode, client not connected, or follower mode, do nothing.
   } else if (event.type == "mouseleave") {
     g.focusedAnswerID = 0
@@ -390,7 +394,12 @@ function handleMouse(event: MouseEvent, v: number) {
 function handleTouch(event: TouchEvent, v: number) {
   event.stopPropagation()
   event.preventDefault()
-  if (g.clients.length == 0 || !g.playerStatuses.has(hName.value) || countPlayers() <= 1) {
+  if (
+    g.clients.length == 0 ||
+    !g.playerStatuses.has(hName.value) ||
+    countPlayers() <= 1 ||
+    (g.answerer == hName.value && g.currentQuestion[1].startsWith("dare: "))
+  ) {
     // single player mode, client not connected, or follower mode, do nothing.
   } else if (event.type == "touchstart") {
     g.focusedAnswerID = v
@@ -488,6 +497,11 @@ enum rendermode {
 function renderQuestion(mode: rendermode) {
   renderStatus()
 
+  if (g.currentQuestion.length == 0) {
+    hQuestion.innerText = "loading..."
+    return
+  }
+
   // Not connected to host yet, that's the only case where the clients array can be empty.
   // Ignore that, the interface doesn't have to be interactible in that case.
   if (g.clients.length == 0) {
@@ -517,8 +531,8 @@ function renderQuestion(mode: rendermode) {
     }
   }
 
-  let isdare = g.currentQuestion[0].startsWith("dare: ")
-  let isvote = g.currentQuestion[0].startsWith("vote: ")
+  let isdare = g.currentQuestion[1].startsWith("dare: ")
+  let isvote = g.currentQuestion[1].startsWith("vote: ")
   let isquestion = !isdare && !isvote
 
   // Collect various data from which to compute and render the current game status.
@@ -537,33 +551,44 @@ function renderQuestion(mode: rendermode) {
   })
   let isanswerer = hName.value == answerer
 
-  // Compute the hGroupControl visibility status.
+  // Compute the hGroupControl visibility status and its text.
   let answererText = ""
   if (playercnt <= 1) {
     hGroupControl.hidden = true
   } else {
     hGroupControl.hidden = false
-    hAnswerer.hidden = !isquestion || answerer == ""
-    hBecomeAnswerer.hidden = !isquestion || (answerer != "" && answerer != hName.value)
+    hAnswerer.hidden = isvote || answerer == ""
+    hBecomeAnswerer.hidden = isvote || (answerer != "" && answerer != hName.value)
     hNextMark.hidden = !isplayer
 
     let answerertype = isdare ? "receiver" : "answerer"
     let rem = playercnt - allanswers.length - 1
     if (answer != 0) rem++
-    if (isanswerer) {
-      if (rem == 0 && answer != 0) answererText = "round done"
-      if (rem == 0 && answer == 0) answererText = "all ready, answer now!"
-      if (rem > 0 && answer == 0) answererText = `wait, ${rem} guessers pending`
-      if (rem > 0 && answer != 0) answererText = `round done, ${rem} unanswered`
-    } else {
-      if (answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
-      if (rem > 0 && answer == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} guessers pending`
-      if (rem == 0 && answer == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, waiting on answer`
+    if (isquestion) {
+      if (isanswerer) {
+        if (rem == 0 && answer != 0) answererText = "round done"
+        if (rem == 0 && answer == 0) answererText = "all ready, answer now!"
+        if (rem > 0 && answer == 0) answererText = `wait, ${rem} guessers pending`
+        if (rem > 0 && answer != 0) answererText = `round done, ${rem} unanswered`
+      } else {
+        if (answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
+        if (rem > 0 && answer == 0)
+          answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} guessers pending`
+        if (rem == 0 && answer == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, waiting on answer`
+      }
+    } else if (isdare) {
+      if (isanswerer) {
+        if (rem == 0) answererText = "round done"
+        if (rem > 0) answererText = `${rem} responses pending`
+      } else {
+        if (rem > 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} responses pending`
+        if (rem == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
+      }
     }
     hBecomeAnswerer.innerText = `${answerer == hName.value ? "[x]" : "[ ]"} become ${answerertype}`
   }
 
-  // Check win condition.
+  // Check win condition and determine background color.
   if (playercnt >= 2) {
     if (isquestion) {
       if (answer != 0) {
@@ -578,9 +603,31 @@ function renderQuestion(mode: rendermode) {
         }
       } else if (isanswerer) {
         bgclass = allanswers.length == playercnt - 1 ? "cbgSpecial" : "cbgReference"
-      } else if (allanswers.length == 2 && playercnt == 2) {
+      } else if (playercnt == 2 && allanswers.length == 2) {
         revealed = true
         bgclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
+      }
+    } else if (isdare) {
+      let allanswered = g.playerStatuses.forEach((st, name) => {
+        if (st.active && name != answerer && (st.response & responsebits.answermask) == 0) return false
+        return true
+      })
+      if (answerer != "" && allanswered) {
+        revealed = true
+        let hasvolunteer = allanswers.some((v) => v >= 2)
+        if (isanswerer || !isplayer) {
+          bgclass = hasvolunteer ? "cbgPositive" : "cbgNegative"
+          answererText += hasvolunteer ? ", there are volunteers" : ", no volunteers"
+        } else if (isplayer) {
+          bgclass = playeranswer >= 2 ? "cbgPositive" : "cbgNegative"
+          answererText += hasvolunteer ? ", there are volunteers" : ", no volunteers"
+        }
+      } else if (isanswerer) {
+        bgclass = "cbgReference"
+      } else if (playercnt == 2 && allanswers.length == 2) {
+        revealed = true
+        let [mn, mx] = [Math.min(...allanswers), Math.max(...allanswers)]
+        bgclass = mn >= 2 && mx >= 3 ? "cbgPositive" : "cbgNegative"
       }
     }
   }
@@ -590,6 +637,7 @@ function renderQuestion(mode: rendermode) {
   let answerNames: string[][] = [[], [], [], [], []]
   if (revealed) {
     g.playerStatuses.forEach((st, name) => {
+      if (isdare && name == answerer) return
       if (st.active) answerNames[st.response & responsebits.answermask].push(name)
     })
   }
@@ -617,7 +665,7 @@ function renderQuestion(mode: rendermode) {
   } else if (bgclass != "") {
     // Result ready.
     document.body.className = bgclass
-  } else if ((r.response & responsebits.answermask) > 0) {
+  } else if ((r.response & responsebits.answermask) > 0 && (!isdare || answerer != hName.value)) {
     // Answered, waiting for reveal.
     document.body.className = "cbgNotice"
   } else {
@@ -652,14 +700,14 @@ function disconnectAll() {
 }
 
 function handleHash() {
+  // Close all connections.
+  disconnectAll()
+
   hIntro.hidden = true
   hSeedPreview.hidden = true
   hPrintable.hidden = true
   hGameUI.hidden = true
   document.body.className = ""
-
-  // Close all connections.
-  disconnectAll()
 
   if (location.hash == "#preview") {
     handleSeedPreview()
@@ -745,7 +793,6 @@ function handleParse() {
     let parts = line.split("@")
     for (let i in parts) parts[i] = parts[i].trim()
     let special = parts[0].startsWith("dare: ") || parts[0].startsWith("vote: ")
-    let x = parts[0].indexOf("X")
     if (!knownCategories.has(category)) {
       badcards++
       badcard = line
@@ -758,10 +805,6 @@ function handleParse() {
       badcards++
       badcard = line
       badreason = `got ${parts.length - 1} answers, want 2-4`
-    } else if (parts[0].startsWith("dare: ") && (x == -1 || parts[0].lastIndexOf("X") != x)) {
-      badcards++
-      badcard = line
-      badreason = "needs exactly one 1 X"
     } else {
       qs.push([category].concat(parts))
     }
@@ -816,7 +859,7 @@ function handleNameChange(s: string) {
   }
   g.clients[0].username = s
   updatePlayerStatus()
-  renderStatus()
+  renderQuestion(rendermode.quick)
 }
 
 const signalingServer = "https://iio.ie/sig"
