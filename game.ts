@@ -20,7 +20,7 @@
 // Client->host commands:
 //
 // - l: Log param on the host. For debugging.
-// - n: Set the username of the client. Empty or invalid param resets the client to a follower.
+// - n: Set the username of the client. Empty or invalid param resets the client to a spectator.
 // - j: Jump to specific question. Param is the new card index (1 based).
 // - r: Mark the response status. Param is a responsebits number.
 // - x: Client leaves.
@@ -382,7 +382,7 @@ function handleMouse(event: MouseEvent, v: number) {
     countPlayers() <= 1 ||
     (g.answerer == hName.value && g.currentQuestion[1].startsWith("dare: "))
   ) {
-    // single player mode, client not connected, or follower mode, do nothing.
+    // single player mode, client not connected, or spectator mode, do nothing.
   } else if (event.type == "mouseleave") {
     g.focusedAnswerID = 0
   } else if (event.type == "mouseup") {
@@ -403,7 +403,7 @@ function handleTouch(event: TouchEvent, v: number) {
     countPlayers() <= 1 ||
     (g.answerer == hName.value && g.currentQuestion[1].startsWith("dare: "))
   ) {
-    // single player mode, client not connected, or follower mode, do nothing.
+    // single player mode, client not connected, or spectator mode, do nothing.
   } else if (event.type == "touchstart") {
     g.focusedAnswerID = v
   } else if (event.type == "touchcancel") {
@@ -465,24 +465,24 @@ function updatePlayerStatus() {
 function renderStatus() {
   let stat = `${g.currentPos}, category ${g.currentQuestion[0]}`
   if (!g.clientMode) {
-    let [clients, players, followers, pending] = [0, 0, 0, 0]
+    let [clients, players, spectators, pending] = [0, 0, 0, 0]
     for (let c of g.clients) {
       if (c.networkStatus != "" && c.conn != null) pending++
-      if (c.networkStatus == "" && c.username == "") followers++
+      if (c.networkStatus == "" && c.username == "") spectators++
       if (c.networkStatus == "" && c.username != "") clients++
     }
     g.playerStatuses.forEach((st) => {
       if (st.active) players++
     })
     if (g.clients.length >= 2) {
-      if (g.clients[0].username == "") followers--
-      if (followers > 0) stat += `, ${followers} followers`
+      if (g.clients[0].username == "") spectators--
+      if (spectators > 0) stat += `, ${spectators} spectators`
       if (players > 0) stat += `, ${players} players`
-      if (clients != players) stat += `, ${clients} clients (some players have multiple clients)`
+      if (clients != players) stat += `, ${clients} clients <span class=cfgNegative>(some clients have identical names!)</span>`
       if (pending > 0) stat += `, ${pending} pending`
     }
   }
-  hStat.innerText = stat
+  hStat.innerHTML = stat
 
   let players = [] as string[]
   g.playerStatuses.forEach((st, name) => {
@@ -513,7 +513,7 @@ function renderQuestion(mode: rendermode) {
   }
 
   if (mode == rendermode.full) {
-    if ('wakeLock' in navigator) navigator.wakeLock.request('screen');
+    if ("wakeLock" in navigator) navigator.wakeLock.request("screen")
     hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion, true)
     g.fontsize = 300
     hGameScreen.style.fontSize = `300px`
@@ -686,7 +686,7 @@ function renderQuestion(mode: rendermode) {
   // Color the background as needed.
   let r = g.playerStatuses.get(hName.value)
   if (r == undefined || !r.active || playercnt == 1) {
-    // This is a follower client.
+    // This is a spectator client.
     document.body.className = bgclass
   } else if (bgclass != "") {
     // Result ready.
@@ -939,7 +939,7 @@ async function connectToClient(hostcode: string, clientID: number) {
 
   conn.oniceconnectionstatechange = async (ev) => {
     if (conn.iceConnectionState != "disconnected") return
-    error(`error: lost connection to ${c.username == "" ? "a follower" : c.username}`)
+    error(`error: lost connection to ${c.username == "" ? "a spectator" : c.username}`)
     updatePlayerStatus()
     renderQuestion(rendermode.full)
   }
@@ -982,7 +982,7 @@ async function connectToClient(hostcode: string, clientID: number) {
         renderQuestion(rendermode.quick)
         break
       case "x":
-        error(`${c.username == "" ? "a follower" : c.username} exited`)
+        error(`${c.username == "" ? "a spectator" : c.username} exited`)
         updatePlayerStatus()
         renderQuestion(rendermode.full)
         break
