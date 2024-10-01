@@ -962,9 +962,19 @@ async function connectToClient(hostcode: string, clientID: number) {
         if (r != r || c.username == "") break
         let st = g.playerStatuses.get(c.username)
         if (st != undefined) {
+          // Jump to next if needed.
+          let next = false
+          if ((r & responsebits.nextmarker) > 0 && (st.response & responsebits.nextmarker) == 0) {
+            g.playerStatuses.forEach((st) => {
+              if (st.active && (st.response & responsebits.nextmarker) > 0) next = true
+            })
+          }
+
           // Clear the answerer bit from the response if some other player is already the answerer.
           if ((r & responsebits.answerermarker) > 0 && g.answerer != "" && g.answerer != c.username) r &= ~responsebits.answerermarker
           st.response = r
+
+          if (next) handleNext()
         }
         updatePlayerStatus()
         renderQuestion(rendermode.quick)
