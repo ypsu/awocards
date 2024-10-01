@@ -513,6 +513,7 @@ function renderQuestion(mode: rendermode) {
   }
 
   if (mode == rendermode.full) {
+    if ('wakeLock' in navigator) navigator.wakeLock.request('screen');
     hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion, true)
     g.fontsize = 300
     hGameScreen.style.fontSize = `300px`
