@@ -546,6 +546,7 @@ function renderQuestion(mode: rendermode) {
   let playeranswer = 0
   let playerresponse = 0
   let pendingPlayers = 0
+  let revealcnt = 0
   g.playerStatuses.forEach((st, name) => {
     if (st.active) playercnt++
     if (st.active && (st.response & responsebits.answermask) > 0) allanswers.push(st.response & responsebits.answermask)
@@ -553,6 +554,7 @@ function renderQuestion(mode: rendermode) {
     if (st.active && name == hName.value) playerresponse = st.response
     if (st.active && (st.response & responsebits.answermask) > 0 && name == hName.value) playeranswer = st.response & responsebits.answermask
     if (st.active && name != answerer && (st.response & responsebits.answermask) == 0) pendingPlayers++
+    if (st.active && (st.response & responsebits.revealmarker) > 0) revealcnt++
   })
   let isanswerer = hName.value == answerer
 
@@ -643,7 +645,8 @@ function renderQuestion(mode: rendermode) {
         answererText = mn >= 2 && mx >= 3 ? "go for the activity!" : "skip the activity"
       }
     } else if (isvote) {
-      if (allanswers.length == playercnt) {
+      console.log("revealcnt", revealcnt)
+      if (allanswers.length == playercnt || (revealcnt >= 2 && allanswers.length >= 1)) {
         revealed = true
         let [mn, mx] = [Math.min(...allanswers), Math.max(...allanswers)]
         let ok = mn >= 3 || (mn >= 2 && mx == 4)
