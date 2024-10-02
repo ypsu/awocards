@@ -493,20 +493,6 @@ function renderStatus() {
     }
   }
   hStat.innerHTML = stat
-
-  let players = [] as string[]
-  g.playerStatuses.forEach((st, name) => {
-    if (!st.active) return
-    if (name == g.answerer) {
-      players.push(`<span  class=cfgReference>${name}</span>`)
-    } else if ((st.response & responsebits.answermask) > 0) {
-      players.push(`<span class=cfgNotice>${name}</span>`)
-    } else {
-      players.push(name)
-    }
-  })
-  players.sort()
-  hPlayers.innerHTML = "Players: " + players.join(", ")
 }
 
 enum rendermode {
@@ -675,6 +661,32 @@ function renderQuestion(mode: rendermode) {
     }
   }
   hAnswerer.innerText = answererText
+
+  // Render the color coded player status line.
+  let players = [] as string[]
+  g.playerStatuses.forEach((st, name) => {
+    if (!st.active) return
+    let panswer = st.response & responsebits.answermask
+    if (name == g.answerer) {
+      players.push(`<span     class=cfgReference>${name}</span>`)
+    } else if (panswer == 0) {
+      players.push(`<span  >${name}</span>`)
+    } else if (!revealed) {
+      players.push(`<span    class=cfgNotice>${name}</span>`)
+    } else if ((isdare || isvote) && panswer == 1) {
+      players.push(`<span class=cfgNegative>${name}</span>`)
+    } else if (isdare || isvote) {
+      players.push(`<span   class=cfgPositive>${name}</span>`)
+    } else if (panswer == answer) {
+      players.push(`<span   class=cfgPositive>${name}</span>`)
+    } else if (playercnt == 2 && allanswers.length == 2 && allanswers[0] == allanswers[1]) {
+      players.push(`<span   class=cfgPositive>${name}</span>`)
+    } else {
+      players.push(`<span class=cfgNegative>${name}</span>`)
+    }
+  })
+  players.sort()
+  hPlayers.innerHTML = "Players: " + players.join(", ")
 
   // Render player names if revealed.
   let answerNames: string[][] = [[], [], [], [], []]
