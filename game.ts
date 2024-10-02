@@ -544,7 +544,7 @@ function renderQuestion(mode: rendermode) {
   let bgclass = ""
   let allanswers: number[] = []
   let playercnt = 0
-  let [answerer, answer] = ["", 0]
+  let [answerer, answer, answererResponse] = ["", 0, 0]
   let isplayer = g.playerStatuses.has(hName.value)
   let playeranswer = 0
   let playerresponse = 0
@@ -553,7 +553,9 @@ function renderQuestion(mode: rendermode) {
   g.playerStatuses.forEach((st, name) => {
     if (st.active) playercnt++
     if (st.active && (st.response & responsebits.answermask) > 0) allanswers.push(st.response & responsebits.answermask)
-    if (st.active && (st.response & responsebits.answerermarker) != 0) [answerer, answer] = [name, st.response & responsebits.answermask]
+    if (st.active && (st.response & responsebits.answerermarker) != 0) {
+      ;[answerer, answer, answererResponse] = [name, st.response & responsebits.answermask, st.response]
+    }
     if (st.active && name == hName.value) playerresponse = st.response
     if (st.active && (st.response & responsebits.answermask) > 0 && name == hName.value) playeranswer = st.response & responsebits.answermask
     if (st.active && name != answerer && (st.response & responsebits.answermask) == 0) pendingPlayers++
@@ -571,10 +573,10 @@ function renderQuestion(mode: rendermode) {
     hGroupControl.hidden = false
     hAnswerer.hidden = isplayer && !isvote && answerer == ""
     hBecomeAnswerer.hidden = isspectator || isvote || (answerer != "" && answerer != hName.value)
-    hRevealMarker.hidden = !isvote || playercnt < 3
+    hRevealMarker.hidden = (!isvote && (!isdare || answerer != hName.value)) || playercnt < 3
     hNextMarker.hidden = !isplayer
 
-    hRevealMarker.innerText = `${(playerresponse & responsebits.revealmarker) > 0 ? "[x]" : "[ ]"} force reveal (needs 2 players)`
+    hRevealMarker.innerText = `${(playerresponse & responsebits.revealmarker) > 0 ? "[x]" : "[ ]"} force reveal${isvote ? " (needs 2 players)" : ""}`
     hNextMarker.innerText = `${(playerresponse & responsebits.nextmarker) > 0 ? "[x]" : "[ ]"} next question (needs 2 players)`
 
     let answerertype = isdare ? "receiver" : "answerer"
@@ -585,7 +587,8 @@ function renderQuestion(mode: rendermode) {
         if (pendingPlayers > 0 && answer == 0) answererText = `wait, ${pendingPlayers} guessers pending`
         if (pendingPlayers > 0 && answer != 0) answererText = `round done, ${pendingPlayers} unanswered`
       } else {
-        if (answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
+        if (pendingPlayers == 0 && answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
+        if (pendingPlayers > 0 && answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done, ${pendingPlayers} unanswered`
         if (pendingPlayers > 0 && answer == 0) {
           answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} guessers pending`
         }
@@ -594,9 +597,11 @@ function renderQuestion(mode: rendermode) {
     } else if (isdare) {
       if (isanswerer) {
         if (pendingPlayers == 0) answererText = "round done"
-        if (pendingPlayers > 0) answererText = `${pendingPlayers} responses pending`
+        if (pendingPlayers > 0) answererText = `wait, ${pendingPlayers} responses pending`
       } else {
-        if (pendingPlayers > 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} responses pending`
+        if (pendingPlayers > 0) {
+          answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} responses pending`
+        }
         if (pendingPlayers == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
       }
     } else if (isvote) {
@@ -629,7 +634,7 @@ function renderQuestion(mode: rendermode) {
         answererText = allanswers[0] == allanswers[1] ? "you agree" : "you disagree"
       }
     } else if (isdare) {
-      if (answerer != "" && pendingPlayers == 0) {
+      if (answerer != "" && (pendingPlayers == 0 || (answererResponse & responsebits.revealmarker) > 0)) {
         revealed = true
         let hasvolunteer = allanswers.some((v) => v >= 2)
         if (isanswerer || !isplayer) {
