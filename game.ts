@@ -44,7 +44,10 @@ declare var hNetwork: HTMLElement
 declare var hNextMarker: HTMLElement
 declare var hHostcode: HTMLInputElement
 declare var hIntro: HTMLElement
+declare var hJoinButton: HTMLElement
 declare var hJoincode: HTMLInputElement
+declare var hJoinname: HTMLInputElement
+declare var hJoinnameErr: HTMLElement
 declare var hJumpIndex: HTMLInputElement
 declare var hNeedJS: HTMLElement
 declare var hPlayers: HTMLElement
@@ -894,6 +897,21 @@ function eventPromise(obj: EventTarget, eventName: string) {
   })
 }
 
+function handleJoinnameChange(s: string) {
+  if (s != "" && !validateName(s)) {
+    hJoinname.className = "cbgNegative"
+    hJoinnameErr.innerText = "invalid name, must be at most 12 alphanumeric characters"
+    s = ""
+  } else {
+    hJoinname.className = ""
+    hJoinnameErr.innerText = ""
+  }
+  hName.value = s
+  localStorage.setItem("Username", s)
+  if (s == "") hJoinButton.innerText = "Spectate"
+  if (s != "") hJoinButton.innerText = "Join"
+}
+
 function handleNameChange(s: string) {
   if (s != "" && !validateName(s)) {
     hName.className = "cbgNegative"
@@ -903,6 +921,7 @@ function handleNameChange(s: string) {
     hName.className = ""
     hNameErr.innerText = ""
   }
+  hJoinname.value = s
   localStorage.setItem("Username", s)
   if (g.clientMode) {
     if (g.clients.length >= 1) g.clients[0].channel?.send("n" + s)
@@ -1310,9 +1329,11 @@ function main() {
 
   // Load name if stored.
   let storedName = localStorage.getItem("Username")
-  if (storedName != null && hName.value == "") {
+  if (storedName != null && hJoinname.value == "" && hName.value == "") {
+    hJoinname.value = storedName
     hName.value = storedName
   }
+  hJoinButton.innerText = hJoinname.value == "" ? "Spectate" : "Join"
 
   handleParse()
   handleHash()

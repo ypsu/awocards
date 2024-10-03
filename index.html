@@ -23,8 +23,8 @@ Start game:
 </p>
 
 <ul>
-  <li><button onclick='location.hash="#play"'>Start</button> (the join code, if needed, will be available once started)
-  <li><input type=number size=6 placeholder=CODE id=hJoincode> <button onclick=handleJoin()>Join</button> (for joining an online version of the game or to present the questions on more screens)
+  <li><button onclick='location.hash="#play"'>Start</button> (to present questions or to host a network game)
+  <li>joincode: <input type=number size=6 placeholder=CODE id=hJoincode> username: <input size=10 placeholder=NAME id=hJoinname oninput=handleJoinnameChange(hJoinname.value)> <button id=hJoinButton onclick=handleJoin()>Join</button> <span id=hJoinnameErr class=cfgNegative></span> (for spectating or joining a networked version of the game)
   <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
 </ul>
 
