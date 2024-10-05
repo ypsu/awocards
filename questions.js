@@ -148,7 +148,6 @@ Do you like makeup on women? @ yes @ a little bit doesn't hurt @ no
 Do you like breast implants in women? @ yes @ fine either way @ only if otherwise the woman would be flat-chested @ no
 Do you like filled lips in women? @ yes @ fine either way @ no
 How would try finding a partner if you were single? @ online dating @ real-life speed dating events @ bar @ ask friends if they know of somebody
-Would you try couples dating? @ no @ yes but just for vanilla dates such as common lunches or vacations @ yes for spicy things too to keep life interesting
 How satisfied are you with your sex life? @ too much sex in my life @ just about right @ not enough sex in my life @ sex doesn't interest me
 Would you have sex with a friend if they really wanted to? @ no, I'm very picky @ no, I'm a monogamist @ only with some @ sure, sex is fun
 Have you ever had a friend with whom you masturbated together but otherwise never had sex together? @ yes, I did @ yes, I still do @ no but would like to have one @ no, I'm not into such friends
@@ -181,11 +180,12 @@ What is your most favorite sex act of these? @ receive oral sex @ give oral sex 
 How big of an issue would your death be? @ none as I have a will, inheritance, and funeral all set up @ there's some work my family needs to do but they should be ok @ it would be hard for my family as they depend a lot on me being alive and healthy
 How difficult do you deem your life in average? @ easy @ medium @ hard @ nightmare
 Which sex act have you done with both genders? Pick the first that applies. @ my genital touched both vagina and penis already @ oral sex @ handjob @ none or other
+Which of these would you use to describe yourself? @ dependable @ good looks @ fun @ smart
+What's the most annoying trait of you? @ boring @ smartass (always correcting others) @ lazy @ subpar communication skills
 
 @partner
 Have you had sex with another person after your current relationship started? @ no @ yes @ multiple people even
 How do you handle serious disagreements with your partner? @ shouting @ talk through them like responsible adults @ give each other the silent treatment @ we never argue
-Would you swap your partner with someone in this room for a week? @ no @ yes but only if sex is strictly off limits @ yes, it would be a nice experiment
 Would you swap your partner with someone else for a week? @ no @ yes but only if sex is strictly off limits @ yes, it would be a nice experiment
 Which body part would you change on your partner? @ face @ genital @ chest/boobs @ hair
 Would you like to have sex with someone else than your partner? @ no, my partner is enough @ I wouldn't mind trying but I'm fine as is too @ yes, I think I'd be happier if I could try that
@@ -193,13 +193,11 @@ Do you mind if your partner watches porn and masturbates to it? @ it's fine @ it
 Would you be open for opening up your relationship to a third party or parties? @ yes, I'd like to @ yes, if my partner really wants to @ only for short experiments @ not a chance, I'm strictly monogamous
 What should your partner have more of? @ self-confidence @ self-discipline @ kindness @ lightheartedness
 Who initiates sex more often? @ me @ my partner @ about the same
-Would you allow your partner to have sex with others? @ yes @ only if I have no other option to keep them happy @ no
 What chore should your partner do more of? @ cleaning @ shopping @ laundry @ cooking
 What should your partner do more? @ exercising @ studying @ socializing @ working
 What should your partner do less? @ smartphoning @ smoking/drinking @ working @ partying
 How do you prefer your partner better? @ with lots of makeup @ with little makeup @ without makeup
-What do you like about your partner's genital the most? @ how it looks like @ how it feels like @ how it smells/tastes like @ its endurance
-What do you like about your partner's genital the least? @ how it looks like @ how it feels like @ how it smells/tastes like @ its endurance
+What do you like about your partner's genital the most? @ how it looks like @ how it feels like @ how it smells/tastes like @ its performance
 What do you miss the most when your partner is away? @ sex @ cooking @ the chores they finish @ presence in general
 Would you mind breast implants? @ I don't mind them if my partner wants them @ I'd prefer to not have them for me or for my partner
 Would you mind lip filling? @ I don't mind them if my partner wants them @ I'd prefer to not have them for me or for my partner
@@ -209,6 +207,19 @@ What way of your partner getting more sex would annoy you the most? @ transactio
 How would you prefer your partner to sleep? @ naked @ in underwear @ in an oversized t-shirt @ in pyjamas with separate pants
 What would you do if your partner suddenly became bedridden for life? @ stay with them and take care of them forever @ start a new life but take care of them @ start a new life without them
 Would you watch your partner having sex with someone else? @ no, I wouldn't allow my partner to have sex with others @ I don't want to be present @ sure, I'd be happy to watch @ sure, I'd be happy to record it even
+What's the best description of your partner? @ dependable @ good looks @ fun @ smart
+What's the most annoying trait of your partner? @ boring @ smartass (always correcting others) @ lazy @ subpar communication skills
+Is it important that your partner looks good? @ no, I don't care about the looks @ there's a minimum standard I like to have (e.g. daily shower, clean clothes) but I don't care above that @ it's important to me that my partner looks top form all the time
+Do you have anal sex with your partner? @ never tried @ tried but it's not for us @ occasionally @ regularly
+What would you prefer your partner to masturbate to? @ naked or videos of me on their phone @ porn
+Suppose you hate each other and are divorcing. E.g. the partner is too lazy, does nothing all day, drives you crazy, and divorce is the only option. How would you split possesions and wealth? @ let the partner take whatever they want @ 50-50 @ based on contributions (e.g. who earned more from work gets more) @ let the law decide on a fair split
+What attracted you to your partner? @ money @ personality @ sex @ food (i.e. their cooking)
+Would you try couples dating? @ no @ yes but just for vanilla dates such as common lunches or vacations @ yes for spicy things too to keep life interesting
+How would you react if you learned your partner cheated? @ leave right away @ threaten them that I leave if it happens again @ no big deal but ask them to tell me before @ no big deal, I'd thank them for telling me
+How often do you think about sex with different people than your partner? @ I never think about sex @ never @ sometimes @ often
+How often do you think about leaving your relationship? @ never @ sometimes @ often
+If you could ask for one 3 minute activity each evening from now on from your partner, which one would you prefer to receive? @ oral sex @ handjob @ massage @ joint shower
+If you need to give one 3 minute activity each evening from now on to your partner, which one would you prefer to give? @ oral sex @ handjob @ massage @ joint shower
 
 @light-dares
 dare: Do you want to pour a glass of water over their head?
