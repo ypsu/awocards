@@ -53,7 +53,7 @@
 .cfgInverted  { color: var(--fg-inverted); }
 
 body { font-family: sans-serif; cursor: default; }
-#hIntro { max-width: 50em; margin: 0 auto; padding: 0 8px; }
+#hIntro, #hWeeklyUI { max-width: 50em; margin: 0 auto; padding: 0 8px; }
 #hGameUI { margin: 0 auto; padding: 0 8px; }
 button { padding-left: 1ch; padding-right: 1ch; font-size: inherit; }
 #hGameUI { margin: 0 0; user-select: none; }

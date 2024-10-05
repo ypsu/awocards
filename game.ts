@@ -30,26 +30,28 @@ declare var hBecomeAnswerer: HTMLElement
 declare var hCustomDB: HTMLInputElement
 declare var hCustomQuestionsReport: HTMLElement
 declare var hCustomText: HTMLTextAreaElement
+declare var hDate: HTMLInputElement
 declare var hError: HTMLElement
 declare var hFullscreen: HTMLInputElement
-declare var hGameUI: HTMLElement
 declare var hGameScreen: HTMLElement
+declare var hGameUI: HTMLElement
 declare var hGroupControl: HTMLElement
+declare var hHostcode: HTMLInputElement
 declare var hHostGame: HTMLInputElement
 declare var hHostURL: HTMLElement
-declare var hName: HTMLInputElement
-declare var hNameErr: HTMLElement
-declare var hNavbar: HTMLElement
-declare var hNetwork: HTMLElement
-declare var hNextMarker: HTMLElement
-declare var hHostcode: HTMLInputElement
 declare var hIntro: HTMLElement
 declare var hJoinButton: HTMLElement
 declare var hJoincode: HTMLInputElement
-declare var hJoinname: HTMLInputElement
 declare var hJoinnameErr: HTMLElement
+declare var hJoinname: HTMLInputElement
 declare var hJumpIndex: HTMLInputElement
+declare var hLastMonday: HTMLElement
+declare var hNameErr: HTMLElement
+declare var hName: HTMLInputElement
+declare var hNavbar: HTMLElement
 declare var hNeedJS: HTMLElement
+declare var hNetwork: HTMLElement
+declare var hNextMarker: HTMLElement
 declare var hPlayers: HTMLElement
 declare var hPrintable: HTMLElement
 declare var hQuestion: HTMLElement
@@ -57,6 +59,8 @@ declare var hRevealMarker: HTMLElement
 declare var hSeed: HTMLInputElement
 declare var hSeedPreview: HTMLElement
 declare var hStat: HTMLInputElement
+declare var hWeeklyCard: HTMLElement
+declare var hWeeklyUI: HTMLElement
 
 declare var questionsdata: string
 
@@ -195,12 +199,11 @@ function selectQuestions() {
   g.filteredQuestions = cnt
 }
 
-function shuffle() {
+function shuffle(seednumber: number) {
   selectQuestions()
   let qs = g.questions.slice()
 
   // Shuffle the questions.
-  let seednumber = parseInt(hSeed.value)
   if (seednumber != 0) {
     seed(seednumber)
     for (let i = qs.length - 1; i > 0; i--) {
@@ -212,7 +215,7 @@ function shuffle() {
 }
 
 function handleSeedPreview() {
-  shuffle()
+  shuffle(parseInt(hSeed.value))
 
   let html = ""
   for (let q of g.shuffledqs) {
@@ -249,7 +252,7 @@ function makeQuestionHTML(q: question, interactive: boolean) {
     h += `<li ${a()}>can be talked into it ${p()}</li>\n`
     h += `<li ${a()}>I don't mind trying ${p()}</li>\n`
     h += `<li ${a()}>definitely yes ${p()}</li>\n`
-    return h
+    return h + "</ol>"
   }
   if (q[1].startsWith("dare: ")) {
     let h = `<p>Dare: ${escapehtml(q[1].slice(6))}</li><ol>\n`
@@ -289,6 +292,62 @@ function handlePrint() {
   }
 
   location.hash = "#printable"
+}
+
+function handleWeekly() {
+  let cats = ""
+  for (let cat in g.categories) {
+    if ((document.getElementById("hq" + cat[0]) as HTMLInputElement).checked) cats += cat[0]
+  }
+  if (cats == "") cats = "s"
+  location.hash = `#weekly-c${cats}`
+}
+
+function setDate(v: string) {
+  let parts = location.hash.split("-").filter((p) => !p.startsWith("d"))
+  let d = parseInt(v)
+  if (d) parts.push(`d${d}`)
+  let newhash = parts.join("-")
+  // Update hash without adding it to the history.
+  history.replaceState(null, "", newhash)
+  history.pushState(null, "", newhash)
+  history.back()
+  handleHash()
+}
+
+function renderWeekly() {
+  let cats = ""
+  let date = 0
+  let parts = location.hash.split("-")
+  parts.shift()
+  while (parts.length > 0) {
+    let part = parts.shift()
+    if (part?.startsWith("c")) cats = part.substr(1)
+    if (part?.startsWith("d")) date = parseInt(part.substr(1))
+  }
+  if (cats == "") cats = "s"
+  if (date && hDate.value != `${date}`) hDate.value = `${date}`
+
+  let d = new Date()
+  let [yy, mm, dd] = [d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()]
+  while (new Date(Date.UTC(yy, mm - 1, dd)).getUTCDay() != 1) {
+    let d = new Date(Date.UTC(yy, mm - 1, dd - 1))
+    ;[yy, mm, dd] = [d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()]
+  }
+  let lastMonday = (yy % 100) * 10000 + mm * 100 + dd
+  hLastMonday.innerText = `${lastMonday}`
+  if (!date) {
+    date = lastMonday
+    hDate.value = `${lastMonday}`
+  }
+
+  shuffle(1)
+  let qs = []
+  for (let q of g.shuffledqs) {
+    if (cats.includes(q[0][0])) qs.push(q)
+  }
+
+  hWeeklyCard.innerHTML = `${makeQuestionHTML(qs[date % qs.length], false)}\n<p><em>category: ${qs[date % qs.length][0]}</em></p>`
 }
 
 function handleStart() {
@@ -770,6 +829,7 @@ function handleHash() {
   hSeedPreview.hidden = true
   hPrintable.hidden = true
   hGameUI.hidden = true
+  hWeeklyUI.hidden = true
   document.body.className = ""
 
   if (location.hash == "#preview") {
@@ -791,6 +851,11 @@ function handleHash() {
   if (location.hash.startsWith("#join-")) {
     hGameUI.hidden = false
     join()
+    return
+  }
+  if (location.hash.startsWith("#weekly-")) {
+    hWeeklyUI.hidden = false
+    renderWeekly()
     return
   }
 
@@ -864,7 +929,7 @@ function handleParse() {
     }
   }
   g.questions = qs
-  shuffle()
+  shuffle(parseInt(hSeed.value))
 
   let err = ""
   if (invalidCategories.size > 0) {

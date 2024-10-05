@@ -26,6 +26,7 @@ Start game:
   <li><button onclick='location.hash="#play"'>Start</button> (to present questions or to host a network game)
   <li>joincode: <input type=number size=6 placeholder=CODE id=hJoincode> username: <input size=10 placeholder=NAME id=hJoinname oninput=handleJoinnameChange(hJoinname.value)> <button id=hJoinButton onclick=handleJoin()>Join</button> <span id=hJoinnameErr class=cfgNegative></span> (for spectating or joining a networked version of the game)
   <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
+  <li><button onclick=handleWeekly()>Weekly question</button> (for having a random but predictable discussion topic)
 </ul>
 
 <p>
@@ -413,6 +414,12 @@ This should work well for custom questions too.
       <li><button onclick="location.href='#'">Back to menu</button>
     </ul>
   </details>
+</div>
+
+<div id=hWeeklyUI hidden>
+  <div id=hWeeklyCard><p>Question card comes here</p></div>
+  <hr>
+  <p>Date in YYMMDD format (defaults to the last Monday, <span id=hLastMonday></span>): <input id=hDate type=number placeholder=YYMMDD size=9 oninput=setDate(hDate.value)></p>
 </div>
 
 <script src=questions.js></script>
