@@ -103,12 +103,11 @@ How should sites like facebook and youtube be moderated? @ no moderation, free s
 Should the state have the ability to read and monitor our private messages without a warrant? @ yes, if it helps preventing crime and fraud @ no, privacy is more important even if it means more crime
 What should be expected from migrants? @ migration should not be allowed, everyone should stay home @ migrating is OK if the migrant gives up their home culture and religion in favor of the new country's culture @ migrants can come with their culture but the new country isn't obligated to support it @ if a country accepts migrants, it should do its best to accept the migrant's culture too
 If we need to settle on one form of tax only, which should it be? @ transaction tax (e.g. 20% of every purchase goes to state) @ wealth tax (e.g. 20% of the total wealth of each person and company must go to state each year) @ land tax (e.g. homeowners pay tax based on rent in their area) @ pollution tax (e.g. companies generating pollution must have expensive licenses to do so)
+What's your opinion about masturbation? @ it's a shameful activity, people should not do it @ it's shameful but OK to do it as long as people don't talk about it @ it's healthy we should talk more about it @ it's healthy and we should be even more open about it, make it a normal day to day activity friends can do together
 
 @intimate
-Have you ever sexually fantasized about someone here other than your partner? @ no @ yes
 Do you like being tickled? @ no @ just a little bit @ I want to be tickle-tortured
 What's your opinion on peeing during a shower? @ it's gross @ it's OK @ it's the best way to pee
-Would you swap your life with someone in this room? @ no @ yes but only for a little while @ yes, forever even
 How do you wipe your ass after WC? @ while standing @ while sitting @ I don't wipe
 Of who have you taken naked pics that are still viewable in your phone's photo gallery? Select the first answer that applies. @ my partner @ some other people @ myself @ nobody
 Are you able to swallow cum? @ no @ sometimes @ yes @ don't know because never had cum in my mouth
@@ -117,19 +116,18 @@ What breasts you like the most? @ I don't like breasts @ small @ medium @ large
 Have you ever come from anal stimulation? @ no and I don't want to try it @ no but would like to try it @ I have tried but not succeeded yet @ yes
 What noises do you like to hear during sex? @ quiet @ moaning @ nice talk @ dirty talk
 What noises do you like to make during sex? @ quiet @ moaning @ nice talk @ dirty talk
-Do you have a friend with "benefits" outside your primary relationship? @ no and not interested in having one @ no but I wish for one @ yes
-Do you own a vibrator or cock ring? @ no and I'm not interested @ no but I'd like to try it @ yes but I don't use it @ yes and I regularly use it
+Do you have a friend with "benefits" outside your primary relationship? @ no and not interested in having one @ no but I wish for one @ not currently but had one in the past @ yes, i have one currently
+Which sex toy you own? Pick the first that apply. @ fake vagina or penis @ vibrator @ penis ring @ none of the above
+What peculiarity does your genital have? Pick the first that applies. @ it has a piercing @ it has a tattoo on it or very near it @ it is special in a different way @ it's ordinary, nothing special
 What's your favorite body part that you like to play with? @ boobs @ penis @ vagina @ ass
 Have you tried group sex? @ no and not interested @ I'd like to try it @ I had a threesome @ I had groupsex with many people
 How easy is it for you to reach orgasm? @ almost impossible @ needs a lot of work @ matter of seconds
 How many people expressed love or sexual interest to you that you rejected thorough your life? @ none @ one @ a few @ a lot
 Which body part would you change on yourself? @ face @ genital @ chest @ hair
-Would you do a full frontal nude scene if you were a famous actor? @ no @ yes but only if I get loads of money in exchange @ yes if that's the only way to get a role in a good movie @ yes because I don't mind nudity
 When did you lose your virginity? @ 0-16 @ 17-21 @ 22 or later @ I'm still a virgin
-How often do you masturbate? @ never @ monthly @ weekly @ daily
+How often do you masturbate on average? @ never @ monthly @ weekly @ daily
 Which role would you prefer if you needed to do this for a full hour? @ receiving oral sex @ giving oral sex @ having sex
-How would you feel about getting naked in a gender neutral clothes changing room of a gym or swimming pool? @ no problem @ a bit ashamed, would try to change as discreetly as possible @ very ashamed, I would need to go to a private changing booth
-Where do you have a piercing? Select the first that applies. @ on my genital @ on my nipples @ on my navel @ nowhere
+How would you feel about getting naked in a gender neutral clothes changing room of a gym or swimming pool? @ no problem @ a bit ashamed, would try to change as discreetly as possible @ ashamed, I would need to go to a private changing booth
 Which penis do you find more aesthetically pleasing? @ circumcised @ intact
 Would you enter a couple's relationship as a third party? @ sure, no problem @ only for an experiment, not for long term @ no
 What's your preferred sex position? @ missionary @ cowgirl @ doggy @ standing sex, e.g. in shower
@@ -140,8 +138,7 @@ What do you wish you had more from your parents during your childhood? @ love @ 
 What is the biggest benefit of a relationship for you? @ sex @ sharing money or chores @ sharing a life @ not being alone
 What's your oral sex preferences? @ I prefer giving it @ I prefer receiving @ I don't like sex either way
 Would you date yourself, a person with your exact personality? @ yes, I'd love myself @ no, I'd hate myself
-Would you go to a naked saune with others? @ sure, no problem @ only with my partner @ no because I'm too shy @ no because I don't like saunas
-Would you swap your body with someone in this room? @ no @ yes but only for a little while @ yes, forever even
+Would you go to a naked sauna with others? @ sure, no problem @ only with my partner @ no because I'm too shy @ no because I don't like saunas
 Would you play strip poker in a group? @ already played @ never played but would like to try @ no
 What do you like about your genital the most? @ how it looks like @ how it feels like @ how it smells/tastes like @ its endurance
 What do you like about your genital the least? @ how it looks like @ how it feels like @ how it smells/tastes like @ its endurance
@@ -154,9 +151,36 @@ How would try finding a partner if you were single? @ online dating @ real-life 
 Would you try couples dating? @ no @ yes but just for vanilla dates such as common lunches or vacations @ yes for spicy things too to keep life interesting
 How satisfied are you with your sex life? @ too much sex in my life @ just about right @ not enough sex in my life @ sex doesn't interest me
 Would you have sex with a friend if they really wanted to? @ no, I'm very picky @ no, I'm a monogamist @ only with some @ sure, sex is fun
-Would you go on a naked hike? @ no @ yes
-Have you ever had a fap friend with whom you masturbated together but otherwise never had sex together? @ yes, I did @ yes, I still do @ no but would like to have one @ no, I'm not into such friends
+Have you ever had a friend with whom you masturbated together but otherwise never had sex together? @ yes, I did @ yes, I still do @ no but would like to have one @ no, I'm not into such friends
 Where do you masturbate most often? @ bathroom @ in the bed @ in the shower @ in front of the tv or computer
+How would you describe your relationship to your parents? @ good @ bad @ complicated @ nonexistent
+How often did you consider suicide in the past? @ never @ occasionally @ often @ all the time
+Have you ever received penetrative anal sex? @ no and it doesn't interest me @ no but wouldn't mind trying @ yes and I liked it @ yes but didn't really like it
+Have you ever given penetrative anal sex? @ no and it doesn't interest me @ no but wouldn't mind trying @ yes and I liked it @ yes but didn't really like it
+Have you ever received asshole licking? @ no and it doesn't interest me @ no but wouldn't mind trying @ yes and I liked it @ yes but didn't really like it
+Have you ever given asshole licking? @ no and it doesn't interest me @ no but wouldn't mind trying @ yes and I liked it @ yes but didn't really like it
+Did your parents do a good job? @ no @ yes
+Do you get enough love in your life? @ no @ yes
+What is your love language? What makes you feel loved the most? @ compliments or gifts @ quality time (e.g. dates, vacations) @ acts of service (e.g. doing chores) @ physical touch
+Why do you hold your religious beliefs? @ because that's how I was raised and didn't think much about it @ because I know it's the most right view and everyone else is wrong @ for practical reasons, it's a way to connect with friends and family @ I'm forced to hold the views due to external factors
+Have you been with escorts? @ nope, I'm against the idea entirely @ nope, just not interested @ only once as an experiment @ several times
+What do you not like about your genital? @ how it looks like @ its sensitivity or performance @ the pain it causes @ type (I want the other gender's genital)
+When you born again, which sex would you want to be? @ female @ male
+How interested are you seeing other people nude? @ I don't want to see others naked @ I don't care about others naked @ I like to check out others @ seeing others naked makes me very happy
+Would you like to have a friend with benefits? @ yes any gender @ yes but only of my preferred gender @ no
+What would you do if you became bald? @ wear a wig @ wear a hat @ accept/embrace @ hair transplant
+Do you find bald people attractive? @ no @ some people are cool with no hair but not everyone @ prefer bald people
+Which death would you prefer? @ sudden death @ slow death such as cancer so that there's some preparatory time
+What would you want more in life? @ more sex @ more money @ more fame @ more free time
+Of what nature is your most worrying medical condition? @ birth defect @ something that developed over time on its own @ something I made happen due to bad (life) choices @ something someone else made to me
+Would you recommend yourself as a partner for another person? @ yes because I would be a good partner @ yes but just because life is easier with a partner @ only for short term, long term relationships are hard @ no, I'm terrible
+You must sacrifice an activity. You can never do this anymore in life. Which one you pick? @ meeting friends @ browsing/watching internet/youtube/netflix/etc @ having sex @ exercising
+Do you feel bad or ashamed after masturbation? @ I don't masturbate @ not really @ only when I'm doing it too much @ yes, always
+What is your least favorite sex act of these? @ receive oral sex @ give oral sex @ penetrative sex @ mutual masturbation
+What is your most favorite sex act of these? @ receive oral sex @ give oral sex @ penetrative sex @ mutual masturbation
+How big of an issue would your death be? @ none as I have a will, inheritance, and funeral all set up @ there's some work my family needs to do but they should be ok @ it would be hard for my family as they depend a lot on me being alive and healthy
+How difficult do you deem your life in average? @ easy @ medium @ hard @ nightmare
+Which sex act have you done with both genders? Pick the first that applies. @ my genital touched both vagina and penis already @ oral sex @ handjob @ none or other
 
 @partner
 Have you had sex with another person after your current relationship started? @ no @ yes @ multiple people even
