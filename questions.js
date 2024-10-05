@@ -212,7 +212,7 @@ What's the most annoying trait of your partner? @ boring @ smartass (always corr
 Is it important that your partner looks good? @ no, I don't care about the looks @ there's a minimum standard I like to have (e.g. daily shower, clean clothes) but I don't care above that @ it's important to me that my partner looks top form all the time
 Do you have anal sex with your partner? @ never tried @ tried but it's not for us @ occasionally @ regularly
 What would you prefer your partner to masturbate to? @ naked or videos of me on their phone @ porn
-Suppose you hate each other and are divorcing. E.g. the partner is too lazy, does nothing all day, drives you crazy, and divorce is the only option. How would you split possesions and wealth? @ let the partner take whatever they want @ 50-50 @ based on contributions (e.g. who earned more from work gets more) @ let the law decide on a fair split
+Suppose you hate each other and are divorcing. E.g. the partner is too lazy, does nothing all day, drives you crazy, and divorce is the only option. How would you split possessions and wealth? @ let the partner take whatever they want @ 50-50 @ based on contributions (e.g. who earned more from work gets more) @ let the law decide on a fair split
 What attracted you to your partner? @ money @ personality @ sex @ food (i.e. their cooking)
 Would you try couples dating? @ no @ yes but just for vanilla dates such as common lunches or vacations @ yes for spicy things too to keep life interesting
 How would you react if you learned your partner cheated? @ leave right away @ threaten them that I leave if it happens again @ no big deal but ask them to tell me before @ no big deal, I'd thank them for telling me
@@ -252,6 +252,8 @@ dare: Do you want to lick their teeth?
 dare: Do you want to suck their finger?
 dare: Do you want to suck their toe?
 dare: Do you want to suck their tongue?
+dare: Do you want to play dentist and examine their mouth?
+dare: Do you want to play ear doctor and examine their ear?
 dare: Do you want to take off all their upper body clothing and see them topless?
 dare: Do you want to pull all their bottom body clothing and see them bottomless?
 dare: Do you want to take off all their clothing and see them fully naked?
@@ -274,8 +276,10 @@ dare: Do you want to suck their nipple?
 dare: Do you want to massage their bare chest / breasts?
 dare: Do you want to massage their genital?
 dare: Do you want to massage their asshole?
+dare: Do you want to hug them from behind while your hand massages their genital?
 dare: Do you want to have your genital touch their genital?
-dare: Do you want to inspect their genital up close and play doctor?
+dare: Do you want to play anal doctor and examine their asshole up close?
+dare: Do you want to play a doctor and examine their genital up close?
 
 @activities
 vote: Should we go for a boat tour?
@@ -295,7 +299,7 @@ vote: Should we do a video game night?
 vote: Should we try a gym together?
 vote: Should we do a bike tour?
 vote: Should we go to a disco?
-vote: Should we go to cinema?
+vote: Should we go to a cinema?
 vote: Should we go to a concert?
 vote: Should we go to a museum?
 vote: Should we go to theatre?
@@ -313,11 +317,13 @@ vote: Should we play blindfolded face recognition? One person is blindfolded, an
 vote: Should we go to a nudist beach?
 vote: Should we go to a nudist sauna?
 vote: Should we do a naked hike?
+vote: Should we do a strip poker night?
+vote: Should we do a naked dinner night?
 vote: Should we have a cozy group shower and clean each other? (the smaller the shower cabin the better)
 vote: Should we try masturbating together?
 vote: Should we try doing an oral sex circle? (lie in a circle, heads between the next person's legs)
 vote: Should we try doing a hand sex circle? (stand or sit in a circle, each person's hand between the legs of the person on right)
-vote: Should we have a sleep-together-in-one-big-bed night?
+vote: Should we have a sleep-together-in-one-big-bed and have-a-tickle-and-pillow-fight night?
 vote: Should we have a who-can-piss-most-far contest? (ladies would be the judges)
 vote: Should we watch some porn together?
 vote: Should we take a nude group photo?

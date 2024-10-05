@@ -992,7 +992,7 @@ function handleNameChange(s: string) {
     if (g.clients.length >= 1) g.clients[0].channel?.send("n" + s)
     return
   }
-  g.clients[0].username = s
+  if (g.clients.length > 0) g.clients[0].username = s
   updatePlayerStatus()
   renderQuestion(rendermode.quick)
 }
