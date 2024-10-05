@@ -60,6 +60,7 @@ What's your least favorite exercise? @ pushups @ pullups @ sit-ups @ squats
 Who cuts your hair? @ I do @ my hairdresser @ my partner/friend/family @ my hair needs no cutting
 Everyone on Earth gets all-knowing glasses. What statistic should the glasses display above people's heads? @ their name @ their mood @ their relationship status @ their net worth
 What should happen to you dead body once you die? @ buried so that worms and ants can feed on me as I rot away @ cremated for a quick and clean disposal @ donated to medical university so that students can play with me @ museum so that everyone can see me for a while
+There's is a pill that prolongs your life with 10 years (from 70 to 80) but you have to take it every day and can't miss a day. @ I will meticulously take it every day, yay for 10 extra years @ I will try to take it but no big deal if it's a hassle @ too much effort, don't want to live that long anyway
 
 @divisive
 What's after death? @ nothing @ we reincarnate @ we meet the biblical God @ we exit the "simulation" and meet our universe administrators
@@ -81,7 +82,7 @@ Are men and women equal? @ yes @ yes but only until the woman gets pregnant @ no
 How would you address immigration? @ disallow, people should improve their homeland @ allow in limited form for skilled people and some refugees @ allow generously @ remove all borders
 Which medium is the most harmful for society at large? @ video games and movies @ social networking sites @ video sharing sites @ news organizations
 How should healthcare be managed? @ centrally by the government, no private market be allowed @ solely by the private market @ have both government and private market providers and have them compete
-Should death penalty be allowed? @ yes and be generous about it @ yes but only for really grave crimes @ yes but only if the criminal prefers that over imprisonment @ no
+Should death penalty be allowed? @ yes @ yes @ people with life sentence should be given the option for assisted suicide @ no, people should be locked away forever without the option of death
 Should kids be allowed to change their gender in young age via hormone therapy other intrusive methods? @ yes because the earlier started the more effective the treatment is @ not until it they are teenagers @ not until they are adults @ all such treatments should be banned
 Should conscription be a thing? @ no, it's a waste of time @ yes but optionally @ yes, mandatorily, some discipline won't hurt
 What should be done with big banks? @ leave them as they are @ split them up @ regulate them @ make them into a government run institutes
@@ -93,6 +94,15 @@ Should private schools be allowed? @ no because then there's no incentive to imp
 What should be done with robots if they could think and act like humans and we couldn't really distinguish them from humans? @ should have the same rights as humans @ they are robots, should continue obeying humans @ should be destroyed
 Should vaccination be mandated? @ no @ only a few select vaccines, much fewer than what is mandatory today @ yes
 What's your stance on vaccinating yourself? @ avoid vaccination wherever possible @ only the mandatory ones @ only mandatory and the highly recommended ones @ I like vaccines, it's a good exercise for the immune system
+5 people are tied to a train track and a trolley is running towards them. They will be killed in a few seconds. You stand in front of a lever which can derail the train onto a track which has only one person tied to the track. @ pull the lever to kill one person, save 5 @ leave things as they are, you are just an innocent bystander
+Is torture morally OK? @ it's never OK and should be never used @ it's never OK but very practical @ it's OK but only if it's being done to very bad people @ it's OK, even to potentially innocent people, if it can potentially save lives
+Should restaurants, barbers, escorts be allowed to refuse clients based on race? @ no, it should be illegal for all @ it should be allowed for some, not for others @ yes, everyone should be allowed to discriminate as they wish
+Should prostitution be legal? @ it should be completely illegal @ it should be heavily regulated @ there should be only some light rules around it @ everyone should be free to do whatever they want
+Should incest sex be illegal? @ it's fine, people do whatever they want @ it's fine because it's victimless as long as it's not used for making babies @ any such sexual activity should be completely illegal
+How should sites like facebook and youtube be moderated? @ no moderation, free spech for all! @ light moderation, just to stop the worst kinds of discussions, people have to learn to have thick skin @ heavy moderation so that it's a safe place for all
+Should the state have the ability to read and monitor our private messages without a warrant? @ yes, if it helps preventing crime and fraud @ no, privacy is more important even if it means more crime
+What should be expected from migrants? @ migration should not be allowed, everyone should stay home @ migrating is OK if the migrant gives up their home culture and religion in favor of the new country's culture @ migrants can come with their culture but the new country isn't obligated to support it @ if a country accepts migrants, it should do its best to accept the migrant's culture too
+If we need to settle on one form of tax only, which should it be? @ transaction tax (e.g. 20% of every purchase goes to state) @ wealth tax (e.g. 20% of the total wealth of each person and company must go to state each year) @ land tax (e.g. homeowners pay tax based on rent in their area) @ pollution tax (e.g. companies generating pollution must have expensive licenses to do so)
 
 @intimate
 Have you ever sexually fantasized about someone here other than your partner? @ no @ yes
