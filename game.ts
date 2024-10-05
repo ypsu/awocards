@@ -272,7 +272,7 @@ function handlePrint() {
 
   let h = ""
   for (let q of g.questions) {
-    if (g.categories[q[0]]) h += `<div class=hPrintableCard><span>${makeQuestionHTML(q, false)}</span></div>`
+    if (g.categories[q[0]]) h += `<div class=hPrintableCard><span>${makeQuestionHTML(q, false)}\n<p><em>category: ${q[0]}</em></p></span></div>`
   }
   hPrintable.hidden = false
   hPrintable.innerHTML = h
