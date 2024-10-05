@@ -2,13 +2,13 @@ let questionsdata = `
 @softball
 Who is your favorite superhero? @ Superman @ Batman @ Ironman @ Spiderman
 What's the best pet? @ cat @ dog @ fish @ hamster
-Which type of car you like the best? @ small, smart cars @ medium ones, sedans @ big ones, SUVs
+Which type of car you like the best? @ hate all cars @ small, smart cars @ medium ones, sedans @ big ones, SUVs
 How often do make your bed in the morning? @ every morning @ often @ rarely @ never
 What's your alarm clock set at on your average working day? @ 5am or less @ between 5am and 7am @ after 7am @ I set no alarm
 Could you live without a smartphone? @ no @ yes but I'd use laptops a lot @ yes, I'm not an internet addict
 Do you snore? @ no @ sometimes @ all the time
-Do you exercise and maintain a fit lifestyle? @ nope @ a little bit but should be doing more @ I'm doing enough
-How many kids would you prefer to have? @ none @ 1 or 2 @ 3 or 4 @ I want to be a child factory
+Do you exercise and maintain a fit lifestyle? @ nope @ a little bit but should be doing more @ I'm doing enough @ I'm doing too much
+How many kids would you prefer to have? @ none @ 1 or 2 @ 3 or 4 @ as many as possible
 How many proper pushups could you do right now in one go? @ none @ about 5 @ about 10 @ 15 or more, easy
 How often do you feel depressed? @ never @ rarely @ sometimes @ always
 How would you live if you could restart your life from your childhood? @ roughly the same way as now @ completely differently
@@ -18,11 +18,9 @@ How do you deal with depression? keep it to myself and hope it passes @ distract
 Which superpower would you like the most? @ invisibility @ flying @ teleportation @ mind reading
 Where would you prefer to live when old and your partner is gone? @ stay home alone @ move to a friend @ move to a nursing home @ move to a child's family
 Where would you live if you lost all your money, job, and friends? @ move to parents @ go to a homeless shelter @ live on the streets
-What would you build if you were a billionaire? @ an amusement park @ a hotel @ a hospital
 Would you be your own parent? @ no, I'd be a bad parent for myself @ it would be probably okay @ I'd love to have had myself as a parent
 What sort of movies do you like? @ blockbuster action movies @ romantic true story @ horrors and thrillers @ comedies
 If you would be young and need to choose a carreer, what would you study? @ physics @ computers @ medicine @ accounting
-What's your go to food when you are lazy? @ sandwich @ eggs @ pizza @ potato chips
 What books do you like? @ autobiography @ romantic novels @ scifi-novels @ travel guides
 What book would you write? @ autobiography @ romantic novel @ scifi-novel @ travel guide
 When do you brush your teeth in the morning? @ I don't brush @ before breakfast @ after breakfast
@@ -31,19 +29,18 @@ How do you sleep? @ naked @ in underwear @ in an oversized t-shirt @ in pyjamas 
 What new friends would you prefer the most? @ guys @ girls @ balanced
 Where do you want to grow old? @ alone in the woods @ in a small village @ in a town @ in a big city
 Which one is your favorite sport? @ football @ basketball @ karate @ running
-What would you do with the money if you were to win the lottery? @ spend it (e.g. nice house) @ keep it @ give it away (e.g. charity or friends) @ invest it
+What would you do with the money if you were to win the lottery? @ spend it on luxuries (e.g. nice house) @ give it away (e.g. charity or friends) @ invest it @ start my own company
 How open are you with your private thoughts? @ I tell everyone everything @ I tell truthfully if asked but otherwise keep things to myself @ there are things I don't share with anyone
 Where are you at in your life? @ I've done most things I wanted out of life @ there are still a few things I want to achieve @ there are lot of things I still want to do
 What's your favorite way to communicate remotely? @ email @ chat/sms/whatsapp @ phone call @ video call
 What's your favorite drink? @ coffee @ hot chocolate @ orange juice @ beer
-What's after death? @ nothing @ we reincarnate @ we meet the biblical God @ we exit the "simulation" and meet our universe administrators
 What's your weight? @ 0 - 70 kg @ 70 - 90 kg @ 90-120 kg @ 120+ kg
 What's your opinion when your friends talk during a movie night? @ awesome @ annoying
 What's you opinion on pineapples on pizza? @ delicious @ abomination
 What gives you more joy? @ to receive a gift @ to give a gift
 What is your typical sleeping pattern? @ morning person (wake up early) @ evening person (stay up late) @ completely random
 What's your favorite drug for watching movies? @ potato chips @ tortilla chips with a nice sauce @ popcorn @ no drugs, no distraction
-Would you lasik your eyes if you had vision issues? @ no @ already done @ yes
+Would you lasik your eyes if you had vision issues? If you already had one: would you lasik again if it worsened? @ no @ yes
 Would you want to know your exact death date? @ no, I'd prefer it to be a surprise @ yes, but only the year number @ yes, the exact day
 Would you modify your baby's genes if it were possible? @ no, I'd leave it as nature intended @ I'd fix only serious life-hardening issues @ sure, I'd make it smart and attractive
 Would you preserve your brain if it would keep your experience ongoing and avoid death? @ yeah, I don't want to die @ no, death is natural and I'm curious what's after death
@@ -61,8 +58,11 @@ How satisfied are you with your life in general? @ happy as I am @ I'm a bit unh
 What's your most favorite exercise? @ pushups @ pullups @ sit-ups @ squats
 What's your least favorite exercise? @ pushups @ pullups @ sit-ups @ squats
 Who cuts your hair? @ I do @ my hairdresser @ my partner/friend/family @ my hair needs no cutting
+Everyone on Earth gets all-knowing glasses. What statistic should the glasses display above people's heads? @ their name @ their mood @ their relationship status @ their net worth
+What should happen to you dead body once you die? @ buried so that worms and ants can feed on me as I rot away @ cremated for a quick and clean disposal @ donated to medical university so that students can play with me @ museum so that everyone can see me for a while
 
 @divisive
+What's after death? @ nothing @ we reincarnate @ we meet the biblical God @ we exit the "simulation" and meet our universe administrators
 What's your opinion on abortions? @ should be easy to get @ should be hard to get @ should be completely illegal @ should be illegal but the people should be able to give the baby to government no questions asked and then the government would give the orphans high quality care
 What's your opinion on climate change? @ it's a lie, there's no climate change @ it's overblown, humanity is not in danger @ humanity will fix it @ humanity is doomed
 What should people do when everything is fully automated? @ people should be still working so that we don't get lazy @ we get free money and capitalism sorts things out @ everyone receives free services (food, shelter, care, internet) and they can do whatever they want
