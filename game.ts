@@ -694,7 +694,7 @@ function renderQuestion(mode: rendermode) {
   }
 
   // Compute each player's statusbox.
-  g.disableInteraction = !isplayer || playercnt <= 1 || isanswerer && isdare
+  g.disableInteraction = !isplayer || playercnt <= 1 || (isanswerer && isdare)
   if (playercnt >= 2) {
     let status = statusdescs.empty
     if (isquestion) {
