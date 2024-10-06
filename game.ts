@@ -42,6 +42,7 @@ declare var hHostURL: HTMLElement
 declare var hIntro: HTMLElement
 declare var hJoinButton: HTMLElement
 declare var hJoincode: HTMLInputElement
+declare var hJoining: HTMLElement
 declare var hJoinnameErr: HTMLElement
 declare var hJoinname: HTMLInputElement
 declare var hJumpIndex: HTMLInputElement
@@ -896,6 +897,9 @@ function handleHash() {
   }
   if (location.hash.startsWith("#join-")) {
     hGameUI.hidden = false
+    hJoining.innerText = "Joining..."
+    hJoining.hidden = false
+    hGameUI.hidden = true
     join()
     return
   }
@@ -1072,6 +1076,7 @@ function renderNetworkStatus() {
 
 function setNetworkStatus(s: string) {
   g.networkStatus = s
+  if (hJoining.innerText != "") hJoining.innerText = "Joining: " + s
   renderNetworkStatus()
 }
 
@@ -1318,6 +1323,9 @@ async function join() {
         return
       }
       g.clients = [new client(0, conn, channel)]
+      hJoining.innerText = ""
+      hJoining.hidden = true
+      hGameUI.hidden = false
       handleNameChange(hName.value)
       channel.onmessage = async (ev) => {
         let msg = (ev as MessageEvent).data
