@@ -37,6 +37,7 @@ declare var hGameUI: HTMLElement
 declare var hGroupControl: HTMLElement
 declare var hHostcode: HTMLInputElement
 declare var hHostGame: HTMLInputElement
+declare var hHostGameLine: HTMLElement
 declare var hHostURL: HTMLElement
 declare var hIntro: HTMLElement
 declare var hJoinButton: HTMLElement
@@ -662,9 +663,10 @@ function renderQuestion(mode: rendermode) {
   // Compute the hGroupControl visibility status and its text.
   let answererText = ""
   hNavbar.hidden = isplayer && playercnt >= 2
-  if (playercnt <= 1 || !isplayer) {
-    hGroupControl.hidden = true
-    hStatusbox.hidden = true
+  hGroupControl.hidden = true
+  hStatusbox.hidden = true
+  if (playercnt >= 2 && !isplayer) {
+    hStatusbox.hidden = false
   } else {
     hGroupControl.hidden = false
     hStatusbox.hidden = false
@@ -678,22 +680,21 @@ function renderQuestion(mode: rendermode) {
   }
 
   // Compute each player's statusbox.
-  let reveled = false
-  if (playercnt >= 2 && isplayer) {
+  if (playercnt >= 2) {
     let status = statusdescs.empty
     if (isquestion) {
       if (answerer == "") {
         status = statusdescs.questionvolunteer
-      } else if (playeranswer == 0 && isanswerer) {
+      } else if (isplayer && playeranswer == 0 && isanswerer) {
         status = statusdescs.respond
-      } else if (playeranswer == 0) {
+      } else if (isplayer && playeranswer == 0) {
         status = statusdescs.guess
       } else if (answer == 0 || (pendingPlayers > 0 && revealcnt <= 1)) {
         status = statusdescs.wait
-      } else if (isanswerer && allanswers.every((v) => v == answer)) {
+      } else if ((isanswerer || !isplayer) && allanswers.every((v) => v == answer)) {
         status = statusdescs.congrats
         revealed = true
-      } else if (isanswerer) {
+      } else if (isanswerer || !isplayer) {
         status = statusdescs.interrogate
         revealed = true
       } else if (playeranswer == answer) {
@@ -707,7 +708,7 @@ function renderQuestion(mode: rendermode) {
     if (isvote) {
       let [mn, mx] = [Math.min(...allanswers), Math.max(...allanswers)]
       let ok = mn >= 3 || (mn >= 2 && mx == 4)
-      if (playeranswer == 0) {
+      if (isplayer && playeranswer == 0) {
         status = statusdescs.respond
       } else if (pendingPlayers > 0 && revealcnt <= 1) {
         status = statusdescs.wait
@@ -723,7 +724,7 @@ function renderQuestion(mode: rendermode) {
       let hasvolunteer = allanswers.some((v) => v >= 2)
       if (answerer == "") {
         status = statusdescs.darevolunteer
-      } else if (!isanswerer && playeranswer == 0) {
+      } else if (isplayer && !isanswerer && playeranswer == 0) {
         status = statusdescs.respond
       } else if (pendingPlayers > 0 && revealcnt <= 1) {
         status = statusdescs.wait
@@ -855,6 +856,7 @@ function handleHash() {
   hPrintable.hidden = true
   hGameUI.hidden = true
   hWeeklyUI.hidden = true
+  hHostGameLine.hidden = true
   document.body.className = ""
 
   if (location.hash == "#preview") {
@@ -868,6 +870,7 @@ function handleHash() {
     return
   }
   if (location.hash == "#play") {
+    hHostGameLine.hidden = false
     handleStart()
     hGameUI.hidden = false
     renderQuestion(rendermode.full)
