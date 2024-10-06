@@ -1212,9 +1212,10 @@ async function handleHost() {
 
   setNetworkStatus("initializing")
   g.aborter = new AbortController()
+  let aborter = g.aborter
 
   for (let clientID = 1; ; clientID++) {
-    if (g.aborter.signal.aborted) {
+    if (aborter.signal.aborted) {
       return
     }
     let response
@@ -1224,10 +1225,10 @@ async function handleHost() {
       response = await fetch(`${signalingServer}?set=tlewra-${hostcode}-nextid`, {
         method: "POST",
         body: `${clientID}`,
-        signal: g.aborter.signal,
+        signal: aborter.signal,
       })
     } catch (e) {
-      if (g.aborter.signal.aborted) {
+      if (aborter.signal.aborted) {
         return
       }
       setNetworkStatus(`error: upload offer to signaling server: ${e} (will try again soon)`)
@@ -1267,6 +1268,7 @@ async function join() {
   g.clientMode = true
   g.playerStatuses.clear()
   g.aborter = new AbortController()
+  let aborter = g.aborter
   while (true) {
     let response
     setNetworkStatus("awaiting server's signal")
@@ -1317,7 +1319,7 @@ async function join() {
 
     conn.ondatachannel = (ev) => {
       let channel = (ev as RTCDataChannelEvent).channel
-      if (g.aborter?.signal.aborted) {
+      if (aborter?.signal.aborted) {
         channel.send("x")
         conn.close()
         return
