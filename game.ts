@@ -635,7 +635,7 @@ function renderQuestion(mode: rendermode) {
     hGroupControl.hidden = false
     hAnswerer.hidden = isplayer && !isvote && answerer == ""
     hBecomeAnswerer.hidden = isspectator || isvote || (answerer != "" && answerer != hName.value)
-    hRevealMarker.hidden = (!isvote && (!isdare || answerer != hName.value)) || playercnt < 3
+    hRevealMarker.hidden = !(isvote || (isdare && isanswerer) || (isquestion && isanswerer && pendingPlayers > 0 && playeranswer != 0))
     hNextMarker.hidden = !isplayer
 
     hRevealMarker.innerText = `${(playerresponse & responsebits.revealmarker) > 0 ? "[x]" : "[ ]"} force reveal${isvote ? " (needs 2 players)" : ""}`
@@ -647,7 +647,8 @@ function renderQuestion(mode: rendermode) {
         if (pendingPlayers == 0 && answer != 0) answererText = "round done"
         if (pendingPlayers == 0 && answer == 0) answererText = "all ready, answer now!"
         if (pendingPlayers > 0 && answer == 0) answererText = `wait, ${pendingPlayers} guessers pending`
-        if (pendingPlayers > 0 && answer != 0) answererText = `round done, ${pendingPlayers} unanswered`
+        if (pendingPlayers > 0 && answer != 0 && (answererResponse & responsebits.revealmarker) == 0) answererText = `${pendingPlayers} guessers pending`
+        if (pendingPlayers > 0 && answer != 0 && (answererResponse & responsebits.revealmarker) > 0) answererText = `round done, ${pendingPlayers} unanswered`
       } else {
         if (pendingPlayers == 0 && answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
         if (pendingPlayers > 0 && answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done, ${pendingPlayers} unanswered`
@@ -676,7 +677,7 @@ function renderQuestion(mode: rendermode) {
   // Check win condition and determine background color.
   if (playercnt >= 2) {
     if (isquestion) {
-      if (answer != 0) {
+      if ((answer != 0 && pendingPlayers == 0) || (answer != 0 && (answererResponse & responsebits.revealmarker) > 0)) {
         revealed = true
         if (isanswerer || !isplayer) {
           let allcorrect = allanswers.every((v) => v == answer)
