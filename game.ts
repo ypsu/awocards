@@ -825,6 +825,7 @@ function handleHash() {
   // Close all connections.
   disconnectAll()
 
+  hQuestion.innerHTML = ""
   hIntro.hidden = true
   hSeedPreview.hidden = true
   hPrintable.hidden = true
