@@ -351,6 +351,7 @@ function renderWeekly() {
 }
 
 function handleStart() {
+  shuffle(parseInt(hSeed.value))
   g.clients = [new client(-1, null, null)]
   g.playerStatuses.clear()
   handleNameChange(hName.value)
@@ -930,7 +931,6 @@ function handleParse() {
     }
   }
   g.questions = qs
-  shuffle(parseInt(hSeed.value))
 
   let err = ""
   if (invalidCategories.size > 0) {
