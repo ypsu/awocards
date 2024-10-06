@@ -169,13 +169,13 @@ let g = {
   // The fontsize of the question currently show such that it fits the screen.
   fontsize: 0 as number,
 
-  // The focused answer ID, the answer being pushed down.
-  focusedAnswerID: 0 as number,
+  // Which button is being pressed. That one should be colored grey.
+  downbutton: responsebits.empty as responsebits,
 
   // In host mode this tracks the current answerer's username if set.
   answerer: "" as string,
 
-  // If true then the users cannot interact with the answers.
+  // If true then the users cannot interact with the answers, e.g. during the volunteer phase.
   disableInteraction: true as boolean,
 }
 
@@ -445,16 +445,29 @@ function handleNext() {
   renderQuestion(rendermode.full)
 }
 
-function reportAnswer(v: number) {
+function reportClick(v: number) {
+  if (v <= 7 && g.disableInteraction) {
+    g.downbutton = 0
+    return
+  }
   let st = g.playerStatuses.get(hName.value)
   if (st == undefined) return
   let r = st.response
-  if ((st.response & responsebits.answermask) > 0) {
-    // Already answered? Clear answer then.
-    r &= ~responsebits.answermask
+
+  if ((v & responsebits.answermask) > 0) {
+    // This is an answer click.
+    // Already answered? Clear answer then, otherwise set it.
+    if ((st.response & responsebits.answermask) > 0) {
+      r &= ~responsebits.answermask
+    } else {
+      r = (r & ~responsebits.answermask) | v
+    }
   } else {
-    r = (r & ~responsebits.answermask) | v
+    // Otherwise this is a status click.
+    r ^= v
   }
+  g.downbutton = 0
+
   if (g.clientMode) {
     g.clients[0].channel?.send(`r${r}`)
   } else {
@@ -472,21 +485,17 @@ function countPlayers() {
 }
 
 function handleMouse(event: MouseEvent, v: number) {
-  if (
-    g.clients.length == 0 ||
-    !g.playerStatuses.has(hName.value) ||
-    countPlayers() <= 1 ||
-    g.disableInteraction ||
-    (g.answerer == hName.value && g.currentQuestion[1].startsWith("dare: "))
-  ) {
-    // single player mode, client not connected, or spectator mode, do nothing.
-  } else if (event.type == "mouseleave") {
-    g.focusedAnswerID = 0
-  } else if (event.type == "mouseup") {
-    if (v == g.focusedAnswerID) reportAnswer(v)
-    g.focusedAnswerID = 0
-  } else if (event.type == "mousedown" && (event.buttons & 1) == 1) {
-    g.focusedAnswerID = v
+  if (g.downbutton == 0 && (event.type == "mouseleave" || event.type == "mouseup")) return
+  if (event.type == "mouseleave") {
+    g.downbutton = 0
+    renderQuestion(rendermode.quick)
+    return
+  }
+  if (event.button != 0) return
+  if (v == g.downbutton && event.type == "mouseup") {
+    reportClick(v)
+  } else if (event.type == "mousedown" && (v >= 8 || !g.disableInteraction)) {
+    g.downbutton = v
   }
   renderQuestion(rendermode.quick)
 }
@@ -494,21 +503,12 @@ function handleMouse(event: MouseEvent, v: number) {
 function handleTouch(event: TouchEvent, v: number) {
   event.stopPropagation()
   event.preventDefault()
-  if (
-    g.clients.length == 0 ||
-    !g.playerStatuses.has(hName.value) ||
-    countPlayers() <= 1 ||
-    g.disableInteraction ||
-    (g.answerer == hName.value && g.currentQuestion[1].startsWith("dare: "))
-  ) {
-    // single player mode, client not connected, or spectator mode, do nothing.
-  } else if (event.type == "touchstart") {
-    g.focusedAnswerID = v
+  if (event.type == "touchstart" && (v >= 8 || !g.disableInteraction)) {
+    g.downbutton = v
   } else if (event.type == "touchcancel") {
-    g.focusedAnswerID = 0
+    g.downbutton = 0
   } else if (event.type == "touchend") {
-    if (v == g.focusedAnswerID) reportAnswer(v)
-    g.focusedAnswerID = 0
+    reportClick(v)
   }
   renderQuestion(rendermode.quick)
 }
@@ -672,7 +672,7 @@ function renderQuestion(mode: rendermode) {
   hStatusbox.hidden = true
   if (playercnt >= 2 && !isplayer) {
     hStatusbox.hidden = false
-  } else {
+  } else if (playercnt >= 2) {
     hGroupControl.hidden = false
     hStatusbox.hidden = false
     hBecomeAnswerer.hidden = !((isquestion || isdare) && (answerer == "" || isanswerer))
@@ -682,10 +682,14 @@ function renderQuestion(mode: rendermode) {
     hNextMarker.innerText = `${(playerresponse & responsebits.nextmarker) > 0 ? "[x]" : "[ ]"} next question (needs 2 players)`
     let answerertype = isdare ? "receiver" : "answerer"
     hBecomeAnswerer.innerText = `${answerer == hName.value ? "[x]" : "[ ]"} become ${answerertype}`
+
+    hBecomeAnswerer.className = g.downbutton == responsebits.answerermarker ? "cfgNeutral" : ""
+    hNextMarker.className = g.downbutton == responsebits.nextmarker ? "cfgNeutral" : ""
+    hRevealMarker.className = g.downbutton == responsebits.revealmarker ? "cfgNeutral" : ""
   }
 
   // Compute each player's statusbox.
-  g.disableInteraction = false
+  g.disableInteraction = !isplayer || playercnt <= 1 || isanswerer && isdare
   if (playercnt >= 2) {
     let status = statusdescs.empty
     if (isquestion) {
@@ -822,7 +826,7 @@ function renderQuestion(mode: rendermode) {
     answerClass[answer] = "cfgPositive"
     if (playeranswer != answer) answerClass[playeranswer] = "cfgNegative"
   }
-  answerClass[g.focusedAnswerID] = "cfgNeutral"
+  if (g.downbutton < 4) answerClass[g.downbutton] = "cfgNeutral"
   for (let id = 1; id <= 4; id++) {
     let elem = document.getElementById(`ha${id}`)
     if (elem != null) elem.className = answerClass[id]
@@ -1398,6 +1402,18 @@ function main() {
   window.onresize = () => {
     if (location.hash == "#play" || location.hash.startsWith("#join-")) renderQuestion(rendermode.full)
   }
+
+  let addToggleHandlers = (h: HTMLElement, v: number) => {
+    h.onmousedown = (event: MouseEvent) => handleMouse(event, v)
+    h.onmouseup = (event: MouseEvent) => handleMouse(event, v)
+    h.onmouseleave = (event: MouseEvent) => handleMouse(event, v)
+    h.ontouchstart = (event: TouchEvent) => handleTouch(event, v)
+    h.ontouchend = (event: TouchEvent) => handleTouch(event, v)
+    h.ontouchcancel = (event: TouchEvent) => handleTouch(event, v)
+  }
+  addToggleHandlers(hBecomeAnswerer, responsebits.answerermarker)
+  addToggleHandlers(hRevealMarker, responsebits.revealmarker)
+  addToggleHandlers(hNextMarker, responsebits.nextmarker)
 
   // Init category names.
   for (let cat of ["softball", "divisive", "intimate", "partner", "light-dares", "hot-dares", "activities", "naughty-activities"]) {
