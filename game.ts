@@ -652,23 +652,10 @@ function renderQuestion(mode: rendermode) {
   if (mode == rendermode.full || answerer != lastRenderedName) {
     if ("wakeLock" in navigator) navigator.wakeLock.request("screen")
     lastRenderedName = answerer
-    let a = answerer == "" ? "?" : answerer
+    let a = playercnt >= 2 && answerer == "" ? "?" : answerer
     hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion, a)
     g.fontsize = 300
     hGameScreen.style.fontSize = `300px`
-
-    // Update player count based parts of the interface.
-    let playercnt = g.playerStatuses.size
-    if (playercnt <= 1) {
-      hGroupControl.hidden = true
-      hPlayers.hidden = true
-    } else if (playercnt == 2) {
-      hGroupControl.hidden = true
-      hPlayers.hidden = false
-    } else {
-      hGroupControl.hidden = false
-      hPlayers.hidden = false
-    }
   }
 
   // Compute the hGroupControl visibility status and its text.

@@ -18,7 +18,7 @@ Start game:
 </p>
 
 <ul>
-  <li><button onclick='location.hash="#play"'>Start</button> (to present questions or to host a network game)
+  <li><button onclick='location.hash="#play"'>Start</button> (to present the cards or to host a network game)
   <li>Join code: <input type=number size=6 placeholder=CODE id=hJoincode> username: <input size=10 placeholder=NAME id=hJoinname oninput=handleJoinnameChange(hJoinname.value)> <button id=hJoinButton onclick=handleJoin()>Join</button> <span id=hJoinnameErr class=cfgNegative></span> (for spectating or joining a networked version of the game)
   <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
   <li><button onclick=handleWeekly()>Weekly question</button> (for having a random but predictable discussion topic)
@@ -88,7 +88,129 @@ vote: Should we go for a hike?  # example
 
 <hr>
 
-<p>TODO: describe rules.</p>
+<h2 id=rules>Rules <a href=#rules>¶</a></h2>
+<p>
+  inqards (formed from "INQuisitive cARDS") is a simple turn based game for 2-6 players with a set of question, dare, vote cards with personal and sexual content.
+</p>
+
+<p>
+  Distribute 4 voting chips to each player.
+  Each voting chip is a piece of paper with a 1-4 digit on one side.
+  Shuffle the printed version of the cards and put them into a stack in the middle of the desk.
+  Each round someone pulls the card from the top.
+  Each type of card plays differently:
+</p>
+
+<ul>
+  <li>
+    Question card (cards that have a question and 2-4 answers): the card puller has to answer the question.
+    If none of the answers feel true, then in that case just pick the "closest" or "the least wrong" answer from the list.
+    Once they figured out the answer, they put the answer's voting chip face down in front of them.
+    The guessers have to guess what the answerer answer is.
+    They also put a voting chip face down in front of them.
+    Reveal everyone's vote chip once everyone has a voting chip in front of them.
+    Players who have guessed wrong have to explain why they picked their answer.
+  <li>
+    Vote card (cards that start with "Group vote"): each player votes how much interest they have doing the activity together with all the other members of the group.
+    Reveal the voting chips once everyone finished voting.
+    If nobody answered "definitely not" then make a plan doing that activity later on.
+  <li>
+    Dare card (cards that start with "Dare"): the card puller needs to decide if he would be willing to receive said act from anyone from the group.
+    If no then see if there's anybody else in the group to volunteer their body for the act.
+    If there's no volunteer then just go to the next round.
+    If there's a volunteer then the rest of the group uses the voting chip to express how much interest they have giving said act to the volunteer's body.
+    Reveal the voting chips once everyone answered.
+    The receiver can choose someone who didn't answer "definitely not" to do the activity to them for at most 1 minute.
+    Others, umm, just watch.
+</ul>
+
+<p>
+  The rules are not set in stone.
+  Alter them to whatever that makes sense for your group.
+  If a question, answer, or an activity is unclear then change it to something that makes sense.
+  E.g. if a person getting a partner card has multiple partners then they should randomly pick one with a dice before answering.
+  Or just draw a different card.
+  Your game, your rules.
+</p>
+
+<p>
+  Be aware that some cards can be quite spicy.
+  Play this game with your most trusted polyamorous LGBTQ-friendly friends only.
+  It can feel magical when people fully open up to each other.
+</p>
+
+<p>
+  Play only the "softball" question and "activites" vote cards if you are unsure or have a rather conservative group.
+  The game won't be that deep and interesting but it could be still a bit fun.
+</p>
+
+<p>
+  The game is stateless, there's no score to track or anything.
+  Think of it as a conversation starter.
+  The best outcome is that the game is abandoned because you found an interesting topic to chat about.
+</p>
+
+<h2 id=phonegame>Playing with phones <a href=#phonegame>¶</a></h2>
+
+<p>
+  Use printed cards + real voting chips for the best experience.
+  People shouldn't be poking at their phones in such a social game.
+  Don't play this online, it's too awkward for that.
+<p>
+
+<p>
+  If you have voting chips (e.g. from Dixit) then just present the current card from a phone or two but play with the voting chips.
+  However if you live in the 23rd century and there's no paper anymore, then this site provides a networked version that can be played with phones.
+  The host should start the game via the "Start game" option and then in the game setting tick the "host game" option.
+  Then they should share the join code with others.
+</p>
+
+<p>
+  Follow the instructions at the top section above the question.
+  Tap around, do a few test rounds, hopefully the interface makes sense after a few rounds.
+</p>
+
+<p>
+  It's also possible to spectate the game, e.g. to present the current question to the living room TV or to a secondary phone so that everyone can see it.
+  Join the game with an empty username to do so.
+</p>
+
+<p>
+  The implementation is a bit buggy.
+  Just reload the game if it gets stuck.
+  The game is peer-to-peer (WebRTC) so the host's phone must be always on.
+  Don't switch away from the tab or lock the phone or the game might break.
+  Also make sure each player picks a different username otherwise it gets weird.
+  Open a github issue per contact point below if it's completely broken or if you found a reproducible bug.
+</p>
+
+<h2 id=emailgame>Email game <a href=#emailgame>¶</a></h2>
+
+<p>
+  The cards can be used in any form you can think of.
+  Here's an example for an email game for keeping in touch with a friend with whom you no longer know what to talk about.
+  Each week or once a month one of you comes to this site and clicks the "Weekly question" button.
+  Then shoots an email like "I think your answer to this question is A because B".
+  If you are lucky then the other person will respond "No, it's C because D".
+  For extra points they will answer "And I think your answer to the question will be E because F".
+  Voila, you are keeping in touch while learning something about the other person.
+</p>
+
+<p>
+  By default only the softball questions are enabled.
+  Enable the private question categories too if you want spicier conversations.
+</p>
+
+<h2 id=contact>Contact <a href=#contact>¶</a></h2>
+
+The rules, cards, source code are all public domain, do whatever you want with them.
+Here is a forum if you want to discuss this site and its content:
+
+<ul>
+  <li>General discussion: <a href=https://github.com/ypsu/inqards/discussions>https://github.com/ypsu/inqards/discussions</a>
+  <li>Report issues: <a href=https://github.com/ypsu/inqards/issues>https://github.com/ypsu/inqards/issues</a>
+</ul>
+
 </div>
 
 <ol id=hSeedPreview hidden></ol>
