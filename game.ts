@@ -85,6 +85,7 @@ class statusdesc {
 
 const statusdescs = {
   empty: new statusdesc("?", "unknown", "This is an internal error."),
+  network: new statusdesc("…", "network", "Waiting for a response from the host's computer."),
   questionvolunteer: new statusdesc("👋", "volunteer", "Someone has to volunteer to answer the question."),
   darevolunteer: new statusdesc("👋", "volunteer", "Someone has to volunteer to receive the dare."),
   wait: new statusdesc("⌛", "wait", "Wait until other players make their move."),
@@ -161,6 +162,9 @@ let g = {
 
   // Player statuses as received by the p host->client message.
   playerStatuses: new Map<string, userstatus>(),
+
+  // The last status sent, used to detect discrepancy from host.
+  sentStatus: responsebits.empty,
 
   // Whether hosting or just connected to the client.
   // In client mode the client's connection to host is in clients[0].
@@ -468,8 +472,9 @@ function reportClick(v: number) {
   }
   g.downbutton = 0
 
+  g.sentStatus = r
   if (g.clientMode) {
-    g.clients[0].channel?.send(`r${r}`)
+    if (g.clients.length >= 1) g.clients[0].channel?.send(`r${r}`)
   } else {
     st.response = r
     updatePlayerStatus()
@@ -751,6 +756,7 @@ function renderQuestion(mode: rendermode) {
         revealed = true
       }
     }
+    if (playerresponse != g.sentStatus) status = statusdescs.network
     hStatusMarker.innerHTML = `${status.emoji} ${status.tag}<br><span style=font-size:initial>${status.desc}</span>`
   }
 
@@ -1329,6 +1335,7 @@ async function join() {
               st.response = parseInt(sp[1])
               if (!st.response) st.response = 0
               g.playerStatuses.set(sp[0], st)
+              if (sp[0] == hName.value) g.sentStatus = st.response
             }
             updatePlayerStatus()
             renderQuestion(rendermode.full)
