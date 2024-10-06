@@ -25,7 +25,6 @@
 // - r: Mark the response status. Param is a responsebits number.
 // - x: Client leaves.
 
-declare var hAnswerer: HTMLElement
 declare var hBecomeAnswerer: HTMLElement
 declare var hCustomDB: HTMLInputElement
 declare var hCustomQuestionsReport: HTMLElement
@@ -59,6 +58,8 @@ declare var hRevealMarker: HTMLElement
 declare var hSeed: HTMLInputElement
 declare var hSeedPreview: HTMLElement
 declare var hStat: HTMLInputElement
+declare var hStatusbox: HTMLElement
+declare var hStatusMarker: HTMLElement
 declare var hWeeklyCard: HTMLElement
 declare var hWeeklyUI: HTMLElement
 
@@ -70,6 +71,32 @@ enum responsebits {
   answerermarker = 8, // marks the player as the answerer
   nextmarker = 16, // means the player voted for jumping on the next question
   revealmarker = 32, // means the player voted on revealing the answer in the activity vote game
+}
+
+class statusdesc {
+  emoji: string
+  tag: string
+  desc: string
+  constructor(emoji: string, tag: string, desc: string) {
+    ;[this.emoji, this.tag, this.desc] = [emoji, tag, desc]
+  }
+}
+
+const statusdescs = {
+  empty: new statusdesc("?", "unknown", "This is an internal error."),
+  questionvolunteer: new statusdesc("👋", "volunteer", "Someone has to volunteer to answer the question."),
+  darevolunteer: new statusdesc("👋", "volunteer", "Someone has to volunteer to receive the dare."),
+  wait: new statusdesc("⌛", "wait", "Wait until other players make their move."),
+  respond: new statusdesc("🎲", "respond", "Pick an answer."),
+  guess: new statusdesc("🤔", "guess", "Guess what the answerer will answer."),
+  congrats: new statusdesc("👍", "congrats", "Everyone guessed your answer correctly, congratulate them."),
+  interrogate: new statusdesc("😐", "interrogate", "Some guessed your answer wrong, investigate why."),
+  correct: new statusdesc("✅", "correct", "Your answer is correct."),
+  wrong: new statusdesc("❌", "wrong", "Your answer is wrong."),
+  plan: new statusdesc("📅", "plan", "The group is interested in the activity, make a plan for it."),
+  skip: new statusdesc("🚫", "skip", "Not enough enthusiasm for this activity, skip it."),
+  pick: new statusdesc("👈", "pick", "Pick someone and give them your body."),
+  watch: new statusdesc("📺", "watch", "Wait until the receiver picks a volunteer and then enjoy the show."),
 }
 
 class client {
@@ -225,14 +252,14 @@ function handleSeedPreview() {
   location.hash = "#preview"
 }
 
-function makeQuestionHTML(q: question, interactive: boolean) {
+function makeQuestionHTML(q: question, name: string) {
   if (q.length <= 1) {
     return "loading..."
   }
   let answerid = 0
   let a = () => {
     answerid++
-    if (!interactive) return ""
+    if (name == "") return "" // not interactive mode.
     let props = `id=ha${answerid}`
     for (let ev of ["mousedown", "mouseup", "mouseleave"]) {
       props += ` on${ev}=handleMouse(event,${answerid})`
@@ -256,6 +283,7 @@ function makeQuestionHTML(q: question, interactive: boolean) {
   }
   if (q[1].startsWith("dare: ")) {
     let h = `<p>Dare: ${escapehtml(q[1].slice(6))}</li><ol>\n`
+    if (name != "") h = `<p>Dare against ${name}'s body: ${escapehtml(q[1].slice(6))}</li><ol>\n`
     h += `<li ${a()}>no ${p()}</li>\n`
     h += `<li ${a()}>can be talked into it ${p()}</li>\n`
     h += `<li ${a()}>I don't mind trying ${p()}</li>\n`
@@ -263,6 +291,7 @@ function makeQuestionHTML(q: question, interactive: boolean) {
     return h + "</ol>"
   }
   let h = `<p>${escapehtml(q[1])}</p><ol>`
+  if (name != "") h = `<p>${name}: ${escapehtml(q[1])}</p><ol>`
   for (let i = 2; i < q.length; i++) h += `<li ${a()}>${escapehtml(q[i])} ${p()}</li>\n`
   return h + "</ol>"
 }
@@ -272,7 +301,7 @@ function handlePrint() {
 
   let h = ""
   for (let q of g.questions) {
-    if (g.categories[q[0]]) h += `<div class=hPrintableCard><span>${makeQuestionHTML(q, false)}\n<p><em>category: ${q[0]}</em></p></span></div>`
+    if (g.categories[q[0]]) h += `<div class=hPrintableCard><span>${makeQuestionHTML(q, "")}\n<p><em>category: ${q[0]}</em></p></span></div>`
   }
   hPrintable.hidden = false
   hPrintable.innerHTML = h
@@ -347,7 +376,7 @@ function renderWeekly() {
     if (cats.includes(q[0][0])) qs.push(q)
   }
 
-  hWeeklyCard.innerHTML = `${makeQuestionHTML(qs[date % qs.length], false)}\n<p><em>category: ${qs[date % qs.length][0]}</em></p>`
+  hWeeklyCard.innerHTML = `${makeQuestionHTML(qs[date % qs.length], "")}\n<p><em>category: ${qs[date % qs.length][0]}</em></p>`
 }
 
 function handleStart() {
@@ -563,6 +592,7 @@ enum rendermode {
   full,
 }
 
+let lastRenderedName = ""
 function renderQuestion(mode: rendermode) {
   renderStatus()
 
@@ -574,28 +604,7 @@ function renderQuestion(mode: rendermode) {
   // Not connected to host yet, that's the only case where the clients array can be empty.
   // Ignore that, the interface doesn't have to be interactible in that case.
   if (g.clients.length == 0) {
-    document.body.className = "cbgNeutral"
     return
-  }
-
-  if (mode == rendermode.full) {
-    if ("wakeLock" in navigator) navigator.wakeLock.request("screen")
-    hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion, true)
-    g.fontsize = 300
-    hGameScreen.style.fontSize = `300px`
-
-    // Update player count based parts of the interface.
-    let playercnt = g.playerStatuses.size
-    if (playercnt <= 1) {
-      hGroupControl.hidden = true
-      hPlayers.hidden = true
-    } else if (playercnt == 2) {
-      hGroupControl.hidden = true
-      hPlayers.hidden = false
-    } else {
-      hGroupControl.hidden = false
-      hPlayers.hidden = false
-    }
   }
 
   let isdare = g.currentQuestion[1].startsWith("dare: ")
@@ -627,130 +636,156 @@ function renderQuestion(mode: rendermode) {
   let isanswerer = hName.value != "" && hName.value == answerer
   let isspectator = !isplayer
 
+  // Render the question.
+  if (mode == rendermode.full || answerer != lastRenderedName) {
+    if ("wakeLock" in navigator) navigator.wakeLock.request("screen")
+    lastRenderedName = answerer
+    let a = answerer == "" ? "?" : answerer
+    hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion, a)
+    g.fontsize = 300
+    hGameScreen.style.fontSize = `300px`
+
+    // Update player count based parts of the interface.
+    let playercnt = g.playerStatuses.size
+    if (playercnt <= 1) {
+      hGroupControl.hidden = true
+      hPlayers.hidden = true
+    } else if (playercnt == 2) {
+      hGroupControl.hidden = true
+      hPlayers.hidden = false
+    } else {
+      hGroupControl.hidden = false
+      hPlayers.hidden = false
+    }
+  }
+
   // Compute the hGroupControl visibility status and its text.
   let answererText = ""
   hNavbar.hidden = isplayer && playercnt >= 2
-  if (playercnt <= 1) {
+  if (playercnt <= 1 || !isplayer) {
     hGroupControl.hidden = true
+    hStatusbox.hidden = true
   } else {
     hGroupControl.hidden = false
-    hAnswerer.hidden = isplayer && !isvote && answerer == ""
-    hBecomeAnswerer.hidden = isspectator || isvote || (answerer != "" && answerer != hName.value)
-    hRevealMarker.hidden = !(isvote || (isdare && isanswerer) || (isquestion && isanswerer && pendingPlayers > 0 && playeranswer != 0))
-    hNextMarker.hidden = !isplayer
+    hStatusbox.hidden = false
+    hBecomeAnswerer.hidden = !((isquestion || isdare) && (answerer == "" || isanswerer))
+    hRevealMarker.hidden = !(pendingPlayers > 0 && (isvote || (isdare && answerer != "") || (isquestion && answer != 0)))
 
-    hRevealMarker.innerText = `${(playerresponse & responsebits.revealmarker) > 0 ? "[x]" : "[ ]"} force reveal${isvote ? " (needs 2 players)" : ""}`
+    hRevealMarker.innerText = `${(playerresponse & responsebits.revealmarker) > 0 ? "[x]" : "[ ]"} skip wait (needs 2 players)`
     hNextMarker.innerText = `${(playerresponse & responsebits.nextmarker) > 0 ? "[x]" : "[ ]"} next question (needs 2 players)`
-
     let answerertype = isdare ? "receiver" : "answerer"
-    if (isquestion) {
-      if (isanswerer) {
-        if (pendingPlayers == 0 && answer != 0) answererText = "round done"
-        if (pendingPlayers == 0 && answer == 0) answererText = "all ready, answer now!"
-        if (pendingPlayers > 0 && answer == 0) answererText = `wait, ${pendingPlayers} guessers pending`
-        if (pendingPlayers > 0 && answer != 0 && (answererResponse & responsebits.revealmarker) == 0) answererText = `${pendingPlayers} guessers pending`
-        if (pendingPlayers > 0 && answer != 0 && (answererResponse & responsebits.revealmarker) > 0) answererText = `round done, ${pendingPlayers} unanswered`
-      } else {
-        if (pendingPlayers == 0 && answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
-        if (pendingPlayers > 0 && answer != 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done, ${pendingPlayers} unanswered`
-        if (pendingPlayers > 0 && answer == 0) {
-          answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} guessers pending`
-        }
-        if (pendingPlayers == 0 && answer == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, waiting on answer`
-      }
-    } else if (isdare) {
-      if (isanswerer) {
-        if (pendingPlayers == 0) answererText = "round done"
-        if (pendingPlayers > 0) answererText = `wait, ${pendingPlayers} responses pending`
-      } else {
-        if (pendingPlayers > 0) {
-          answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, ${playercnt - allanswers.length - 1} responses pending`
-        }
-        if (pendingPlayers == 0) answererText = `${answerertype} is ${answerer == "" ? "?" : answerer}, round done`
-      }
-    } else if (isvote) {
-      if (allanswers.length == playercnt) answererText = `round done`
-      if (allanswers.length != playercnt) answererText = `${playercnt - allanswers.length} responses pending`
-    }
     hBecomeAnswerer.innerText = `${answerer == hName.value ? "[x]" : "[ ]"} become ${answerertype}`
   }
 
-  // Check win condition and determine background color.
-  if (playercnt >= 2) {
+  // Compute each player's statusbox.
+  let reveled = false
+  if (playercnt >= 2 && isplayer) {
+    let status = statusdescs.empty
     if (isquestion) {
-      if ((answer != 0 && pendingPlayers == 0) || (answer != 0 && (answererResponse & responsebits.revealmarker) > 0)) {
+      if (answerer == "") {
+        status = statusdescs.questionvolunteer
+      } else if (playeranswer == 0 && isanswerer) {
+        status = statusdescs.respond
+      } else if (playeranswer == 0) {
+        status = statusdescs.guess
+      } else if (answer == 0 || (pendingPlayers > 0 && revealcnt <= 1)) {
+        status = statusdescs.wait
+      } else if (isanswerer && allanswers.every((v) => v == answer)) {
+        status = statusdescs.congrats
         revealed = true
-        if (isanswerer || !isplayer) {
-          let allcorrect = allanswers.every((v) => v == answer)
-          bgclass = allcorrect ? "cbgPositive" : "cbgNegative"
-          answererText += allcorrect ? ", all correct" : ", some incorrect"
-        } else if (playeranswer != 0) {
-          bgclass = playeranswer == answer ? "cbgPositive" : "cbgNegative"
-          answererText += playeranswer == answer ? ", you guessed right!" : ", you guessed wrong!"
-        }
       } else if (isanswerer) {
-        bgclass = pendingPlayers == 0 ? "cbgSpecial" : "cbgReference"
-      } else if (playercnt == 2 && allanswers.length == 2) {
+        status = statusdescs.interrogate
         revealed = true
-        bgclass = allanswers[0] == allanswers[1] ? "cbgPositive" : "cbgNegative"
-        hBecomeAnswerer.hidden = true
-        hAnswerer.hidden = false
-        answererText = allanswers[0] == allanswers[1] ? "you agree" : "you disagree"
-      }
-    } else if (isdare) {
-      if (answerer != "" && (pendingPlayers == 0 || (answererResponse & responsebits.revealmarker) > 0)) {
+      } else if (playeranswer == answer) {
+        status = statusdescs.correct
         revealed = true
-        let hasvolunteer = allanswers.some((v) => v >= 2)
-        if (isanswerer || !isplayer) {
-          bgclass = hasvolunteer ? "cbgPositive" : "cbgNegative"
-          answererText += hasvolunteer ? ", there are volunteers" : ", no volunteers"
-        } else if (isplayer) {
-          bgclass = playeranswer >= 2 ? "cbgPositive" : "cbgNegative"
-          answererText += hasvolunteer ? ", there are volunteers" : ", no volunteers"
-        }
-      } else if (isanswerer) {
-        bgclass = "cbgReference"
-      } else if (playercnt == 2 && allanswers.length == 2) {
+      } else {
+        status = statusdescs.wrong
         revealed = true
-        let [mn, mx] = [Math.min(...allanswers), Math.max(...allanswers)]
-        bgclass = mn >= 2 && mx >= 3 ? "cbgPositive" : "cbgNegative"
-        hBecomeAnswerer.hidden = true
-        hAnswerer.hidden = false
-        answererText = mn >= 2 && mx >= 3 ? "go for the activity!" : "skip the activity"
-      }
-    } else if (isvote) {
-      if (allanswers.length == playercnt || (revealcnt >= 2 && allanswers.length >= 1)) {
-        revealed = true
-        let [mn, mx] = [Math.min(...allanswers), Math.max(...allanswers)]
-        let ok = mn >= 3 || (mn >= 2 && mx == 4)
-        bgclass = ok ? "cbgPositive" : "cbgNegative"
-        answererText += ok ? ", go for the activity!" : ", skip the activity"
       }
     }
+    if (isvote) {
+      let [mn, mx] = [Math.min(...allanswers), Math.max(...allanswers)]
+      let ok = mn >= 3 || (mn >= 2 && mx == 4)
+      if (playeranswer == 0) {
+        status = statusdescs.respond
+      } else if (pendingPlayers > 0 && revealcnt <= 1) {
+        status = statusdescs.wait
+      } else if (ok) {
+        status = statusdescs.plan
+        revealed = true
+      } else {
+        status = statusdescs.skip
+        revealed = true
+      }
+    }
+    if (isdare) {
+      let hasvolunteer = allanswers.some((v) => v >= 2)
+      if (answerer == "") {
+        status = statusdescs.darevolunteer
+      } else if (!isanswerer && playeranswer == 0) {
+        status = statusdescs.respond
+      } else if (pendingPlayers > 0 && revealcnt <= 1) {
+        status = statusdescs.wait
+      } else if (hasvolunteer && isanswerer) {
+        status = statusdescs.pick
+        revealed = true
+      } else if (hasvolunteer) {
+        status = statusdescs.watch
+        revealed = true
+      } else {
+        status = statusdescs.skip
+        revealed = true
+      }
+    }
+    hStatusMarker.innerHTML = `${status.emoji} ${status.tag}<br><span style=font-size:initial>${status.desc}</span>`
   }
-  hAnswerer.innerText = answererText
 
-  // Render the color coded player status line.
+  // Render the emoji coded player status line.
   let players = [] as string[]
   g.playerStatuses.forEach((st, name) => {
     if (!st.active) return
     let panswer = st.response & responsebits.answermask
-    if (name == g.answerer) {
-      players.push(`<span     class=cfgReference>${name}</span>`)
-    } else if (panswer == 0) {
-      players.push(`<span  style=font-weight:bold>${name}</span>`)
-    } else if (!revealed) {
-      players.push(`<span    class=cfgNotice>${name}</span>`)
-    } else if ((isdare || isvote) && panswer == 1) {
-      players.push(`<span class=cfgNegative>${name}</span>`)
-    } else if (isdare || isvote) {
-      players.push(`<span   class=cfgPositive>${name}</span>`)
+    if (!revealed) {
+      if (isdare && name == answerer) {
+        players.push(`${name} 👋`)
+      } else if (panswer == 0) {
+        players.push(`${name} 🎲`)
+      } else {
+        players.push(`${name} ⌛`)
+      }
+      return
+    }
+    if (revealed && isvote) {
+      if (panswer == 0) {
+        players.push(`${name} 🎲`)
+      } else if (panswer == 1) {
+        players.push(`${name} ❌`)
+      } else {
+        players.push(`${name} ✅`)
+      }
+      return
+    }
+    if (revealed && isdare) {
+      if (name == answerer) {
+        players.push(`${name} 👋`)
+      } else if (panswer == 0) {
+        players.push(`${name} 🎲`)
+      } else if (panswer == 1) {
+        players.push(`${name} ❌`)
+      } else {
+        players.push(`${name} ✅`)
+      }
+      return
+    }
+    if (panswer == 0) {
+      players.push(`${name} 🎲`)
+    } else if (name == answerer) {
+      players.push(`${name} 👋`)
     } else if (panswer == answer) {
-      players.push(`<span   class=cfgPositive>${name}</span>`)
-    } else if (playercnt == 2 && allanswers.length == 2 && allanswers[0] == allanswers[1]) {
-      players.push(`<span   class=cfgPositive>${name}</span>`)
+      players.push(`${name} ✅`)
     } else {
-      players.push(`<span class=cfgNegative>${name}</span>`)
+      players.push(`${name} ❌`)
     }
   })
   players.sort()
@@ -774,26 +809,14 @@ function renderQuestion(mode: rendermode) {
 
   // Color answers as needed.
   let answerClass = ["", "", "", "", "", ""]
+  if (isquestion && revealed) {
+    answerClass[answer] = "cfgPositive"
+    if (playeranswer != answer) answerClass[playeranswer] = "cfgNegative"
+  }
   answerClass[g.focusedAnswerID] = "cfgNeutral"
   for (let id = 1; id <= 4; id++) {
     let elem = document.getElementById(`ha${id}`)
     if (elem != null) elem.className = answerClass[id]
-  }
-
-  // Color the background as needed.
-  let r = g.playerStatuses.get(hName.value)
-  if (r == undefined || !r.active || playercnt == 1) {
-    // This is a spectator client.
-    document.body.className = bgclass
-  } else if (bgclass != "") {
-    // Result ready.
-    document.body.className = bgclass
-  } else if ((r.response & responsebits.answermask) > 0 && (!isdare || answerer != hName.value)) {
-    // Answered, waiting for reveal.
-    document.body.className = "cbgNotice"
-  } else {
-    // Waiting for answer.
-    document.body.className = ""
   }
 
   // Shrink to fit.

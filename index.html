@@ -91,12 +91,12 @@ vote: Should we go for a hike?  # example
 <div id=hGameUI hidden>
   <div id=hGameScreen>
     <div id=hNavbar><button onclick=handlePrev() style=width:45%>Prev</button> <button onclick=handleNext() style=width:45%>Next</button></div>
+    <div id=hStatusbox style=text-align:center><p><span id=hStatusMarker>✋ volunteer</p><hr></div>
     <div id=hQuestion></div>
     <div id=hGroupControl>
       <hr>
       <ul style=font-family:monospace>
         <li id=hBecomeAnswerer onclick=handleMarkerClick(responsebits.answerermarker)>[ ] become answerer
-        <li id=hAnswerer>Answerer:
         <li id=hRevealMarker onclick=handleMarkerClick(responsebits.revealmarker)>[ ] force reveal (needs 2 players)
         <li id=hNextMarker onclick=handleMarkerClick(responsebits.nextmarker)>[ ] next question (needs 2 players)
       </ul>
