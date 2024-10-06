@@ -718,7 +718,6 @@ function renderQuestion(mode: rendermode) {
         answererText = mn >= 2 && mx >= 3 ? "go for the activity!" : "skip the activity"
       }
     } else if (isvote) {
-      console.log("revealcnt", revealcnt)
       if (allanswers.length == playercnt || (revealcnt >= 2 && allanswers.length >= 1)) {
         revealed = true
         let [mn, mx] = [Math.min(...allanswers), Math.max(...allanswers)]
@@ -738,7 +737,7 @@ function renderQuestion(mode: rendermode) {
     if (name == g.answerer) {
       players.push(`<span     class=cfgReference>${name}</span>`)
     } else if (panswer == 0) {
-      players.push(`<span  >${name}</span>`)
+      players.push(`<span  style=font-weight:bold>${name}</span>`)
     } else if (!revealed) {
       players.push(`<span    class=cfgNotice>${name}</span>`)
     } else if ((isdare || isvote) && panswer == 1) {
