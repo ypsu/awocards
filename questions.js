@@ -181,7 +181,7 @@ How big of an issue would your death be? @ none as I have a will, inheritance, a
 How difficult do you deem your life in average? @ easy @ medium @ hard @ nightmare
 Which sex act have you done with both genders? Pick the first that applies. @ my genital touched both vagina and penis already @ oral sex @ handjob @ none or other
 Which of these would you use to describe yourself? @ dependable @ good looks @ fun @ smart
-What's the most annoying trait of you? @ boring @ smartass (always correcting others) @ lazy @ subpar communication skills
+What's the most annoying trait of you? @ boring or lazy @ workaholic @ stubborn @ bad communication skills
 
 @partner
 Have you had sex with another person after your current relationship started? @ no @ yes @ multiple people even
@@ -208,7 +208,7 @@ How would you prefer your partner to sleep? @ naked @ in underwear @ in an overs
 What would you do if your partner suddenly became bedridden for life? @ stay with them and take care of them forever @ start a new life but take care of them @ start a new life without them
 Would you watch your partner having sex with someone else? @ no, I wouldn't allow my partner to have sex with others @ I don't want to be present @ sure, I'd be happy to watch @ sure, I'd be happy to record it even
 What's the best description of your partner? @ dependable @ good looks @ fun @ smart
-What's the most annoying trait of your partner? @ boring @ smartass (always correcting others) @ lazy @ subpar communication skills
+What's the most annoying trait of your partner? @ boring or lazy @ workaholic @ stubborn @ bad communication skills
 Is it important that your partner looks good? @ no, I don't care about the looks @ there's a minimum standard I like to have (e.g. daily shower, clean clothes) but I don't care above that @ it's important to me that my partner looks top form all the time
 Do you have anal sex with your partner? @ never tried @ tried but it's not for us @ occasionally @ regularly
 What would you prefer your partner to masturbate to? @ naked or videos of me on their phone @ porn
