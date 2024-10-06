@@ -174,6 +174,9 @@ let g = {
 
   // In host mode this tracks the current answerer's username if set.
   answerer: "" as string,
+
+  // If true then the users cannot interact with the answers.
+  disableInteraction: true as boolean,
 }
 
 function escapehtml(unsafe: string) {
@@ -473,6 +476,7 @@ function handleMouse(event: MouseEvent, v: number) {
     g.clients.length == 0 ||
     !g.playerStatuses.has(hName.value) ||
     countPlayers() <= 1 ||
+    g.disableInteraction ||
     (g.answerer == hName.value && g.currentQuestion[1].startsWith("dare: "))
   ) {
     // single player mode, client not connected, or spectator mode, do nothing.
@@ -494,6 +498,7 @@ function handleTouch(event: TouchEvent, v: number) {
     g.clients.length == 0 ||
     !g.playerStatuses.has(hName.value) ||
     countPlayers() <= 1 ||
+    g.disableInteraction ||
     (g.answerer == hName.value && g.currentQuestion[1].startsWith("dare: "))
   ) {
     // single player mode, client not connected, or spectator mode, do nothing.
@@ -680,11 +685,13 @@ function renderQuestion(mode: rendermode) {
   }
 
   // Compute each player's statusbox.
+  g.disableInteraction = false
   if (playercnt >= 2) {
     let status = statusdescs.empty
     if (isquestion) {
       if (answerer == "") {
         status = statusdescs.questionvolunteer
+        g.disableInteraction = true
       } else if (isplayer && playeranswer == 0 && isanswerer) {
         status = statusdescs.respond
       } else if (isplayer && playeranswer == 0) {
@@ -724,6 +731,7 @@ function renderQuestion(mode: rendermode) {
       let hasvolunteer = allanswers.some((v) => v >= 2)
       if (answerer == "") {
         status = statusdescs.darevolunteer
+        g.disableInteraction = true
       } else if (isplayer && !isanswerer && playeranswer == 0) {
         status = statusdescs.respond
       } else if (pendingPlayers > 0 && revealcnt <= 1) {
