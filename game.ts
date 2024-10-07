@@ -663,13 +663,16 @@ function renderQuestion(mode: rendermode) {
   hNavbar.hidden = isplayer && playercnt >= 2
   hGroupControl.hidden = true
   hStatusbox.hidden = true
+  hPlayers.hidden = true
   if (playercnt >= 2 && !isplayer) {
     hStatusbox.hidden = false
+    hPlayers.hidden = false
   } else if (playercnt >= 2) {
     hGroupControl.hidden = false
     hStatusbox.hidden = false
     hBecomeAnswerer.hidden = !((isquestion || isdare) && (answerer == "" || isanswerer))
     hRevealMarker.hidden = !(pendingPlayers > 0 && (isvote || (isdare && answerer != "") || (isquestion && answer != 0)))
+    hPlayers.hidden = false
 
     hRevealMarker.innerText = `${(playerresponse & responsebits.revealmarker) > 0 ? "[x]" : "[ ]"} skip wait (needs 2 players)`
     hNextMarker.innerText = `${(playerresponse & responsebits.nextmarker) > 0 ? "[x]" : "[ ]"} next question (needs 2 players)`
