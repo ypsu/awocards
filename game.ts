@@ -62,6 +62,9 @@ declare var hSeedPreview: HTMLElement
 declare var hStat: HTMLInputElement
 declare var hStatusbox: HTMLElement
 declare var hStatusMarker: HTMLElement
+declare var hThemeDark: HTMLInputElement
+declare var hThemeLight: HTMLInputElement
+declare var hThemeSystem: HTMLInputElement
 declare var hWeeklyCard: HTMLElement
 declare var hWeeklyUI: HTMLElement
 
@@ -1394,6 +1397,25 @@ async function join() {
   setNetworkStatus("")
 }
 
+let darkPreference = matchMedia("(prefers-color-scheme:dark)")
+function setTheme() {
+  if (hThemeDark.checked || (hThemeSystem.checked && darkPreference.matches)) {
+    document.documentElement.style.colorScheme = "dark"
+    document.documentElement.setAttribute("data-theme", "dark")
+  } else {
+    document.documentElement.style.colorScheme = "light"
+    document.documentElement.setAttribute("data-theme", "light")
+  }
+
+  if (hThemeDark.checked) {
+    localStorage.setItem("Theme", "dark")
+  } else if (hThemeLight.checked) {
+    localStorage.setItem("Theme", "light")
+  } else {
+    localStorage.removeItem("Theme")
+  }
+}
+
 function seterror(msg: string) {
   hError.innerText = `Error: ${msg}.\nReload the page to try again.`
   hError.hidden = false
@@ -1409,6 +1431,9 @@ function main() {
   window.onresize = () => {
     if (location.hash == "#play" || location.hash.startsWith("#join-")) renderQuestion(rendermode.full)
   }
+
+  darkPreference.addEventListener("change", setTheme)
+  setTheme()
 
   let addToggleHandlers = (h: HTMLElement, v: number) => {
     h.onmousedown = (event: MouseEvent) => handleMouse(event, v)
@@ -1457,6 +1482,17 @@ function main() {
     hName.value = storedName
   }
   hJoinButton.innerText = hJoinname.value == "" ? "Spectate" : "Join"
+
+  // Load theme if stored.
+  let storedTheme = localStorage.getItem("Theme")
+  if (storedTheme == "light") {
+    hThemeLight.checked = true
+  } else if (storedTheme == "dark") {
+    hThemeDark.checked = true
+  } else {
+    hThemeSystem.checked = true
+  }
+  setTheme()
 
   handleParse()
   handleHash()

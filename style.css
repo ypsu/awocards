@@ -16,24 +16,22 @@
   --fg-inverted:  #fff;
 }
 
-@media (prefers-color-scheme:dark) {
-  :root {
-    --bg-neutral:   #444;
-    --bg-notice:    #660;
-    --bg-negative:  #644;
-    --bg-positive:  #464;
-    --bg-reference: #448;
-    --bg-special:   #646;
-    --bg-inverted:  #fff;
+[data-theme=dark] {
+  --bg-neutral:   #444;
+  --bg-notice:    #660;
+  --bg-negative:  #644;
+  --bg-positive:  #464;
+  --bg-reference: #448;
+  --bg-special:   #646;
+  --bg-inverted:  #fff;
 
-    --fg-neutral:   #666;
-    --fg-notice:    #ffc;
-    --fg-negative:  #c88;
-    --fg-positive:  #8c8;
-    --fg-reference: #88c;
-    --fg-special:   #c8c;
-    --fg-inverted:  #000;
-  }
+  --fg-neutral:   #666;
+  --fg-notice:    #ffc;
+  --fg-negative:  #c88;
+  --fg-positive:  #8c8;
+  --fg-reference: #88c;
+  --fg-special:   #c8c;
+  --fg-inverted:  #000;
 }
 
 .cbgNeutral   { background-color: var(--bg-neutral); }

@@ -29,10 +29,10 @@ Question cards:
 </p>
 
 <ul>
-  <li><input type=checkbox id=hqs checked> <label for=hqs>softball: easy, family friendly questions; can be used as a gentle intro into the game.</label>
-  <li><input type=checkbox id=hqd> <label for=hqd>divisive: political questions; ideal for turning friends into enemies.</label>
-  <li><input type=checkbox id=hqi> <label for=hqi>intimate: embarrassing, very private questions; ideal for making people regret coming to your drinking party.</label>
-  <li><input type=checkbox id=hqp> <label for=hqp>partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
+  <li><input type=checkbox id=hqs checked><label for=hqs> softball: easy, family friendly questions; can be used as a gentle intro into the game.</label>
+  <li><input type=checkbox id=hqd><label for=hqd> divisive: political questions; ideal for turning friends into enemies.</label>
+  <li><input type=checkbox id=hqi><label for=hqi> intimate: embarrassing, very private questions; ideal for making people regret coming to your drinking party.</label>
+  <li><input type=checkbox id=hqp><label for=hqp> partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
 </ul>
 
 <p>
@@ -40,8 +40,8 @@ Vote cards:
 </p>
 
 <ul>
-  <li><input type=checkbox id=hqa> <label for=hqa>activities: vote about vanilla activities to avoid just sitting home all the time.</label>
-  <li><input type=checkbox id=hqn> <label for=hqn>naughty-activities: vote about naughty activities to spice up life a bit.</label>
+  <li><input type=checkbox id=hqa><label for=hqa> activities: vote about vanilla activities to avoid just sitting home all the time.</label>
+  <li><input type=checkbox id=hqn><label for=hqn> naughty-activities: vote about naughty activities to spice up life a bit.</label>
 </ul>
 
 <p>
@@ -49,8 +49,8 @@ Dare cards:
 </p>
 
 <ul>
-  <li><input type=checkbox id=hql> <label for=hql>light-dares: semi-naughty but still a relatively gentle intro into dares.</label>
-  <li><input type=checkbox id=hqh> <label for=hqh>hot-dares: naughty dares in case you are all butt naked already; ideal as a warmup for your umm... hot party.</label>
+  <li><input type=checkbox id=hql><label for=hql> light-dares: semi-naughty but still a relatively gentle intro into dares.</label>
+  <li><input type=checkbox id=hqh><label for=hqh> hot-dares: naughty dares in case you are all butt naked already; ideal as a warmup for your umm... hot party.</label>
 </ul>
 
 <p>
@@ -244,6 +244,10 @@ Here is a forum if you want to discuss this site and its content:
       <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
       <li>Jump to question: <button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button> <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump(hJumpIndex.value)>Jump</button>
       <li id=hHostGameLine><input type=checkbox id=hHostGame onclick=handleHost()><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode> <span id=hHostURL hidden></span>
+      <li>Color theme:
+        <input type=radio name=iTheme oninput=setTheme() id=hThemeSystem><label for=hThemeSystem> system</label>
+        <input type=radio name=iTheme oninput=setTheme() id=hThemeLight><label for=hThemeLight> light</label>
+        <input type=radio name=iTheme oninput=setTheme() id=hThemeDark><label for=hThemeDark> dark</label>
       <li><button onclick="location.href='#'">Back to menu</button>
     </ul>
   </details>
