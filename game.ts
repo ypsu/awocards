@@ -253,6 +253,14 @@ function shuffle(seednumber: number) {
   g.shuffledqs = qs
 }
 
+function handleCategoryChange() {
+  let cats = ""
+  for (let cat in g.categories) {
+    if ((document.getElementById("hq" + cat[0]) as HTMLInputElement).checked) cats += cat[0]
+  }
+  localStorage.setItem("Categories", cats)
+}
+
 function handleSeedPreview() {
   shuffle(parseInt(hSeed.value))
 
@@ -1493,6 +1501,19 @@ function main() {
     hName.value = storedName
   }
   hJoinButton.textContent = hJoinname.value == "" ? "Spectate" : "Join"
+
+  // Load categories if stored.
+  let storedCategories = localStorage.getItem("Categories")
+  if (storedCategories != null) {
+    for (let cat in g.categories) {
+      let elem = document.getElementById("hq" + cat) as HTMLInputElement
+      if (elem != null) elem.checked = false
+    }
+    for (let cat of storedCategories) {
+      let elem = document.getElementById("hq" + cat) as HTMLInputElement
+      if (elem != null) elem.checked = true
+    }
+  }
 
   // Load theme if stored.
   let storedTheme = localStorage.getItem("Theme")
