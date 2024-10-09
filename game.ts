@@ -1159,7 +1159,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   } while (conn.iceGatheringState != "complete")
   updateStatus("uploading offer")
   try {
-    response = await fetch(`${signalingServer}?set=inqards-${hostcode}-${clientID}-offer&timeoutms=5000`, {
+    response = await fetch(`${signalingServer}?set=awocards-${hostcode}-${clientID}-offer&timeoutms=5000`, {
       method: "POST",
       body: conn.localDescription?.sdp,
     })
@@ -1175,7 +1175,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   // Establish the connection to the connecting client.
   updateStatus("awaiting client's answer")
   try {
-    response = await fetch(`${signalingServer}?get=inqards-${hostcode}-${clientID}-answer&timeoutms=5000`, { method: "POST" })
+    response = await fetch(`${signalingServer}?get=awocards-${hostcode}-${clientID}-answer&timeoutms=5000`, { method: "POST" })
   } catch (e) {
     error(`error: await client's answer: ${e} (client has to try again)`)
     return
@@ -1222,7 +1222,7 @@ async function handleHost() {
     // Advertise the next client ID.
     setNetworkStatus("waiting for next client")
     try {
-      response = await fetch(`${signalingServer}?set=inqards-${hostcode}-nextid`, {
+      response = await fetch(`${signalingServer}?set=awocards-${hostcode}-nextid`, {
         method: "POST",
         body: `${clientID}`,
         signal: aborter.signal,
@@ -1274,7 +1274,7 @@ async function join() {
     let response
     setNetworkStatus("awaiting server's signal")
     try {
-      response = await fetch(`${signalingServer}?get=inqards-${joincode}-nextid&timeoutms=600000`, { method: "POST" })
+      response = await fetch(`${signalingServer}?get=awocards-${joincode}-nextid&timeoutms=600000`, { method: "POST" })
     } catch (e) {
       setNetworkStatus(`error: await server's signal: ${e} (will try again soon`)
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
@@ -1293,7 +1293,7 @@ async function join() {
 
     setNetworkStatus("awaiting server's offer")
     try {
-      response = await fetch(`${signalingServer}?get=inqards-${joincode}-${clientID}-offer&timeoutms=5000`, { method: "POST" })
+      response = await fetch(`${signalingServer}?get=awocards-${joincode}-${clientID}-offer&timeoutms=5000`, { method: "POST" })
     } catch (e) {
       setNetworkStatus(`error: wait server's offer: ${e} (will try again soon`)
       await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
@@ -1388,7 +1388,7 @@ async function join() {
 
     setNetworkStatus("sending answer")
     try {
-      response = await fetch(`${signalingServer}?set=inqards-${joincode}-${clientID}-answer`, {
+      response = await fetch(`${signalingServer}?set=awocards-${joincode}-${clientID}-answer`, {
         method: "POST",
         body: conn.localDescription?.sdp,
       })

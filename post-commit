@@ -22,7 +22,7 @@ fi
 prettier --check --print-width=160 --no-semi *.ts >/dev/null || fail 'Reformat code with `prettier --write --print-width=160 --no-semi *.ts` and amend the commit'.
 
 # Verify that the code compiled and the compiled code is up to date.
-tmpdir=/tmp/.inqardsprecommit
+tmpdir=/tmp/.awocardsprecommit
 rm -rf "$tmpdir"
 tsc --outDir "$tmpdir" || fail 'Fix compiler error and amend the commit.'
 for f in "$tmpdir"/*; do
