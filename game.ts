@@ -1269,6 +1269,7 @@ async function join() {
   g.aborter = new AbortController()
   let aborter = g.aborter
   while (true) {
+    let jointime = Date.now()
     let response
     setNetworkStatus("awaiting server's signal")
     try {
@@ -1312,7 +1313,10 @@ async function join() {
       conn.close()
       g.clients = []
       setNetworkStatus("error: lost connection (will try reconnecting soon)")
-      await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      if (Date.now() - jointime < 60000) {
+        // Avoid rapid retrying.
+        await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+      }
       join()
     }
 
