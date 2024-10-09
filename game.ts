@@ -525,6 +525,7 @@ function handleTouch(event: TouchEvent, v: number) {
 function updateCurrentQuestion() {
   // Reset responses.
   g.playerStatuses.forEach((st) => (st.response = responsebits.empty))
+  g.sentStatus = responsebits.empty
   updatePlayerStatus()
 
   if (g.questionIndex == g.shuffledqs.length) {
