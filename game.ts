@@ -376,7 +376,7 @@ function renderWeekly() {
     ;[yy, mm, dd] = [d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()]
   }
   let lastMonday = (yy % 100) * 10000 + mm * 100 + dd
-  hLastMonday.innerText = `${lastMonday}`
+  hLastMonday.textContent = `${lastMonday}`
   if (!date) {
     date = lastMonday
     hDate.value = `${lastMonday}`
@@ -619,7 +619,7 @@ function renderQuestion(mode: rendermode) {
   renderStatus()
 
   if (g.currentQuestion.length == 0) {
-    hQuestion.innerText = "loading..."
+    hQuestion.textContent = "loading..."
     return
   }
 
@@ -684,10 +684,10 @@ function renderQuestion(mode: rendermode) {
     hRevealMarker.hidden = !(pendingPlayers > 0 && (isvote || (isdare && answerer != "") || (isquestion && answer != 0)))
     hPlayers.hidden = false
 
-    hRevealMarker.innerText = `${(playerresponse & responsebits.revealmarker) > 0 ? "[x]" : "[ ]"} skip wait (needs 2 players)`
-    hNextMarker.innerText = `${(playerresponse & responsebits.nextmarker) > 0 ? "[x]" : "[ ]"} next question (needs 2 players)`
+    hRevealMarker.textContent = `${(playerresponse & responsebits.revealmarker) > 0 ? "[x]" : "[ ]"} skip wait (needs 2 players)`
+    hNextMarker.textContent = `${(playerresponse & responsebits.nextmarker) > 0 ? "[x]" : "[ ]"} next question (needs 2 players)`
     let answerertype = isdare ? "receiver" : "answerer"
-    hBecomeAnswerer.innerText = `${answerer == hName.value ? "[x]" : "[ ]"} become ${answerertype}`
+    hBecomeAnswerer.textContent = `${answerer == hName.value ? "[x]" : "[ ]"} become ${answerertype}`
 
     hBecomeAnswerer.className = g.downbutton == responsebits.answerermarker ? "cfgNeutral" : ""
     hNextMarker.className = g.downbutton == responsebits.nextmarker ? "cfgNeutral" : ""
@@ -897,7 +897,7 @@ function handleHash() {
   }
   if (location.hash.startsWith("#join-")) {
     hGameUI.hidden = false
-    hJoining.innerText = "Joining..."
+    hJoining.textContent = "Joining..."
     hJoining.hidden = false
     hGameUI.hidden = true
     join()
@@ -988,13 +988,13 @@ function handleParse() {
   }
 
   if (!hCustomDB.checked) {
-    hCustomQuestionsReport.innerText = ""
+    hCustomQuestionsReport.textContent = ""
     if (err != "") seterror(err)
   } else {
     if (err != "") {
-      hCustomQuestionsReport.innerText = `Error: ${err}.`
+      hCustomQuestionsReport.textContent = `Error: ${err}.`
     } else {
-      hCustomQuestionsReport.innerText = `Found ${qs.length} entries.`
+      hCustomQuestionsReport.textContent = `Found ${qs.length} entries.`
     }
   }
 }
@@ -1014,26 +1014,26 @@ function eventPromise(obj: EventTarget, eventName: string) {
 function handleJoinnameChange(s: string) {
   if (s != "" && !validateName(s)) {
     hJoinname.className = "cbgNegative"
-    hJoinnameErr.innerText = "invalid name, must be at most 12 alphanumeric characters"
+    hJoinnameErr.textContent = "invalid name, must be at most 12 alphanumeric characters"
     s = ""
   } else {
     hJoinname.className = ""
-    hJoinnameErr.innerText = ""
+    hJoinnameErr.textContent = ""
   }
   hName.value = s
   localStorage.setItem("Username", s)
-  if (s == "") hJoinButton.innerText = "Spectate"
-  if (s != "") hJoinButton.innerText = "Join"
+  if (s == "") hJoinButton.textContent = "Spectate"
+  if (s != "") hJoinButton.textContent = "Join"
 }
 
 function handleNameChange(s: string) {
   if (s != "" && !validateName(s)) {
     hName.className = "cbgNegative"
-    hNameErr.innerText = "invalid name, must be at most 12 alphanumeric characters"
+    hNameErr.textContent = "invalid name, must be at most 12 alphanumeric characters"
     s = ""
   } else {
     hName.className = ""
-    hNameErr.innerText = ""
+    hNameErr.textContent = ""
   }
   hJoinname.value = s
   localStorage.setItem("Username", s)
@@ -1053,9 +1053,9 @@ function renderNetworkStatus() {
   if (g.clientMode) {
     hNetwork.hidden = false
     if (g.networkStatus != "") {
-      hNetwork.innerText = "Network status: " + g.networkStatus
+      hNetwork.textContent = "Network status: " + g.networkStatus
     } else {
-      hNetwork.innerText = "Network status: connected"
+      hNetwork.textContent = "Network status: connected"
     }
     return
   }
@@ -1067,7 +1067,7 @@ function renderNetworkStatus() {
   }
   if (parts.length != 0) {
     hNetwork.hidden = false
-    hNetwork.innerText = "Network status: " + parts.join("; ")
+    hNetwork.textContent = "Network status: " + parts.join("; ")
   } else {
     hNetwork.hidden = true
   }
@@ -1076,7 +1076,7 @@ function renderNetworkStatus() {
 
 function setNetworkStatus(s: string) {
   g.networkStatus = s
-  if (hJoining.innerText != "") hJoining.innerText = "Joining: " + s
+  if (hJoining.textContent != "") hJoining.textContent = "Joining: " + s
   renderNetworkStatus()
 }
 
@@ -1329,7 +1329,7 @@ async function join() {
         return
       }
       g.clients = [new client(0, conn, channel)]
-      hJoining.innerText = ""
+      hJoining.textContent = ""
       hJoining.hidden = true
       hGameUI.hidden = false
       handleNameChange(hName.value)
@@ -1428,7 +1428,7 @@ function setTheme() {
 }
 
 function seterror(msg: string) {
-  hError.innerText = `Error: ${msg}.\nReload the page to try again.`
+  hError.textContent = `Error: ${msg}.\nReload the page to try again.`
   hError.hidden = false
   document.body.classList.add("cbgNeutral")
 }
@@ -1492,7 +1492,7 @@ function main() {
     hJoinname.value = storedName
     hName.value = storedName
   }
-  hJoinButton.innerText = hJoinname.value == "" ? "Spectate" : "Join"
+  hJoinButton.textContent = hJoinname.value == "" ? "Spectate" : "Join"
 
   // Load theme if stored.
   let storedTheme = localStorage.getItem("Theme")
