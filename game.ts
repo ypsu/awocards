@@ -583,19 +583,25 @@ function renderStatus() {
   let stat = `${g.currentPos}, category ${g.currentQuestion[0]}`
   if (!g.clientMode) {
     let [clients, players, spectators, pending] = [0, 0, 0, 0]
+    let clientcnt = new Map<string, number>()
     for (let c of g.clients) {
       if (c.networkStatus != "" && c.conn != null) pending++
       if (c.networkStatus == "" && c.username == "") spectators++
-      if (c.networkStatus == "" && c.username != "") clients++
+      if (c.networkStatus == "" && c.username != "") clientcnt.set(c.username, (clientcnt.get(c.username) ?? 0) + 1)
     }
     g.playerStatuses.forEach((st) => {
       if (st.active) players++
+    })
+    let multiclientusers: string[] = []
+    clientcnt.forEach((cnt, u) => {
+      clients += cnt
+      if (cnt >= 2) multiclientusers.push(u)
     })
     if (g.clients.length >= 2) {
       if (g.clients[0].username == "") spectators--
       if (spectators > 0) stat += `, ${spectators} spectators`
       if (players > 0) stat += `, ${players} players`
-      if (clients != players) stat += `, ${clients} clients <span class=cfgNegative>(some clients have identical names!)</span>`
+      if (clients != players) stat += `, ${clients} clients <span class=cfgNegative>(user(s) ${multiclientusers.join(", ")} have multiple!)</span>`
       if (pending > 0) stat += `, ${pending} pending`
     }
   }
