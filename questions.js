@@ -175,6 +175,7 @@ Of what nature is your most worrying medical condition? @ birth defect @ somethi
 Would you recommend yourself as a partner for another person? @ yes because I would be a good partner @ yes but just because life is easier with a partner @ only for short term, long term relationships are hard @ no, I'm terrible
 You must sacrifice an activity. You can never do this anymore in life. Which one you pick? @ meeting friends @ browsing/watching internet/youtube/netflix/etc @ having sex @ exercising
 Do you feel bad or ashamed after masturbation? @ I don't masturbate @ not really @ only when I'm doing it too much @ yes, always
+Do you like masturbating with others? @ I never masturbate @ I only masturbate alone or with my partner @ I like the idea of having platonic friends with whom I can masturbate with @ I like the idea of visiting a club where I could masturbate with others
 What is your least favorite sex act of these? @ receive oral sex @ give oral sex @ penetrative sex @ mutual masturbation
 What is your most favorite sex act of these? @ receive oral sex @ give oral sex @ penetrative sex @ mutual masturbation
 How big of an issue would your death be? @ none as I have a will, inheritance, and funeral all set up @ there's some work my family needs to do but they should be ok @ it would be hard for my family as they depend a lot on me being alive and healthy
@@ -202,8 +203,8 @@ What do you miss the most when your partner is away? @ sex @ cooking @ the chore
 Would you mind breast implants? @ I don't mind them if my partner wants them @ I'd prefer to not have them for me or for my partner
 Would you mind lip filling? @ I don't mind them if my partner wants them @ I'd prefer to not have them for me or for my partner
 How often do you fight with your partner on average? @ daily @ weekly @ monthly @ never, we live in a harmony
-What way of your partner getting more sex would annoy you the least? @ transactional sex with an escort @ sex in a secondary relationship @ threesome sex with you present @ your partner can't ever have sex with other people even if that means depression and suffering for them
-What way of your partner getting more sex would annoy you the most? @ transactional sex with an escort @ sex in a secondary relationship @ threesome sex with you present @ your partner can't ever have sex with other people even if that means depression and suffering for them
+What way of your partner getting more sex would annoy you the least? @ transactional sex with an escort @ sex in a secondary relationship @ threesome sex with you present @ your partner not having sex with other people even if that means depression and suffering for them
+What way of your partner getting more sex would annoy you the most? @ transactional sex with an escort @ sex in a secondary relationship @ threesome sex with you present @ your partner not having sex with other people even if that means depression and suffering for them
 How would you prefer your partner to sleep? @ naked @ in underwear @ in an oversized t-shirt @ in pyjamas with separate pants
 What would you do if your partner suddenly became bedridden for life? @ stay with them and take care of them forever @ start a new life but take care of them @ start a new life without them
 Would you watch your partner having sex with someone else? @ no, I wouldn't allow my partner to have sex with others @ I don't want to be present @ sure, I'd be happy to watch @ sure, I'd be happy to record it even
