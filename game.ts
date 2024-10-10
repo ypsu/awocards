@@ -145,13 +145,14 @@ let g = {
   categories: {} as Record<string, boolean>,
 
   // The current question index from shuffledqs.
-  questionIndex: -1 as number,
+  questionIndex: 0 as number,
 
   // The currently displayed question and its stat.
   currentQuestion: [] as question,
   filteredIndex: -1,
   filteredQuestions: -1,
   currentPos: "", // the "card 12/34" string precomputed
+  gameSeed: 0,
 
   // To abort a sig request if there's on in flight.
   aborter: null as AbortController | null,
@@ -400,13 +401,30 @@ function renderWeekly() {
 }
 
 function handleStart() {
-  shuffle(parseInt(hSeed.value))
+  g.gameSeed = parseInt(hSeed.value)
+  g.questionIndex = 0
+  let savegame = localStorage.getItem("Savegame")
+  if (savegame != null) {
+    let parts = savegame.split(" ")
+    if (parts.length == 2) {
+      g.questionIndex = parseInt(parts[0])
+      g.gameSeed = parseInt(parts[1])
+    }
+  }
+  shuffle(g.gameSeed)
+
   g.clients = [new client(-1, null, null)]
   g.playerStatuses.clear()
   handleNameChange(hName.value)
   selectQuestions()
-  g.questionIndex = -1
+
+  // Continue the game from g.questionIndex.
+  if (g.questionIndex > g.shuffledqs.length) g.questionIndex = g.shuffledqs.length
   g.filteredIndex = -1
+  for (let i = 0; i < g.questionIndex; i++) {
+    if (g.categories[g.shuffledqs[i][0]]) g.filteredIndex++
+  }
+  g.questionIndex--
   handleNext()
   handleHost()
 }
@@ -543,6 +561,7 @@ function updateCurrentQuestion() {
   }
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
   for (let c of g.clients) c.channel?.send("q" + [`${g.filteredIndex}`, `${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
+  localStorage.setItem("Savegame", `${g.questionIndex} ${g.gameSeed}`)
 
   // Remove inactive players here, good point as any.
   g.playerStatuses.forEach((st, name) => {
@@ -895,6 +914,13 @@ function handleHash() {
     handlePrint()
     hPrintable.hidden = false
     return
+  }
+  if (location.hash == "#restart") {
+    localStorage.removeItem("Savegame")
+    // Update hash without adding it to the history.
+    history.replaceState(null, "", "#play")
+    history.pushState(null, "", "#play")
+    history.back()
   }
   if (location.hash == "#play") {
     hHostGameLine.hidden = false

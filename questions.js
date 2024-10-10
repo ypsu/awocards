@@ -157,7 +157,7 @@ How often did you consider suicide in the past? @ never @ occasionally @ often @
 Have you ever received penetrative anal sex? @ no and it doesn't interest me @ no but wouldn't mind trying @ yes and I liked it @ yes but didn't really like it
 Have you ever given penetrative anal sex? @ no and it doesn't interest me @ no but wouldn't mind trying @ yes and I liked it @ yes but didn't really like it
 Have you ever received asshole licking? @ no and it doesn't interest me @ no but wouldn't mind trying @ yes and I liked it @ yes but didn't really like it
-Have you ever given asshole licking? @ no and it doesn't interest me @ no but wouldn't mind trying @ yes and I liked it @ yes but didn't really like it
+Have you ever licked an asshole? @ no and it doesn't interest me @ no but wouldn't mind trying @ yes and I liked it @ yes but didn't really like it
 Did your parents do a good job? @ no @ yes
 Do you get enough love in your life? @ no @ yes
 What is your love language? What makes you feel loved the most? @ compliments or gifts @ quality time (e.g. dates, vacations) @ acts of service (e.g. doing chores) @ physical touch

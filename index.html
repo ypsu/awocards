@@ -20,6 +20,7 @@ Start game:
 <ul>
   <li><button onclick='location.hash="#play"'>Start</button> (to present the cards or to host a network game)
   <li>Join code: <input type=number size=6 placeholder=CODE id=hJoincode> username: <input size=10 placeholder=NAME id=hJoinname oninput=handleJoinnameChange(hJoinname.value)> <button id=hJoinButton onclick=handleJoin()>Join</button> <span id=hJoinnameErr class=cfgNegative></span> (for spectating or joining a networked version of the game)
+  <li><button onclick='location.hash="#restart"'>Restart</button> (reshuffle cards per game seed and restart from the beginning)
   <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
   <li><button onclick=handleWeekly()>Weekly question</button> (for having a random but predictable discussion topic)
 </ul>
@@ -61,12 +62,11 @@ See <a href="questions.js">the source code</a> to see what cards there are in ea
 <details>
   <summary>Advanced settings</summary>
   <ul>
-    <li>Game seed: <input type=number size=6 id=hSeed placeholder=SEED> <button onclick=handleSeedPreview()>Preview</button> (see <a href=#seed>Game Seed</a> below)
-    <li><input type=checkbox id=hCustomDB onclick=handleParse()> <label for=hCustomDB>Use custom database, see <a href=#customdb>Custom questions</a> below:</label><br>
+    <li>Game seed for randomizing the card order: <input type=number size=6 id=hSeed placeholder=SEED> <button onclick=handleSeedPreview()>Preview</button>
+    <li><input type=checkbox id=hCustomDB onclick=handleParse()> <label for=hCustomDB>Use custom card database:</label><br>
         <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># One card per line.
 # Separate answers via @ for questions, dares and votes can't have answer.
 # Prefix the card with "dare: " or "vote: " to treat them as such.
-# Dares must contain exactly one X character as a placeholder.
 # Characters after # are comments and thus ignored.
 # Lines starting with @ set the question category for the subsequent lines.
 
@@ -76,7 +76,7 @@ Who is your favorite superhero? @ Superman @ Batman @ Ironman @ Spiderman  # exa
 @intimate
 @partner
 @light-dares
-dare: Do you want to kiss X's cheek?  # example
+dare: Do you want to kiss their cheek?  # example
 @hot-dares
 @activities
 vote: Should we go for a hike?  # example
