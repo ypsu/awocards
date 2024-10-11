@@ -244,6 +244,7 @@ Here is a forum if you want to discuss this site and its content:
       <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
       <li>Jump to question: <button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button> <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump(hJumpIndex.value)>Jump</button>
       <li id=hHostGameLine><input type=checkbox id=hHostGame onclick=handleHost()><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode> <span id=hHostURL hidden></span>
+      <li id=hKickLine hidden><input type=checkbox id=hKick oninput=handleKick()><label for=hKick> Kick unresponded players (needs 2 players)</label>
       <li>Color theme:
         <input type=radio name=iTheme oninput=setTheme() id=hThemeSystem><label for=hThemeSystem> system</label>
         <input type=radio name=iTheme oninput=setTheme() id=hThemeLight><label for=hThemeLight> light</label>

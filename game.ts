@@ -12,6 +12,7 @@
 //
 // Host->client commands:
 //
+// - k: Host is kicking out the player. The player has to reload the page to rejoin.
 // - l: Log param on the client. For debugging.
 // - p: Set player statuses and names separated via @. Each entry is "playername responsebits_number".
 // - q: Set the current question.
@@ -46,6 +47,8 @@ declare var hJoining: HTMLElement
 declare var hJoinnameErr: HTMLElement
 declare var hJoinname: HTMLInputElement
 declare var hJumpIndex: HTMLInputElement
+declare var hKick: HTMLInputElement
+declare var hKickLine: HTMLElement
 declare var hLastMonday: HTMLElement
 declare var hNameErr: HTMLElement
 declare var hName: HTMLInputElement
@@ -76,6 +79,7 @@ enum responsebits {
   answerermarker = 8, // marks the player as the answerer
   nextmarker = 16, // means the player voted for jumping on the next question
   revealmarker = 32, // means the player voted on revealing the answer in the activity vote game
+  kickmarker = 64, // means the player voted on kicking unresponsive players
 }
 
 class statusdesc {
@@ -548,6 +552,10 @@ function handleTouch(event: TouchEvent, v: number) {
   renderQuestion(rendermode.quick)
 }
 
+function handleKick() {
+  reportClick(responsebits.kickmarker)
+}
+
 function updateCurrentQuestion() {
   // Reset responses.
   g.playerStatuses.forEach((st) => (st.response = responsebits.empty))
@@ -590,12 +598,13 @@ function updatePlayerStatus() {
   }
 
   let statusmsg = [] as string[]
-  let nextcnt = 0
+  let [nextcnt, kickcnt] = [0, 0]
   g.answerer = ""
   g.playerStatuses.forEach((st, name) => {
     if (st.active) statusmsg.push(`${name} ${st.response}`)
-    if (st.active && st.response & responsebits.answerermarker) g.answerer = name
+    if (st.active && (st.response & responsebits.answerermarker) > 0) g.answerer = name
     if (st.active && (st.response & responsebits.nextmarker) > 0) nextcnt++
+    if (st.active && (st.response & responsebits.kickmarker) > 0) kickcnt++
   })
   statusmsg.sort((a, b) => {
     if (a < b) return -1
@@ -605,6 +614,27 @@ function updatePlayerStatus() {
   let msg = "p" + statusmsg.join("@")
   for (let c of g.clients) c.channel?.send(msg)
   if (nextcnt >= 2) handleNext()
+
+  if (kickcnt >= 2) {
+    let hostkicked = false
+    for (let c of g.clients) {
+      if (c.username == "") continue
+      let st = g.playerStatuses.get(c.username)
+      if (st == null || (st.response & responsebits.answermask) > 0 || (st.response & responsebits.answerermarker) > 0) continue
+      c.username = ""
+      if (c == g.clients[0]) {
+        hostkicked = true
+        g.sentStatus = g.sentStatus & ~responsebits.kickmarker
+      } else {
+        c.channel?.send("k")
+      }
+    }
+    g.playerStatuses.forEach((st) => {
+      st.response = st.response & ~responsebits.kickmarker
+    })
+    updatePlayerStatus()
+    if (hostkicked) alert("You have been kicked out of the game due to inactivity. Reload the game to rejoin.")
+  }
 }
 
 function renderStatus() {
@@ -720,6 +750,8 @@ function renderQuestion(mode: rendermode) {
     hNextMarker.className = g.downbutton == responsebits.nextmarker ? "cfgNeutral" : ""
     hRevealMarker.className = g.downbutton == responsebits.revealmarker ? "cfgNeutral" : ""
   }
+  hKickLine.hidden = playercnt <= 1
+  hKick.checked = (playerresponse & responsebits.kickmarker) > 0
 
   // Compute each player's statusbox.
   g.disableInteraction = !isplayer || playercnt <= 1 || (isanswerer && isdare)
@@ -1155,6 +1187,7 @@ async function connectToClient(hostcode: string, clientID: number) {
         break
       case "l":
         console.log("Client log request:", param)
+        return
       case "n":
         if (!validateName(param)) param = ""
         c.username = param
@@ -1372,10 +1405,16 @@ async function join() {
         if (msg.length == 0) return
         let [cmd, param] = [msg[0], msg.slice(1)]
         switch (cmd) {
+          case "k":
+            alert("You have been kicked out of the game due to inactivity. Reload the game to rejoin.")
+            g.sentStatus = 0
+            return
           case "l":
             console.log("Host log request:", param)
+            return
           case "p":
             g.playerStatuses.clear()
+            g.sentStatus = 0 // pre-clear for the kicked out player case.
             for (let s of param.split("@")) {
               let sp = s.split(" ")
               if (sp.length != 2) continue
@@ -1403,7 +1442,10 @@ async function join() {
             g.clients = []
             setNetworkStatus("error: host abandoned the game (will try reconnecting soon)")
             renderQuestion(rendermode.quick)
-            await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+            if (Date.now() - jointime < 60000) {
+              // Avoid rapid retrying.
+              await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10))
+            }
             join()
             return
           default:
