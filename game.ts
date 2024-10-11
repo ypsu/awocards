@@ -624,11 +624,11 @@ function updatePlayerStatus() {
       c.username = ""
       if (c == g.clients[0]) {
         hostkicked = true
-        g.sentStatus = g.sentStatus & ~responsebits.kickmarker
       } else {
         c.channel?.send("k")
       }
     }
+    g.sentStatus = g.sentStatus & ~responsebits.kickmarker
     g.playerStatuses.forEach((st) => {
       st.response = st.response & ~responsebits.kickmarker
     })
@@ -639,6 +639,22 @@ function updatePlayerStatus() {
 
 function renderStatus() {
   let stat = `${g.currentPos}, category ${g.currentQuestion[0]}`
+
+  let isplayer = g.playerStatuses.has(hName.value)
+  let playercnt = 0
+  g.playerStatuses.forEach((st, name) => {
+    if (st.active) playercnt++
+  })
+  if (playercnt >= 2) {
+    if (hName.value == "") {
+      stat += ", you are presenting because you have not set a username"
+    } else if (!isplayer) {
+      stat += ", you are presenting because you were kicked"
+    } else {
+      stat += ", your username is " + hName.value
+    }
+  }
+
   if (!g.clientMode) {
     let [clients, players, spectators, pending] = [0, 0, 0, 0]
     let clientcnt = new Map<string, number>()
