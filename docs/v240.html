@@ -1,0 +1,344 @@
+<!doctype html><html lang=en>
+<head>
+  <style>:root{color-scheme:light dark}</style>
+  <title>awocards</title>
+  <meta charset=utf-8>
+  <meta name=viewport content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
+  <link rel=icon href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGFBMVEVAQEAAAAAAgP/////lwpgAAAAAAAAAAADtKIp+AAAACHRSTlMA/////////9XKVDIAAAEnSURBVFjD7dfZEoMgDAVQL83/f3MXW0nIQiIvHcc8tTPeIxiwdNvuumiBVXBVKr8TluPh8Epd2FCJKwAvANmsZaA1MQQkywOQr2MGjc0BqArvPBtCnKBPDY2NAbLKAmDmiaYAdqAZAPnFgcYAJPPdCABaA2heX+E8QAFAyepd/LWxCFBvo+ii6lY8BLRxO6rlooy+qI+7KsBd03JbmK8iKw9jXB7QrxN3teeFCBh6Lj5UAWI5acIBSDUPzGGmC3jLd/xSBdQ39yFUlvMNrD7FvwRqwiqAzX2nkP1iGbepfb7iwENWCoiEYZ97gJyEn/cALjDCeMEHh1TrQJBrgiWUulgQoiN4isD8uL8ygKmQyO8/vkt5n0jnj5PHQl6dX3AiLpir/sl8AmdqGkSzPzsjAAAAAElFTkSuQmCC">
+  <style>
+    :root {
+      --bg-neutral:   #ddd;
+      --bg-notice:    #ffc;
+      --bg-negative:  #fcc;
+      --bg-positive:  #cfc;
+      --bg-reference: #ccf;
+      --bg-special:   #fcf;
+      --bg-inverted:  #000;
+
+      --fg-neutral:   #bbb;
+      --fg-notice:    #880;
+      --fg-negative:  #800;
+      --fg-positive:  #080;
+      --fg-reference: #00c;
+      --fg-special:   #808;
+      --fg-inverted:  #fff;
+    }
+
+    [data-theme=dark] {
+      --bg-neutral:   #444;
+      --bg-notice:    #660;
+      --bg-negative:  #644;
+      --bg-positive:  #464;
+      --bg-reference: #448;
+      --bg-special:   #646;
+      --bg-inverted:  #fff;
+
+      --fg-neutral:   #666;
+      --fg-notice:    #ffc;
+      --fg-negative:  #c88;
+      --fg-positive:  #8c8;
+      --fg-reference: #88c;
+      --fg-special:   #c8c;
+      --fg-inverted:  #000;
+    }
+
+    .cbgNeutral   { background-color: var(--bg-neutral); }
+    .cbgNotice    { background-color: var(--bg-notice); }
+    .cbgNegative  { background-color: var(--bg-negative); }
+    .cbgPositive  { background-color: var(--bg-positive); }
+    .cbgReference { background-color: var(--bg-reference); }
+    .cbgSpecial   { background-color: var(--bg-special); }
+    .cbgInverted  { background-color: var(--bg-inverted); }
+
+    .cfgNeutral   { color: var(--fg-neutral); }
+    .cfgNotice    { color: var(--fg-notice); }
+    .cfgNegative  { color: var(--fg-negative); }
+    .cfgPositive  { color: var(--fg-positive); }
+    .cfgReference { color: var(--fg-reference); }
+    .cfgSpecial   { color: var(--fg-special); }
+    .cfgInverted  { color: var(--fg-inverted); }
+
+    body { font-family: sans-serif; cursor: default; }
+    #hIntro, #hWeeklyUI { max-width: 50em; margin: 0 auto; padding: 0 8px; }
+    #hGameUI { margin: 0 auto; padding: 0 8px; }
+    button { padding-left: 1ch; padding-right: 1ch; font-size: inherit; }
+    #hGameUI { margin: 0 0; user-select: none; }
+    textarea { width: 100%; }
+    ol, ul { margin-left: 2ch; }
+    li+li { margin-top: 1.5ex; }
+    .hPrintableCard { border: 1px solid black; display: inline-block; width: 51mm; height: 37mm; padding: 1em; overflow: hidden; line-height: normal; }
+    .hIdlink { text-decoration: none; opacity: 0; }
+    h2 a { opacity: 0; text-decoration: none; color: var(--fg-neutral); }
+    h2:hover a { opacity: 1; }
+    h2:active a { opacity: 1; }
+    h2:target { background-color: var(--bg-neutral); }
+  </style>
+</head><body>
+
+<pre id=hError class=cbgNegative hidden></pre>
+<p id=hNeedJS><em>This page needs Javascript enabled to work.</em></p>
+<div id=hIntro>
+
+<h1>awocards: AWkward Option CARDS</h1>
+
+<p>
+Start game:
+</p>
+
+<ul>
+  <li><button onclick='location.hash="#play"'>Start</button> (to present the cards or to host a network game)
+  <li>Join code: <input type=number size=6 placeholder=CODE id=hJoincode> username: <input size=10 placeholder=NAME id=hJoinname oninput=handleJoinnameChange(hJoinname.value)> <button id=hJoinButton onclick=handleJoin()>Join</button> <span id=hJoinnameErr class=cfgNegative></span> (for spectating or joining a networked version of the game)
+  <li><button onclick='location.hash="#restart"'>Restart</button> (reshuffle cards per game seed and restart from the beginning)
+  <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
+  <li><button onclick=handleWeekly()>Weekly question</button> (for having a random but predictable discussion topic)
+</ul>
+
+<p>
+Question cards:
+</p>
+
+<ul>
+  <li><input type=checkbox id=hqs oninput=handleCategoryChange() checked><label for=hqs> softball: easy, family friendly questions; can be used as a gentle intro into the game.</label>
+  <li><input type=checkbox id=hqd oninput=handleCategoryChange()><label for=hqd> divisive: political questions; ideal for turning friends into enemies.</label>
+  <li><input type=checkbox id=hqi oninput=handleCategoryChange()><label for=hqi> intimate: embarrassing, very private questions; ideal for making people regret coming to your drinking party.</label>
+  <li><input type=checkbox id=hqp oninput=handleCategoryChange()><label for=hqp> partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
+</ul>
+
+<p>
+Vote cards:
+</p>
+
+<ul>
+  <li><input type=checkbox id=hqa oninput=handleCategoryChange()><label for=hqa> activities: vote about vanilla activities to avoid just sitting home all the time.</label>
+  <li><input type=checkbox id=hqn oninput=handleCategoryChange()><label for=hqn> naughty-activities: vote about naughty activities to spice up life a bit.</label>
+</ul>
+
+<p>
+Dare cards:
+</p>
+
+<ul>
+  <li><input type=checkbox id=hql oninput=handleCategoryChange()><label for=hql> light-dares: semi-naughty but still a relatively gentle intro into dares.</label>
+  <li><input type=checkbox id=hqh oninput=handleCategoryChange()><label for=hqh> hot-dares: naughty dares in case you are all butt naked already; ideal as a warmup for your umm... hot party.</label>
+</ul>
+
+<p>
+Select the ones you want to play with before you start the game.
+See <a id=hQuestionsLink href=v0questions.js>the source code</a> to see what cards there are in each category.
+</p>
+
+<details>
+  <summary>Advanced settings</summary>
+  <ul>
+    <li>Game seed for randomizing the card order: <input type=number size=6 id=hSeed placeholder=SEED> <button onclick=handleSeedPreview()>Preview</button>
+    <li><input type=checkbox id=hCustomDB onclick=handleParse()> <label for=hCustomDB>Use custom card database:</label><br>
+        <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># One card per line.
+# Separate answers via @ for questions, dares and votes can't have answer.
+# Prefix the card with "dare: " or "vote: " to treat them as such.
+# Characters after # are comments and thus ignored.
+# Lines starting with @ set the question category for the subsequent lines.
+
+@softball
+Who is your favorite superhero? @ Superman @ Batman @ Ironman @ Spiderman  # example
+@divisive
+@intimate
+@partner
+@light-dares
+dare: Do you want to kiss their cheek?  # example
+@hot-dares
+@activities
+vote: Should we go for a hike?  # example
+@naughty-activities
+</textarea><br>
+<span id=hCustomQuestionsReport></span>
+    <li id=hGameVersion>Game version: loading.
+  </ul>
+</details>
+
+<hr>
+
+<h2 id=rules>Rules <a href=#rules>¶</a></h2>
+<p>
+  awocards (formed from "AWkward Option CARDS") is a simple turn based game for 2-6 players with a set of question, dare, vote cards with personal and sexual content.
+</p>
+
+<p>
+  Distribute 4 voting chips to each player.
+  Each voting chip is a piece of paper with a 1-4 digit on one side.
+  Shuffle the printed version of the cards and put them into a stack in the middle of the desk.
+  Each round someone pulls the card from the top.
+  Each type of card plays differently:
+</p>
+
+<ul>
+  <li>
+    Question card (cards that have a question and 2-4 answers): the card puller has to answer the question.
+    If none of the answers feel true, then in that case just pick the "closest" or "the least wrong" answer from the list.
+    Once they figured out the answer, they put the answer's voting chip face down in front of them.
+    The guessers have to guess what the answerer answer is.
+    They also put a voting chip face down in front of them.
+    Reveal everyone's vote chip once everyone has a voting chip in front of them.
+    Players who have guessed wrong have to explain why they picked their answer.
+  <li>
+    Vote card (cards that start with "Group vote"): each player votes how much interest they have doing the activity together with all the other members of the group.
+    Reveal the voting chips once everyone finished voting.
+    If nobody answered "definitely not" then make a plan doing that activity later on.
+  <li>
+    Dare card (cards that start with "Dare"): the card puller needs to decide if he would be willing to receive said act from anyone from the group.
+    If no then see if there's anybody else in the group to volunteer their body for the act.
+    If there's no volunteer then just go to the next round.
+    If there's a volunteer then the rest of the group uses the voting chip to express how much interest they have giving said act to the volunteer's body.
+    Reveal the voting chips once everyone answered.
+    The receiver can choose someone who didn't answer "definitely not" to do the activity to them for at most 1 minute.
+    Others, umm, just watch.
+</ul>
+
+<p>
+  The rules are not set in stone.
+  Alter them to whatever that makes sense for your group.
+  If a question, answer, or an activity is unclear then change it to something that makes sense.
+  E.g. if a person getting a partner card has multiple partners then they should randomly pick one with a dice before answering.
+  Or just draw a different card.
+  Your game, your rules.
+</p>
+
+<p>
+  Be aware that some cards can be quite spicy.
+  Play this game with your most trusted polyamorous LGBTQ-friendly friends only.
+  It can feel magical when people fully open up to each other.
+</p>
+
+<p>
+  Play only the "softball" question and "activites" vote cards if you are unsure or have a rather conservative group.
+  The game won't be that deep and interesting but it could be still a bit fun.
+</p>
+
+<p>
+  The game is stateless, there's no score to track or anything.
+  Think of it as a conversation starter.
+  The best outcome is that the game is abandoned because you found an interesting topic to chat about.
+</p>
+
+<h2 id=phonegame>Playing with phones <a href=#phonegame>¶</a></h2>
+
+<p>
+  Use printed cards + real voting chips for the best experience.
+  People shouldn't be poking at their phones in such a social game.
+  Don't play this online, it's too awkward for that.
+<p>
+
+<p>
+  If you have voting chips (e.g. from Dixit) then just present the current card from a phone or two but play with the voting chips.
+  However if you live in the 23rd century and there's no paper anymore, then this site provides a networked version that can be played with phones.
+  The host should start the game via the "Start game" option and then in the game setting tick the "host game" option.
+  Then they should share the join code with others.
+</p>
+
+<p>
+  Follow the instructions at the top section above the question.
+  Tap around, do a few test rounds, hopefully the interface makes sense after a few rounds.
+</p>
+
+<p>
+  It's also possible to spectate the game, e.g. to present the current question to the living room TV or to a secondary phone so that everyone can see it.
+  Join the game with an empty username to do so.
+</p>
+
+<p>
+  The implementation is a bit buggy.
+  Just reload the game if it gets stuck.
+  The game is peer-to-peer (WebRTC) so the host's phone must be always on.
+  Don't switch away from the tab or lock the phone or the game might break.
+  Also make sure each player picks a different username otherwise it gets weird.
+  Open a github issue per contact point below if it's completely broken or if you found a reproducible bug.
+</p>
+
+<h2 id=emailgame>Email game <a href=#emailgame>¶</a></h2>
+
+<p>
+  The cards can be used in any form you can think of.
+  Here's an example for an email game for keeping in touch with a friend with whom you no longer know what to talk about.
+  Each week or once a month one of you comes to this site and clicks the "Weekly question" button.
+  Then shoots an email like "I think your answer to this question is A because B".
+  If you are lucky then the other person will respond "No, it's C because D".
+  For extra points they will answer "And I think your answer to the question will be E because F".
+  Voila, you are keeping in touch while learning something about the other person.
+</p>
+
+<p>
+  By default only the softball questions are enabled.
+  Enable the private question categories too if you want spicier conversations.
+</p>
+
+<h2 id=contact>Contact <a href=#contact>¶</a></h2>
+
+The rules, cards, source code are all public domain, do whatever you want with them.
+Here is a forum if you want to discuss this site and its content:
+
+<ul>
+  <li>General discussion: <a href=https://github.com/ypsu/awocards/discussions>https://github.com/ypsu/awocards/discussions</a>
+  <li>Report issues: <a href=https://github.com/ypsu/awocards/issues>https://github.com/ypsu/awocards/issues</a>
+</ul>
+
+</div>
+
+<ol id=hSeedPreview hidden></ol>
+
+<div id=hPrintable hidden></div>
+
+<div id=hJoining hidden></div>
+
+<div id=hGameUI hidden>
+  <div id=hGameScreen>
+    <div id=hNavbar><button onclick=handlePrev() style=width:45%>Prev</button> <button onclick=handleNext() style=width:45%>Next</button></div>
+    <div id=hStatusbox style=text-align:center><p><span id=hStatusMarker>✋ volunteer</p><hr></div>
+    <div id=hQuestion></div>
+    <div id=hGroupControl>
+      <hr>
+      <ul style=font-family:monospace>
+        <li id=hBecomeAnswerer>[ ] become answerer
+        <li id=hRevealMarker>[ ] force reveal (needs 2 players)
+        <li id=hNextMarker>[ ] next question (needs 2 players)
+      </ul>
+    </div>
+  </div>
+  <hr>
+  <p id=hStat></p>
+  <p id=hPlayers>Players:</p>
+  <details ontoggle=renderQuestion(rendermode.quick)>
+    <summary>Settings</summary>
+    <ul>
+      <li id=hNetwork hidden>
+      <li>Your name (set to empty to spectate): <input id=hName size=12 oninput=handleNameChange(hName.value)> <em id=hNameErr class=cfgNegative></em>
+      <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
+      <li>Jump to question: <button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button> <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump(hJumpIndex.value)>Jump</button>
+      <li id=hHostGameLine><input type=checkbox id=hHostGame onclick=handleHost()><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode> <span id=hHostURL hidden></span>
+      <li id=hKickLine hidden><input type=checkbox id=hKick oninput=handleKick()><label for=hKick> Kick unresponded players (needs 2 players)</label>
+      <li>Color theme:
+        <input type=radio name=iTheme oninput=setTheme() id=hThemeSystem><label for=hThemeSystem> system</label>
+        <input type=radio name=iTheme oninput=setTheme() id=hThemeLight><label for=hThemeLight> light</label>
+        <input type=radio name=iTheme oninput=setTheme() id=hThemeDark><label for=hThemeDark> dark</label>
+      <li><button onclick="location.href='#'">Back to menu</button>
+    </ul>
+  </details>
+</div>
+
+<div id=hWeeklyUI hidden>
+  <div id=hWeeklyCard><p>Question card comes here</p></div>
+  <hr>
+  <p>Date in YYMMDD format (defaults to the last Monday, <span id=hLastMonday></span>): <input id=hDate type=number placeholder=YYMMDD size=9 oninput=setDate(hDate.value)></p>
+</div>
+
+<script>
+  let version = 240
+  hQuestionsLink.href = `v${version}questions.js`
+  function loadscript(src) {
+    let elem = document.createElement("script")
+    elem.src = src
+    document.documentElement.append(elem)
+  }
+  loadscript(`v${version}questions.js`)
+  loadscript(`v${version}game.js`)
+</script>
+
+</body></html>
