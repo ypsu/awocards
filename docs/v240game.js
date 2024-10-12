@@ -1089,10 +1089,8 @@ function handleJoinnameChange(s) {
     }
     hName.value = s;
     localStorage.setItem("awocards.Username", s);
-    if (s == "")
-        hJoinButton.textContent = "Spectate";
-    if (s != "")
-        hJoinButton.textContent = "Join";
+    hJoinButton.textContent = hJoinname.value == "" ? "Spectate" : "Join";
+    hJoinButton.disabled = hJoincode.value == "";
 }
 function handleNameChange(s) {
     if (s != "" && !validateName(s)) {
@@ -1580,6 +1578,7 @@ function main() {
         hName.value = storedName;
     }
     hJoinButton.textContent = hJoinname.value == "" ? "Spectate" : "Join";
+    hJoinButton.disabled = hJoincode.value == "";
     // Load categories if stored.
     let storedCategories = localStorage.getItem("awocards.Categories");
     if (storedCategories != null) {

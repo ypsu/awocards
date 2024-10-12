@@ -43,7 +43,7 @@ declare var hHostGame: HTMLInputElement
 declare var hHostGameLine: HTMLElement
 declare var hHostURL: HTMLElement
 declare var hIntro: HTMLElement
-declare var hJoinButton: HTMLElement
+declare var hJoinButton: HTMLButtonElement
 declare var hJoincode: HTMLInputElement
 declare var hJoining: HTMLElement
 declare var hJoinnameErr: HTMLElement
@@ -1100,8 +1100,8 @@ function handleJoinnameChange(s: string) {
   }
   hName.value = s
   localStorage.setItem("awocards.Username", s)
-  if (s == "") hJoinButton.textContent = "Spectate"
-  if (s != "") hJoinButton.textContent = "Join"
+  hJoinButton.textContent = hJoinname.value == "" ? "Spectate" : "Join"
+  hJoinButton.disabled = hJoincode.value == ""
 }
 
 function handleNameChange(s: string) {
@@ -1592,6 +1592,7 @@ function main() {
     hName.value = storedName
   }
   hJoinButton.textContent = hJoinname.value == "" ? "Spectate" : "Join"
+  hJoinButton.disabled = hJoincode.value == ""
 
   // Load categories if stored.
   let storedCategories = localStorage.getItem("awocards.Categories")
