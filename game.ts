@@ -204,9 +204,9 @@ function validateName(n: string) {
 function saveCustomQuestions() {
   handleParse()
   if (hCustomText.value == "") {
-    localStorage.removeItem("CustomQuestions")
+    localStorage.removeItem("awocards.CustomQuestions")
   } else {
-    localStorage.setItem("CustomQuestions", hCustomText.value)
+    localStorage.setItem("awocards.CustomQuestions", hCustomText.value)
   }
 }
 
@@ -263,7 +263,7 @@ function handleCategoryChange() {
   for (let cat in g.categories) {
     if ((document.getElementById("hq" + cat[0]) as HTMLInputElement).checked) cats += cat[0]
   }
-  localStorage.setItem("Categories", cats)
+  localStorage.setItem("awocards.Categories", cats)
 }
 
 function handleSeedPreview() {
@@ -407,7 +407,7 @@ function renderWeekly() {
 function handleStart() {
   g.gameSeed = parseInt(hSeed.value)
   g.questionIndex = 0
-  let savegame = localStorage.getItem("Savegame")
+  let savegame = localStorage.getItem("awocards.Savegame")
   if (savegame != null) {
     let parts = savegame.split(" ")
     if (parts.length == 2) {
@@ -569,7 +569,7 @@ function updateCurrentQuestion() {
   }
   g.currentPos = `card ${g.filteredIndex + 1}/${g.filteredQuestions}`
   for (let c of g.clients) c.channel?.send("q" + [`${g.filteredIndex}`, `${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
-  localStorage.setItem("Savegame", `${g.questionIndex} ${g.gameSeed}`)
+  localStorage.setItem("awocards.Savegame", `${g.questionIndex} ${g.gameSeed}`)
 
   // Remove inactive players here, good point as any.
   g.playerStatuses.forEach((st, name) => {
@@ -964,7 +964,7 @@ function handleHash() {
     return
   }
   if (location.hash == "#restart") {
-    localStorage.removeItem("Savegame")
+    localStorage.removeItem("awocards.Savegame")
     // Update hash without adding it to the history.
     history.replaceState(null, "", "#play")
     history.pushState(null, "", "#play")
@@ -1103,7 +1103,7 @@ function handleJoinnameChange(s: string) {
     hJoinnameErr.textContent = ""
   }
   hName.value = s
-  localStorage.setItem("Username", s)
+  localStorage.setItem("awocards.Username", s)
   if (s == "") hJoinButton.textContent = "Spectate"
   if (s != "") hJoinButton.textContent = "Join"
 }
@@ -1118,7 +1118,7 @@ function handleNameChange(s: string) {
     hNameErr.textContent = ""
   }
   hJoinname.value = s
-  localStorage.setItem("Username", s)
+  localStorage.setItem("awocards.Username", s)
   if (g.clientMode) {
     if (g.clients.length >= 1) g.clients[0].channel?.send("n" + s)
     return
@@ -1286,7 +1286,7 @@ async function handleHost() {
   }
 
   let hostcode = hHostcode.value
-  localStorage.setItem("Hostcode", hHostcode.value)
+  localStorage.setItem("awocards.Hostcode", hHostcode.value)
 
   let href = location.origin + location.pathname + `#join-${hostcode}`
   hHostcode.disabled = true
@@ -1346,7 +1346,7 @@ function handleJoin() {
 
 async function join() {
   let joincode = location.hash.substr(6)
-  localStorage.setItem("Joincode", joincode)
+  localStorage.setItem("awocards.Joincode", joincode)
 
   g.clientMode = true
   g.playerStatuses.clear()
@@ -1511,11 +1511,11 @@ function setTheme() {
   }
 
   if (hThemeDark.checked) {
-    localStorage.setItem("Theme", "dark")
+    localStorage.setItem("awocards.Theme", "dark")
   } else if (hThemeLight.checked) {
-    localStorage.setItem("Theme", "light")
+    localStorage.setItem("awocards.Theme", "light")
   } else {
-    localStorage.removeItem("Theme")
+    localStorage.removeItem("awocards.Theme")
   }
 }
 
@@ -1560,11 +1560,11 @@ function main() {
   hSeed.value = `${(now.getMonth() + 1) * 100 + now.getDate()}`
 
   // Load custom questions from localstorage if there are some.
-  let storedQuestions = localStorage.getItem("CustomQuestions")
+  let storedQuestions = localStorage.getItem("awocards.CustomQuestions")
   if (storedQuestions != null) hCustomText.value = storedQuestions
 
   // Load or generate host code.
-  let storedHostcode = localStorage.getItem("Hostcode")
+  let storedHostcode = localStorage.getItem("awocards.Hostcode")
   if (storedHostcode == null && hHostcode.value == "") {
     let hostcode = Math.round(1000 + Math.random() * (9999 - 1000))
     hHostcode.value = `${hostcode}`
@@ -1573,13 +1573,13 @@ function main() {
   }
 
   // Load join code if stored.
-  let storedJoincode = localStorage.getItem("Joincode")
+  let storedJoincode = localStorage.getItem("awocards.Joincode")
   if (storedJoincode != null && hJoincode.value == "") {
     hJoincode.value = storedJoincode
   }
 
   // Load name if stored.
-  let storedName = localStorage.getItem("Username")
+  let storedName = localStorage.getItem("awocards.Username")
   if (storedName != null && hJoinname.value == "" && hName.value == "") {
     hJoinname.value = storedName
     hName.value = storedName
@@ -1587,7 +1587,7 @@ function main() {
   hJoinButton.textContent = hJoinname.value == "" ? "Spectate" : "Join"
 
   // Load categories if stored.
-  let storedCategories = localStorage.getItem("Categories")
+  let storedCategories = localStorage.getItem("awocards.Categories")
   if (storedCategories != null) {
     for (let cat in g.categories) {
       let elem = document.getElementById("hq" + cat) as HTMLInputElement
@@ -1600,7 +1600,7 @@ function main() {
   }
 
   // Load theme if stored.
-  let storedTheme = localStorage.getItem("Theme")
+  let storedTheme = localStorage.getItem("awocards.Theme")
   if (storedTheme == "light") {
     hThemeLight.checked = true
   } else if (storedTheme == "dark") {
