@@ -588,12 +588,12 @@ function renderStatus() {
         if (st.active)
             playercnt++;
     });
-    if (playercnt >= 2) {
+    if (g.clientMode || g.clients.length >= 2) {
         if (hName.value == "") {
-            stat += ", you are presenting because you have not set a username";
+            stat += ", you are spectating because you have not set a username";
         }
         else if (!isplayer) {
-            stat += ", you are presenting because you were kicked";
+            stat += ", you are spectating because you were kicked";
         }
         else {
             stat += ", your username is " + hName.value;
