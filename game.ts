@@ -16,6 +16,7 @@
 // - l: Log param on the client. For debugging.
 // - p: Set player statuses and names separated via @. Each entry is "playername responsebits_number".
 // - q: Set the current question.
+// - v: Inform the client about the host's version number. The client should reload with the right version if there's a mismatch.
 // - x: Host abandoned the game.
 //
 // Client->host commands:
@@ -363,11 +364,7 @@ function setDate(v: string) {
   let parts = location.hash.split("-").filter((p) => !p.startsWith("d"))
   let d = parseInt(v)
   if (d) parts.push(`d${d}`)
-  let newhash = parts.join("-")
-  // Update hash without adding it to the history.
-  history.replaceState(null, "", newhash)
-  history.pushState(null, "", newhash)
-  history.back()
+  location.replace(parts.join("-"))
   handleHash()
 }
 
@@ -967,10 +964,7 @@ function handleHash() {
   }
   if (location.hash == "#restart") {
     localStorage.removeItem("awocards.Savegame")
-    // Update hash without adding it to the history.
-    history.replaceState(null, "", "#play")
-    history.pushState(null, "", "#play")
-    history.back()
+    location.replace("#play")
   }
   if (location.hash == "#play") {
     hHostGameLine.hidden = false
@@ -1275,6 +1269,7 @@ async function connectToClient(hostcode: string, clientID: number) {
   await eventPromise(channel, "open")
   c.channel = channel
   updateStatus("")
+  channel.send(`v${version}`)
   channel.send("q" + [`${g.filteredIndex}`, `${g.filteredQuestions}`].concat(g.currentQuestion).join("@"))
 }
 
@@ -1453,6 +1448,12 @@ async function join() {
             g.currentQuestion = parts.slice(2)
             renderQuestion(rendermode.full)
             return
+          case "v":
+            let hostversion = parseInt(param)
+            if (version != hostversion) {
+              location.replace(`${location.origin}/v${param}.html${location.hash}`)
+            }
+            return
           case "x":
             conn.oniceconnectionstatechange = null
             channel.onmessage = null
@@ -1538,7 +1539,7 @@ function main() {
   }
   hGameVersion.textContent = `Game version: v${version}`
   if (version != 0) {
-    hGameVersion.innerHTML = `Game version: v${version} (dev version at <a href=/v0>/v0</a>)`
+    hGameVersion.innerHTML = `Game version: v${version} (dev version at <a href=/v0.html>/v0.html</a>)`
   }
 
   darkPreference.addEventListener("change", setTheme)

@@ -124,7 +124,7 @@ Dare cards:
 
 <p>
 Select the ones you want to play with before you start the game.
-See <a href="questions.js">the source code</a> to see what cards there are in each category.
+See <a id=hQuestionsLink href=v0questions.js>the source code</a> to see what cards there are in each category.
 </p>
 
 <details>
@@ -331,6 +331,7 @@ Here is a forum if you want to discuss this site and its content:
 
 <script>
   let version = 0
+  hQuestionsLink.href = `v${version}questions.js`
   function loadscript(src) {
     let elem = document.createElement("script")
     elem.src = src
