@@ -1,10 +1,78 @@
-<!doctype html><html lang=en><head>
+<!doctype html><html lang=en>
+<head>
+  <style>:root{color-scheme:light dark}</style>
   <title>awocards</title>
   <meta charset=utf-8>
   <meta name=viewport content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
-  <style>:root{color-scheme:light dark}</style>
-  <link rel=icon href=favicon.ico>
-  <link rel=stylesheet href=style.css>
+  <link rel=icon href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGFBMVEVAQEAAAAAAgP/////lwpgAAAAAAAAAAADtKIp+AAAACHRSTlMA/////////9XKVDIAAAEnSURBVFjD7dfZEoMgDAVQL83/f3MXW0nIQiIvHcc8tTPeIxiwdNvuumiBVXBVKr8TluPh8Epd2FCJKwAvANmsZaA1MQQkywOQr2MGjc0BqArvPBtCnKBPDY2NAbLKAmDmiaYAdqAZAPnFgcYAJPPdCABaA2heX+E8QAFAyepd/LWxCFBvo+ii6lY8BLRxO6rlooy+qI+7KsBd03JbmK8iKw9jXB7QrxN3teeFCBh6Lj5UAWI5acIBSDUPzGGmC3jLd/xSBdQ39yFUlvMNrD7FvwRqwiqAzX2nkP1iGbepfb7iwENWCoiEYZ97gJyEn/cALjDCeMEHh1TrQJBrgiWUulgQoiN4isD8uL8ygKmQyO8/vkt5n0jnj5PHQl6dX3AiLpir/sl8AmdqGkSzPzsjAAAAAElFTkSuQmCC">
+  <style>
+    :root {
+      --bg-neutral:   #ddd;
+      --bg-notice:    #ffc;
+      --bg-negative:  #fcc;
+      --bg-positive:  #cfc;
+      --bg-reference: #ccf;
+      --bg-special:   #fcf;
+      --bg-inverted:  #000;
+
+      --fg-neutral:   #bbb;
+      --fg-notice:    #880;
+      --fg-negative:  #800;
+      --fg-positive:  #080;
+      --fg-reference: #00c;
+      --fg-special:   #808;
+      --fg-inverted:  #fff;
+    }
+
+    [data-theme=dark] {
+      --bg-neutral:   #444;
+      --bg-notice:    #660;
+      --bg-negative:  #644;
+      --bg-positive:  #464;
+      --bg-reference: #448;
+      --bg-special:   #646;
+      --bg-inverted:  #fff;
+
+      --fg-neutral:   #666;
+      --fg-notice:    #ffc;
+      --fg-negative:  #c88;
+      --fg-positive:  #8c8;
+      --fg-reference: #88c;
+      --fg-special:   #c8c;
+      --fg-inverted:  #000;
+    }
+
+    .cbgNeutral   { background-color: var(--bg-neutral); }
+    .cbgNotice    { background-color: var(--bg-notice); }
+    .cbgNegative  { background-color: var(--bg-negative); }
+    .cbgPositive  { background-color: var(--bg-positive); }
+    .cbgReference { background-color: var(--bg-reference); }
+    .cbgSpecial   { background-color: var(--bg-special); }
+    .cbgInverted  { background-color: var(--bg-inverted); }
+
+    .cfgNeutral   { color: var(--fg-neutral); }
+    .cfgNotice    { color: var(--fg-notice); }
+    .cfgNegative  { color: var(--fg-negative); }
+    .cfgPositive  { color: var(--fg-positive); }
+    .cfgReference { color: var(--fg-reference); }
+    .cfgSpecial   { color: var(--fg-special); }
+    .cfgInverted  { color: var(--fg-inverted); }
+
+    body { font-family: sans-serif; cursor: default; }
+    #hIntro, #hWeeklyUI { max-width: 50em; margin: 0 auto; padding: 0 8px; }
+    #hGameUI { margin: 0 auto; padding: 0 8px; }
+    button { padding-left: 1ch; padding-right: 1ch; font-size: inherit; }
+    #hGameUI { margin: 0 0; user-select: none; }
+    textarea { width: 100%; }
+    ol, ul { margin-left: 2ch; }
+    li+li { margin-top: 1.5ex; }
+    .hPrintableCard { border: 1px solid black; display: inline-block; width: 51mm; height: 37mm; padding: 1em; overflow: hidden; line-height: normal; }
+    .hIdlink { text-decoration: none; opacity: 0; }
+    h2 a { opacity: 0; text-decoration: none; color: var(--fg-neutral); }
+    h2:hover a { opacity: 1; }
+    h2:active a { opacity: 1; }
+    h2:target { background-color: var(--bg-neutral); }
+  </style>
 </head><body>
 
 <pre id=hError class=cbgNegative hidden></pre>
@@ -83,6 +151,7 @@ vote: Should we go for a hike?  # example
 @naughty-activities
 </textarea><br>
 <span id=hCustomQuestionsReport></span>
+    <li id=hGameVersion>Game version: loading.
   </ul>
 </details>
 
@@ -260,7 +329,15 @@ Here is a forum if you want to discuss this site and its content:
   <p>Date in YYMMDD format (defaults to the last Monday, <span id=hLastMonday></span>): <input id=hDate type=number placeholder=YYMMDD size=9 oninput=setDate(hDate.value)></p>
 </div>
 
-<script src=questions.js></script>
-<script src=game.js></script>
+<script>
+  let version = 0
+  function loadscript(src) {
+    let elem = document.createElement("script")
+    elem.src = src
+    document.documentElement.append(elem)
+  }
+  loadscript(`v${version}questions.js`)
+  loadscript(`v${version}game.js`)
+</script>
 
 </body></html>

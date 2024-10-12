@@ -35,6 +35,7 @@ declare var hError: HTMLElement
 declare var hFullscreen: HTMLInputElement
 declare var hGameScreen: HTMLElement
 declare var hGameUI: HTMLElement
+declare var hGameVersion: HTMLElement
 declare var hGroupControl: HTMLElement
 declare var hHostcode: HTMLInputElement
 declare var hHostGame: HTMLInputElement
@@ -72,6 +73,7 @@ declare var hWeeklyCard: HTMLElement
 declare var hWeeklyUI: HTMLElement
 
 declare var questionsdata: string
+declare var version: number
 
 enum responsebits {
   empty = 0,
@@ -1533,6 +1535,10 @@ function main() {
   window.onbeforeunload = disconnectAll
   window.onresize = () => {
     if (location.hash == "#play" || location.hash.startsWith("#join-")) renderQuestion(rendermode.full)
+  }
+  hGameVersion.textContent = `Game version: v${version}`
+  if (version != 0) {
+    hGameVersion.innerHTML = `Game version: v${version} (dev version at <a href=/v0>/v0</a>)`
   }
 
   darkPreference.addEventListener("change", setTheme)
