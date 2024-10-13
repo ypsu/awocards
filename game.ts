@@ -645,7 +645,9 @@ function renderStatus() {
     if (st.active) playercnt++
   })
   if (g.clientMode || g.clients.length >= 2) {
-    if (hName.value == "") {
+    if (g.clients.length == 0) {
+      stat += ", no connection (try reloading)"
+    } else if (hName.value == "") {
       stat += ", you are spectating because you have not set a username"
     } else if (!isplayer) {
       stat += ", you are spectating because you were kicked"

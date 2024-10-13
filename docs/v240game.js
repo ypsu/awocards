@@ -589,7 +589,10 @@ function renderStatus() {
             playercnt++;
     });
     if (g.clientMode || g.clients.length >= 2) {
-        if (hName.value == "") {
+        if (g.clients.length == 0) {
+            stat += ", no connection (try reloading)";
+        }
+        else if (hName.value == "") {
             stat += ", you are spectating because you have not set a username";
         }
         else if (!isplayer) {
@@ -899,8 +902,20 @@ function renderQuestion(mode) {
     }
     // Shrink to fit.
     let [w, h] = [innerWidth, 0.9 * innerHeight];
-    while (g.fontsize >= 12 && (hGameUI.scrollWidth + hGameUI.offsetLeft > w || hGameUI.scrollHeight + hGameUI.offsetTop > h)) {
-        g.fontsize = Math.floor(0.9 * g.fontsize);
+    if (g.fontsize >= 14 && (hGameUI.scrollWidth + hGameUI.offsetLeft > w || hGameUI.scrollHeight + hGameUI.offsetTop > h)) {
+        let [lo, hi] = [12, g.fontsize];
+        for (let it = 0; it < 5; it++) {
+            let mid = (lo + hi) / 2;
+            g.fontsize = mid;
+            hGameScreen.style.fontSize = `${g.fontsize}px`;
+            if (hGameUI.scrollWidth + hGameUI.offsetLeft > w || hGameUI.scrollHeight + hGameUI.offsetTop > h) {
+                hi = mid;
+            }
+            else {
+                lo = mid;
+            }
+        }
+        g.fontsize = lo;
         hGameScreen.style.fontSize = `${g.fontsize}px`;
     }
 }
