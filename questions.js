@@ -269,6 +269,9 @@ dare: Do you want to take a photo of their genital and keep it?
 dare: Do you want to take a photo of their asshole and keep it?
 dare: Do you want to take a photo of their fully naked body without face and keep it?
 dare: Do you want to take a photo of their fully naked body with face and keep it?
+dare: Do you want to kiss their asshole?
+dare: Do you want to kiss their genital?
+dare: Do you want to kiss their nipple?
 dare: Do you want to lick their asshole?
 dare: Do you want to lick their genital?
 dare: Do you want to lick their nipple?
@@ -323,7 +326,7 @@ vote: Should we do a naked dinner night?
 vote: Should we have a cozy group shower and clean each other? (the smaller the shower cabin the better)
 vote: Should we try masturbating together?
 vote: Should we try doing an oral sex circle? (lie in a circle, heads between the next person's legs)
-vote: Should we try doing a hand sex circle? (stand or sit in a circle, each person's hand between the legs of the person on right)
+vote: Should we try doing a hand sex circle? (stand or lie in a circle, each person's hand between the legs of the person on right)
 vote: Should we have a sleep-together-in-one-big-bed and have-a-tickle-and-pillow-fight night?
 vote: Should we have a who-can-piss-most-far contest? (ladies would be the judges)
 vote: Should we watch some porn together?
