@@ -61,6 +61,8 @@ Who cuts your hair? @ I do @ my hairdresser @ my partner/friend/family @ my hair
 Everyone on Earth gets all-knowing glasses. What statistic should the glasses display above people's heads? @ their name @ their mood @ their relationship status @ their net worth
 What should happen to you dead body once you die? @ buried so that worms and ants can feed on me as I rot away @ cremated for a quick and clean disposal @ donated to medical university so that students can play with me @ museum so that everyone can see me for a while
 There's is a pill that prolongs your life with 10 years (from 70 to 80) but you have to take it every day and can't miss a day. @ I will meticulously take it every day, yay for 10 extra years @ I will try to take it but no big deal if it's a hassle @ too much effort, don't want to live that long anyway
+What's your favorite season? @ spring @ summer @ autumn @ winter
+Which of these would be the most devastating for you to lose? @ your dominant arm @ a leg @ hearing @ your wealth (losing all your money, investments, house/apartmant)
 
 @divisive
 What's after death? @ nothing @ we reincarnate @ we meet the biblical God @ we exit the "simulation" and meet our universe administrators
@@ -104,6 +106,9 @@ Should the state have the ability to read and monitor our private messages witho
 What should be expected from migrants? @ migration should not be allowed, everyone should stay home @ migrating is OK if the migrant gives up their home culture and religion in favor of the new country's culture @ migrants can come with their culture but the new country isn't obligated to support it @ if a country accepts migrants, it should do its best to accept the migrant's culture too
 If we need to settle on one form of tax only, which should it be? @ transaction tax (e.g. 20% of every purchase goes to state) @ wealth tax (e.g. 20% of the total wealth of each person and company must go to state each year) @ land tax (e.g. homeowners pay tax based on rent in their area) @ pollution tax (e.g. companies generating pollution must have expensive licenses to do so)
 What's your opinion about masturbation? @ it's a shameful activity, people should not do it @ it's shameful but OK to do it as long as people don't talk about it @ it's healthy we should talk more about it @ it's healthy and we should be even more open about it, make it a normal day to day activity friends can do together
+What should the primary thing for the government to do when low on money? @ print more money (modern monetary theory) @ get loans @ tax more @ austerity: tighten up and reduce benefits, support, and other expenses
+Should smartphones be banned at school? @ no, that would infringe on kids' freedom @ only during classes and teachers should have the authority to confiscate them during classes @ yes because it causes too quarells between the teachers and kids
+Should government allow monopolies? @ yes, government shouldn't dictate how companies are running @ monopoly is OK as long as it is government owned company (e.g. public transportation, utility companies) @ no, large companies should be split to avoid the concentration of power
 
 @intimate
 Do you like being tickled? @ no @ just a little bit @ I want to be tickle-tortured
@@ -163,6 +168,10 @@ Do you get enough love in your life? @ no @ yes
 What is your love language? What makes you feel loved the most? @ compliments or gifts @ quality time (e.g. dates, vacations) @ acts of service (e.g. doing chores) @ physical touch
 Why do you hold your religious beliefs? @ because that's how I was raised and didn't think much about it @ because I know it's the most right view and everyone else is wrong @ for practical reasons, it's a way to connect with friends and family @ I'm forced to hold the views due to external factors
 Have you been with escorts? @ nope, I'm against the idea entirely @ nope, just not interested @ only once as an experiment @ several times
+Would you date / marry an escort? @ no @ date yes, marry no @ maybe, if they are selective with the clients @ yes, the nature of the job doesn't bother me
+Would you date / marry a porn star? @ no @ date yes, marry no @ maybe, if they are selective with the clients @ yes, the nature of the job doesn't bother me
+Would you date / marry nude model, a person who sells naked pics of themselves for money? @ no @ date yes, marry no @ yes, the nature of the job doesn't bother me
+Would you mind doing naked modeling or selling naked pics of you for money? @ I would mind because I don't want others see me naked @ I wouldn't mind doing it under certain conditions (someone has to manage me, good money, etc) @ I have done this or doing this
 What do you not like about your genital? @ how it looks like @ its sensitivity or performance @ the pain it causes @ type (I want the other gender's genital)
 When you born again, which sex would you want to be? @ female @ male
 How interested are you seeing other people nude? @ I don't want to see others naked @ I don't care about others naked @ I like to check out others @ seeing others naked makes me very happy
@@ -183,8 +192,10 @@ How difficult do you deem your life in average? @ easy @ medium @ hard @ nightma
 Which sex act have you done with both genders? Pick the first that applies. @ my genital touched both vagina and penis already @ oral sex @ handjob @ none or other
 Which of these would you use to describe yourself? @ dependable @ good looks @ fun @ smart
 What's the most annoying trait of you? @ boring or lazy @ workaholic @ stubborn @ bad communication skills
+How honest are you with others (e.g. your partner)? @ radical honesty, I tell everything @ I might keep some stuff to myself but never lie @ I sometimes might tell small lies about subjective things (e.g. "this was delicious food" when it wasn't) @ I might make small objective lies when it reduces stress and drama
 
 @partner
+How acceptable is your partner's social life for you? @ it's too much for me @ it's about right @ I wish my partner had more social life @ I wish my partner had a different social life
 Have you had sex with another person after your current relationship started? @ no @ yes @ multiple people even
 How do you handle serious disagreements with your partner? @ shouting @ talk through them like responsible adults @ give each other the silent treatment @ we never argue
 Would you swap your partner with someone else for a week? @ no @ yes but only if sex is strictly off limits @ yes, it would be a nice experiment
@@ -221,6 +232,9 @@ How often do you think about sex with different people than your partner? @ I ne
 How often do you think about leaving your relationship? @ never @ sometimes @ often
 If you could ask for one 3 minute activity each evening from now on from your partner, which one would you prefer to receive? @ oral sex @ handjob @ massage @ joint shower
 If you need to give one 3 minute activity each evening from now on to your partner, which one would you prefer to give? @ oral sex @ handjob @ massage @ joint shower
+Which one would be the worst secret to hold by your partner? In other words which secret would they definitely need to tell you? @ they french kissed someone else @ they don't love you or otherwise feel unhappy with you @ they have romantic feelings towards someone else @ they feel sad
+Which one would be the least worst secret to hold by your partner? In other words: which secret they wouldn't need to admit to you? @ they french kissed someone else @ they don't love you or otherwise feel unhappy with you @ they have romantic feelings towards someone else @ they feel sad
+Science evolved and all diseases (including sexually transmitted diseases) are eliminated, birth control is also 100% perfect. Would you still expect monogamy or other sexual restraint from your partner? @ yes due to tradition and religious reasons @ yes so that they don't fall in love with others through sex @ yes so that we have something special just between us @ no because sex has no risk, it's then no different than dancing or getting massage, it would be another fun activity to do with friends
 
 @light-dares
 dare: Do you want to pour a glass of water over their head?
@@ -240,6 +254,7 @@ dare: Do you want to put your ear on their chest and listen to their heartbeat?
 dare: Do you want to give them a feet massage?
 dare: Do you want to give them a shoulder massage?
 dare: Do you want to scratch their back?
+dare: Do you want to smell their feet?
 dare: Do you want to tickle their armpits?
 dare: Do you want to tickle their feet?
 dare: Do you want to lick their armpit?
