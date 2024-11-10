@@ -919,7 +919,7 @@ function renderQuestion(mode: rendermode) {
   let [w, h] = [innerWidth, 0.9 * innerHeight]
   if (g.fontsize >= 14 && (hGameUI.scrollWidth + hGameUI.offsetLeft > w || hGameUI.scrollHeight + hGameUI.offsetTop > h)) {
     let [lo, hi] = [12, g.fontsize]
-    for (let it = 0; it < 5; it++) {
+    for (let it = 0; it < 8; it++) {
       let mid = (lo + hi) / 2
       g.fontsize = mid
       hGameScreen.style.fontSize = `${g.fontsize}px`
