@@ -248,6 +248,7 @@ vote: Should we go for a hike?  # example
 
 <p>
   The implementation is a bit buggy.
+  Make sure all players are on the same (wifi) network.
   Just reload the game if it gets stuck.
   The game is peer-to-peer (WebRTC) so the host's phone must be always on.
   Don't switch away from the tab or lock the phone or the game might break.
@@ -288,7 +289,10 @@ Here is a forum if you want to discuss this site and its content:
 
 <div id=hPrintable hidden></div>
 
-<div id=hJoining hidden></div>
+<div id=hJoining hidden>
+  <p id=hJoiningMessage></p>
+  <p>(make sure you are on the same (wifi) network)</p>
+</div>
 
 <div id=hGameUI hidden>
   <div id=hGameScreen>

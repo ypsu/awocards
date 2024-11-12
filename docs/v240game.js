@@ -970,7 +970,7 @@ function handleHash() {
     }
     if (location.hash.startsWith("#join-")) {
         hGameUI.hidden = false;
-        hJoining.textContent = "Joining...";
+        hJoiningMessage.textContent = "Joining...";
         hJoining.hidden = false;
         hGameUI.hidden = true;
         join();
@@ -1160,8 +1160,8 @@ function renderNetworkStatus() {
 }
 function setNetworkStatus(s) {
     g.networkStatus = s;
-    if (hJoining.textContent != "")
-        hJoining.textContent = "Joining: " + s;
+    if (hJoiningMessage.textContent != "")
+        hJoiningMessage.textContent = "Joining: " + s;
     renderNetworkStatus();
 }
 async function connectToClient(hostcode, clientID) {
@@ -1391,6 +1391,17 @@ async function join() {
         }
         let offer = await response.text();
         let conn = new RTCPeerConnection(rtcConfig);
+        conn.onicecandidateerror = async (ev) => {
+            conn.oniceconnectionstatechange = null;
+            conn.close();
+            g.clients = [];
+            setNetworkStatus(`error: failed to connect: ${ev.errorText}`);
+            if (Date.now() - jointime < 60000) {
+                // Avoid rapid retrying.
+                await new Promise((resolve) => setTimeout(resolve, 5000 + Math.random() * 10));
+            }
+            join();
+        };
         conn.oniceconnectionstatechange = async (ev) => {
             if (conn.iceConnectionState != "disconnected")
                 return;
@@ -1412,7 +1423,7 @@ async function join() {
                 return;
             }
             g.clients = [new client(0, conn, channel)];
-            hJoining.textContent = "";
+            hJoiningMessage.textContent = "";
             hJoining.hidden = true;
             hGameUI.hidden = false;
             handleNameChange(hName.value);
@@ -1507,7 +1518,7 @@ async function join() {
         }
         break;
     }
-    setNetworkStatus("");
+    setNetworkStatus("awaiting connection");
 }
 let darkPreference = matchMedia("(prefers-color-scheme:dark)");
 function setTheme() {
