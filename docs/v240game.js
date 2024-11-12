@@ -1634,4 +1634,3 @@ function main() {
     handleParse();
     handleHash();
 }
-main();
