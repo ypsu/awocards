@@ -1,5 +1,7 @@
 # awocards: AWkward Options CARDS
 
+Play here: https://awocards.iio.ie.
+
 awocards is a collection text cards and an online game around them.
 
 Game is written in typescript, the post-commit script ensures that the code is styled properly and compiles.
