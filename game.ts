@@ -1624,7 +1624,7 @@ function main() {
   let storedCategories = localStorage.getItem("awocards.Categories")
   if (storedCategories != null) {
     for (let cat in g.categories) {
-      let elem = document.getElementById("hq" + cat) as HTMLInputElement
+      let elem = document.getElementById("hq" + cat[0]) as HTMLInputElement
       if (elem != null) elem.checked = false
     }
     for (let cat of storedCategories) {

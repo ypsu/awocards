@@ -1609,7 +1609,7 @@ function main() {
     let storedCategories = localStorage.getItem("awocards.Categories");
     if (storedCategories != null) {
         for (let cat in g.categories) {
-            let elem = document.getElementById("hq" + cat);
+            let elem = document.getElementById("hq" + cat[0]);
             if (elem != null)
                 elem.checked = false;
         }
