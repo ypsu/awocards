@@ -86,9 +86,8 @@ Start game:
 </p>
 
 <ul>
-  <li><button onclick='location.hash="#play"'>Start</button> (to present the cards or to host a network game)
+  <li><button onclick='location.hash="#play"'>Start/Continue</button> (to present the cards or to host a network game)
   <li>Join code: <input type=number size=6 placeholder=CODE id=hJoincode oninput=handleJoinnameChange(hJoinname.value)> username: <input size=10 placeholder=NAME id=hJoinname oninput=handleJoinnameChange(hJoinname.value)> <button id=hJoinButton onclick=handleJoin()>Join</button> <span id=hJoinnameErr class=cfgNegative></span> (for spectating or joining a networked version of the game)
-  <li><button onclick='location.hash="#restart"'>Restart</button> (reshuffle cards per game seed and restart from the beginning)
   <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
   <li><button onclick=handleWeekly()>Weekly question</button> (for having a random but predictable discussion topic)
 </ul>
@@ -130,7 +129,9 @@ See <a id=hQuestionsLink href=v0questions.js>the source code</a> to see what car
 <details>
   <summary>Advanced settings</summary>
   <ul>
-    <li>Game seed for randomizing the card order: <input type=number size=6 id=hSeed placeholder=SEED> <button onclick=handleSeedPreview()>Preview</button>
+    <li>Game seed for randomizing the card order: <input type=number size=6 id=hSeed placeholder=SEED>
+      <button onclick=handleSeedPreview()>Preview</button>
+      <button onclick='location.hash="#restart"'>Restart with this seed</button>
     <li><input type=checkbox id=hCustomDB onclick=handleParse()> <label for=hCustomDB>Use custom card database:</label><br>
         <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># One card per line.
 # Separate answers via @ for questions, dares and votes can't have answer.
