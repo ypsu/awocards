@@ -21,8 +21,8 @@ Where would you live if you lost all your money, job, and friends? @ move to par
 Would you be your own parent? @ no, I'd be a bad parent for myself @ it would be probably okay @ I'd love to have had myself as a parent
 What sort of movies do you like? @ blockbuster action movies @ romantic true story @ horrors and thrillers @ comedies
 If you would be young and need to choose a carreer, what would you study? @ physics @ computers @ medicine @ accounting
-What books do you like? @ autobiography @ romantic novels @ scifi-novels @ travel guides
-What book would you write? @ autobiography @ romantic novel @ scifi-novel @ travel guide
+What books do you like the most? @ autobiography @ romantic novels @ scifi-novels @ travel guides
+What sort of book would you write if you needed to write a book? @ autobiography @ romantic novel @ scifi-novel @ travel guide
 When do you brush your teeth in the morning? @ I don't brush @ before breakfast @ after breakfast
 Which type of personalities do you like the most? @ intelligent @ fun @ quiet @ empathetic
 How do you sleep? @ naked @ in underwear @ in an oversized t-shirt @ in pyjamas with separate pants
