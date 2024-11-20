@@ -86,7 +86,7 @@ Start game:
 </p>
 
 <ul>
-  <li><button onclick='location.hash="#play"'>Start/Continue</button> (to present the cards or to host a network game)
+  <li><button onclick='location.hash="#play"'>Continue</button> or <button onclick='location.hash="#restart"'>Restart</button> (to present the cards or to host a network game)
   <li>Join code: <input type=number size=6 placeholder=CODE id=hJoincode oninput=handleJoinnameChange(hJoinname.value)> username: <input size=10 placeholder=NAME id=hJoinname oninput=handleJoinnameChange(hJoinname.value)> <button id=hJoinButton onclick=handleJoin()>Join</button> <span id=hJoinnameErr class=cfgNegative></span> (for spectating or joining a networked version of the game)
   <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
   <li><button onclick=handleWeekly()>Weekly question</button> (for having a random but predictable discussion topic)
