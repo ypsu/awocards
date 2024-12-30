@@ -66,7 +66,7 @@ Which of these would be the most devastating for you to lose? @ your dominant ar
 
 @divisive
 What's after death? @ nothing @ we reincarnate @ we meet the biblical God @ we exit the "simulation" and meet our universe administrators
-What's your opinion on abortions? @ should be easy to get @ should be hard to get @ should be completely illegal @ should be illegal but the people should be able to give the baby to government no questions asked and then the government would give the orphans high quality care
+What's your opinion on abortions? @ should be easy to get @ should be hard to get @ should be completely illegal and people should take care of their unwanted children @ should be illegal but the people should be able to give the baby to government no questions asked and then the government would give the orphans high quality care
 What's your opinion on climate change? @ it's a lie, there's no climate change @ it's overblown, humanity is not in danger @ humanity will fix it @ humanity is doomed
 What should people do when everything is fully automated? @ people should be still working so that we don't get lazy @ we get free money and capitalism sorts things out @ everyone receives free services (food, shelter, care, internet) and they can do whatever they want
 What's your opinion on gun ownership? @ must be fully banned @ must be licensed @ should be easily accessible
