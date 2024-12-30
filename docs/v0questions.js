@@ -84,7 +84,7 @@ Are men and women equal? @ yes @ yes but only until the woman gets pregnant @ no
 How would you address immigration? @ disallow, people should improve their homeland @ allow in limited form for skilled people and some refugees @ allow generously @ remove all borders
 Which medium is the most harmful for society at large? @ video games and movies @ social networking sites @ video sharing sites @ news organizations
 How should healthcare be managed? @ centrally by the government, no private market be allowed @ solely by the private market @ have both government and private market providers and have them compete
-Should death penalty be allowed? @ yes @ yes @ people with life sentence should be given the option for assisted suicide @ no, people should be locked away forever without the option of death
+Should death penalty be allowed? @ yes, we should execute really bad people @ people with life sentence should be given the option for assisted suicide @ no, people should be locked away forever without the option of death
 Should kids be allowed to change their gender in young age via hormone therapy other intrusive methods? @ yes because the earlier started the more effective the treatment is @ not until it they are teenagers @ not until they are adults @ all such treatments should be banned
 Should conscription be a thing? @ no, it's a waste of time @ yes but optionally @ yes, mandatorily, some discipline won't hurt
 What should be done with big banks? @ leave them as they are @ split them up @ regulate them @ make them into a government run institutes
