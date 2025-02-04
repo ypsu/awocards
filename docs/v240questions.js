@@ -14,7 +14,7 @@ How often do you feel depressed? @ never @ rarely @ sometimes @ always
 How would you live if you could restart your life from your childhood? @ roughly the same way as now @ completely differently
 If you could travel in time once, where would you go? @ to the past @ stay put @ to the future
 What's your ideal living arrangement? @ alone @ with partner + kids @ in a commune of friends @ in a multigenerational house (living both with my parents and my kids)
-How do you deal with depression? keep it to myself and hope it passes @ distract myself until it passes (e.g. with exercise) @ ask for help @ medicate myself
+How do you deal with depression? @ keep it to myself and hope it passes @ distract myself until it passes (e.g. with exercise) @ ask for help @ medicate myself
 Which superpower would you like the most? @ invisibility @ flying @ teleportation @ mind reading
 Where would you prefer to live when old and your partner is gone? @ stay home alone @ move to a friend @ move to a nursing home @ move to a child's family
 Where would you live if you lost all your money, job, and friends? @ move to parents @ go to a homeless shelter @ live on the streets
