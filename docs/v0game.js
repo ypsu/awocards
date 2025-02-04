@@ -258,8 +258,8 @@ function handlePrint() {
     hPrintable.innerHTML = h;
     for (let div of hPrintable.children) {
         let span = div.children[0];
-        let [lo, hi] = [50, 200];
-        for (let i = 0; i < 4; i++) {
+        let [lo, hi] = [25, 200];
+        for (let i = 0; i < 5; i++) {
             let mid = (lo + hi) / 2;
             span.style.fontSize = `${mid}%`;
             if (div.scrollWidth <= div.clientWidth && div.scrollHeight <= div.clientHeight) {
