@@ -1570,6 +1570,9 @@ function main() {
 
   darkPreference.addEventListener("change", setTheme)
   setTheme()
+  let ss = new CSSStyleSheet()
+  ss.replace(style)
+  document.adoptedStyleSheets.push(ss)
 
   let addToggleHandlers = (h: HTMLElement, v: number) => {
     h.onmousedown = (event: MouseEvent) => handleMouse(event, v)
@@ -1647,3 +1650,78 @@ function main() {
   handleParse()
   handleHash()
 }
+
+let style = `
+  :root{color-scheme:light dark}
+
+  :root {
+    --bg-neutral:   #ddd;
+    --bg-notice:    #ffc;
+    --bg-negative:  #fcc;
+    --bg-positive:  #cfc;
+    --bg-reference: #ccf;
+    --bg-special:   #fcf;
+    --bg-inverted:  #000;
+
+    --fg-neutral:   #bbb;
+    --fg-notice:    #880;
+    --fg-negative:  #800;
+    --fg-positive:  #080;
+    --fg-reference: #00c;
+    --fg-special:   #808;
+    --fg-inverted:  #fff;
+  }
+
+  [data-theme=dark] {
+    --bg-neutral:   #444;
+    --bg-notice:    #660;
+    --bg-negative:  #644;
+    --bg-positive:  #464;
+    --bg-reference: #448;
+    --bg-special:   #646;
+    --bg-inverted:  #fff;
+
+    --fg-neutral:   #666;
+    --fg-notice:    #ffc;
+    --fg-negative:  #c88;
+    --fg-positive:  #8c8;
+    --fg-reference: #88c;
+    --fg-special:   #c8c;
+    --fg-inverted:  #000;
+  }
+
+  .cbgNeutral   { background-color: var(--bg-neutral); }
+  .cbgNotice    { background-color: var(--bg-notice); }
+  .cbgNegative  { background-color: var(--bg-negative); }
+  .cbgPositive  { background-color: var(--bg-positive); }
+  .cbgReference { background-color: var(--bg-reference); }
+  .cbgSpecial   { background-color: var(--bg-special); }
+  .cbgInverted  { background-color: var(--bg-inverted); }
+
+  .cfgNeutral   { color: var(--fg-neutral); }
+  .cfgNotice    { color: var(--fg-notice); }
+  .cfgNegative  { color: var(--fg-negative); }
+  .cfgPositive  { color: var(--fg-positive); }
+  .cfgReference { color: var(--fg-reference); }
+  .cfgSpecial   { color: var(--fg-special); }
+  .cfgInverted  { color: var(--fg-inverted); }
+
+  body { font-family: sans-serif; cursor: default; }
+  #hIntro, #hWeeklyUI { max-width: 50em; margin: 0 auto; padding: 0 8px; }
+  #hGameUI { margin: 0 auto; padding: 0 8px; }
+  button { padding-left: 1ch; padding-right: 1ch; font-size: inherit; }
+  .cNavButton { width: 45% }
+  .cInitialSize { font-size: initial; }
+  .cMonospace { font-family: monospace; }
+  #hStatusbox { text-align: center; }
+  #hGameUI { margin: 0 0; user-select: none; }
+  textarea { width: 100%; }
+  ol, ul { margin-left: 2ch; }
+  li+li { margin-top: 1.5ex; }
+  .hPrintableCard { border: 1px solid black; display: inline-block; width: 51mm; height: 37mm; padding: 1em; overflow: hidden; line-height: normal; }
+  .hIdlink { text-decoration: none; opacity: 0; }
+  h2 a { opacity: 0; text-decoration: none; color: var(--fg-neutral); }
+  h2:hover a { opacity: 1; }
+  h2:active a { opacity: 1; }
+  h2:target { background-color: var(--bg-neutral); }
+`
