@@ -835,7 +835,7 @@ function renderQuestion(mode: rendermode) {
       }
     }
     if (playerresponse != g.sentStatus) status = statusdescs.network
-    hStatusMarker.innerHTML = `${status.emoji} ${status.tag}<br><span style=font-size:initial>${status.desc}</span>`
+    hStatusMarker.innerHTML = `${status.emoji} ${status.tag}<br><span class=cInitialSize>${status.desc}</span>`
   }
 
   // Render the emoji coded player status line.

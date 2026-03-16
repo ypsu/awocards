@@ -62,6 +62,10 @@
     #hIntro, #hWeeklyUI { max-width: 50em; margin: 0 auto; padding: 0 8px; }
     #hGameUI { margin: 0 auto; padding: 0 8px; }
     button { padding-left: 1ch; padding-right: 1ch; font-size: inherit; }
+    .cNavButton { width: 45% }
+    .cInitialSize { font-size: initial; }
+    .cMonospace { font-family: monospace; }
+    #hStatusbox { text-align: center; }
     #hGameUI { margin: 0 0; user-select: none; }
     textarea { width: 100%; }
     ol, ul { margin-left: 2ch; }
@@ -297,12 +301,12 @@ Here is a forum if you want to discuss this site and its content:
 
 <div id=hGameUI hidden>
   <div id=hGameScreen>
-    <div id=hNavbar><button onclick=handlePrev() style=width:45%>Prev</button> <button onclick=handleNext() style=width:45%>Next</button></div>
-    <div id=hStatusbox style=text-align:center><p><span id=hStatusMarker>✋ volunteer</span></p><hr></div>
+    <div id=hNavbar><button onclick=handlePrev() class=cNavButton>Prev</button> <button onclick=handleNext() class=cNavButton>Next</button></div>
+    <div id=hStatusbox><p><span id=hStatusMarker>✋ volunteer</span></p><hr></div>
     <div id=hQuestion></div>
     <div id=hGroupControl>
       <hr>
-      <ul style=font-family:monospace>
+      <ul class=cMonospace>
         <li id=hBecomeAnswerer>[ ] become answerer
         <li id=hRevealMarker>[ ] force reveal (needs 2 players)
         <li id=hNextMarker>[ ] next question (needs 2 players)
