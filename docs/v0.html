@@ -267,16 +267,6 @@ Here is a forum if you want to discuss this site and its content:
   <p>Date in YYMMDD format (defaults to the last Monday, <span id=hLastMonday></span>): <input id=hDate type=number placeholder=YYMMDD size=9 oninput=setDate(hDate.value)></p>
 </div>
 
-<script>
-  let version = 0
-  hQuestionsLink.href = `v${version}questions.js`
-  function loadscript(src) {
-    let elem = document.createElement("script")
-    elem.src = src
-    document.documentElement.append(elem)
-  }
-  loadscript(`v${version}game.js`)
-  window.onload = () => { main() }
-</script>
+<script src=v0.js></script>
 
 </body></html>

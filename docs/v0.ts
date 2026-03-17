@@ -416,6 +416,7 @@ declare var hNextMarker: HTMLElement
 declare var hPlayers: HTMLElement
 declare var hPrintable: HTMLElement
 declare var hQuestion: HTMLElement
+declare var hQuestionsLink: HTMLAnchorElement
 declare var hRevealMarker: HTMLElement
 declare var hSeed: HTMLInputElement
 declare var hSeedPreview: HTMLElement
@@ -428,7 +429,7 @@ declare var hThemeSystem: HTMLInputElement
 declare var hWeeklyCard: HTMLElement
 declare var hWeeklyUI: HTMLElement
 
-declare var version: number
+let version = 0
 
 enum responsebits {
   empty = 0,
@@ -1916,6 +1917,10 @@ function main() {
   window.onresize = () => {
     if (location.hash == "#play" || location.hash.startsWith("#join-")) renderQuestion(rendermode.full)
   }
+  let vmatch = location.pathname.match(/v([0-9]+).html$/)
+  if (vmatch) version = parseInt(vmatch[1])
+  let path = location.pathname
+  hQuestionsLink.href = `v${version}.js`
   hGameVersion.textContent = `Game version: v${version}`
   if (version != 0) {
     hGameVersion.innerHTML = `Game version: v${version} (dev version at <a href=/v0.html>/v0.html</a>)`
@@ -2078,3 +2083,5 @@ let style = `
   h2:active a { opacity: 1; }
   h2:target { background-color: var(--bg-neutral); }
 `
+
+main()

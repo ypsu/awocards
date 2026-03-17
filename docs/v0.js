@@ -352,6 +352,7 @@ vote: Should we do a group kiss? (basically put all our tongues together)
 vote: Should we do a partner swap for a night? (assuming 2 couples are playing, skip to next otherwise)
 vote: Should we play blindfolded genital recognition? One person is blindfolded, another person gets in front of them, and they have to guess who they are solely by touching the genitals.
 `;
+let version = 0;
 var responsebits;
 (function (responsebits) {
     responsebits[responsebits["empty"] = 0] = "empty";
@@ -1880,6 +1881,11 @@ function main() {
         if (location.hash == "#play" || location.hash.startsWith("#join-"))
             renderQuestion(rendermode.full);
     };
+    let vmatch = location.pathname.match(/v([0-9]+).html$/);
+    if (vmatch)
+        version = parseInt(vmatch[1]);
+    let path = location.pathname;
+    hQuestionsLink.href = `v${version}.js`;
     hGameVersion.textContent = `Game version: v${version}`;
     if (version != 0) {
         hGameVersion.innerHTML = `Game version: v${version} (dev version at <a href=/v0.html>/v0.html</a>)`;
@@ -2036,3 +2042,4 @@ let style = `
   h2:active a { opacity: 1; }
   h2:target { background-color: var(--bg-neutral); }
 `;
+main();
