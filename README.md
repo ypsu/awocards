@@ -24,3 +24,10 @@ awocards was chosen as the name because it's unique enough while simple to prono
 
 This repo is public domain.
 Feel free to reuse the cards or code in any manner you desire, no credit is needed.
+
+## Development
+
+The code is in docs/v0.html and docs/v0.ts.
+The docs subdir is used due to github pages naming constraints.
+This is then occasionally snapshotted into a more stable, versioned release with the YYR versioning scheme.
+There can be at most 10 releases per year.

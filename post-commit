@@ -19,6 +19,7 @@ if test "$1" = install; then
 fi
 
 # Check formatting.
+cd docs
 prettier --check --print-width=160 --no-semi *.ts >/dev/null || fail 'Reformat code with `prettier --write --print-width=160 --no-semi *.ts` and amend the commit'.
 
 # Verify that the code compiled and the compiled code is up to date.
