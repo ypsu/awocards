@@ -1906,6 +1906,34 @@ function main() {
     addToggleHandlers(hBecomeAnswerer, responsebits.answerermarker);
     addToggleHandlers(hRevealMarker, responsebits.revealmarker);
     addToggleHandlers(hNextMarker, responsebits.nextmarker);
+    hContinueButton.onclick = () => (location.hash = "#play");
+    hRestartButton.onclick = () => (location.hash = "#restart");
+    hJoincode.oninput = () => handleJoinnameChange(hJoinname.value);
+    hJoinname.oninput = () => handleJoinnameChange(hJoinname.value);
+    hJoinButton.onclick = handleJoin;
+    hPrintButton.onclick = handlePrint;
+    hWeeklyButton.onclick = handleWeekly;
+    hSeedPreviewButton.onclick = handleSeedPreview;
+    hSeedRestartButton.onclick = () => (location.hash = "#restart");
+    hCustomDB.onclick = handleParse;
+    hCustomText.onkeyup = handleCustomTextChange;
+    hPrevButton.onclick = handlePrev;
+    hNextButton.onclick = handleNext;
+    hSettingsPrevButton.onclick = handlePrev;
+    hSettingsNextButton.onclick = handleNext;
+    hSettingsDetails.ontoggle = () => renderQuestion(rendermode.quick);
+    hJumpButton.onclick = () => handleJump(hJumpIndex.value);
+    hName.oninput = () => handleNameChange(hName.value);
+    hFullscreen.onclick = handleFullscreen;
+    hHostGame.onclick = handleHost;
+    hKick.oninput = handleKick;
+    hMenuButton.onclick = () => (location.href = "#");
+    hThemeSystem.oninput = setTheme;
+    hThemeLight.oninput = setTheme;
+    hThemeDark.oninput = setTheme;
+    hDate.oninput = () => setDate(hDate.value);
+    for (let e of [hqs, hqd, hqi, hqp, hqa, hqn, hql, hqh])
+        e.oninput = handleCategoryChange;
     // Init category names.
     for (let cat of ["softball", "divisive", "intimate", "partner", "light-dares", "hot-dares", "activities", "naughty-activities"]) {
         g.categories[cat] = false;

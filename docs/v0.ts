@@ -382,6 +382,7 @@ vote: Should we play blindfolded genital recognition? One person is blindfolded,
 // - x: Client leaves.
 
 declare var hBecomeAnswerer: HTMLElement
+declare var hContinueButton: HTMLButtonElement
 declare var hCustomDB: HTMLInputElement
 declare var hCustomQuestionsReport: HTMLElement
 declare var hCustomText: HTMLTextAreaElement
@@ -403,31 +404,52 @@ declare var hJoining: HTMLElement
 declare var hJoiningMessage: HTMLElement
 declare var hJoinnameErr: HTMLElement
 declare var hJoinname: HTMLInputElement
+declare var hJumpButton: HTMLButtonElement
 declare var hJumpIndex: HTMLInputElement
 declare var hKick: HTMLInputElement
 declare var hKickLine: HTMLElement
 declare var hLastMonday: HTMLElement
+declare var hMenuButton: HTMLButtonElement
 declare var hNameErr: HTMLElement
 declare var hName: HTMLInputElement
 declare var hNavbar: HTMLElement
 declare var hNeedJS: HTMLElement
 declare var hNetwork: HTMLElement
+declare var hNextButton: HTMLButtonElement
 declare var hNextMarker: HTMLElement
 declare var hPlayers: HTMLElement
+declare var hPrevButton: HTMLButtonElement
 declare var hPrintable: HTMLElement
+declare var hPrintButton: HTMLButtonElement
 declare var hQuestion: HTMLElement
 declare var hQuestionsLink: HTMLAnchorElement
+declare var hRestartButton: HTMLButtonElement
 declare var hRevealMarker: HTMLElement
 declare var hSeed: HTMLInputElement
+declare var hSeedPreviewButton: HTMLButtonElement
 declare var hSeedPreview: HTMLElement
+declare var hSeedRestartButton: HTMLButtonElement
+declare var hSettingsDetails: HTMLDetailsElement
+declare var hSettingsNextButton: HTMLButtonElement
+declare var hSettingsPrevButton: HTMLButtonElement
 declare var hStat: HTMLInputElement
 declare var hStatusbox: HTMLElement
 declare var hStatusMarker: HTMLElement
 declare var hThemeDark: HTMLInputElement
 declare var hThemeLight: HTMLInputElement
 declare var hThemeSystem: HTMLInputElement
+declare var hWeeklyButton: HTMLButtonElement
 declare var hWeeklyCard: HTMLElement
 declare var hWeeklyUI: HTMLElement
+
+declare var hqs: HTMLInputElement
+declare var hqd: HTMLInputElement
+declare var hqi: HTMLInputElement
+declare var hqp: HTMLInputElement
+declare var hqa: HTMLInputElement
+declare var hqn: HTMLInputElement
+declare var hql: HTMLInputElement
+declare var hqh: HTMLInputElement
 
 let version = 0
 
@@ -1943,6 +1965,34 @@ function main() {
   addToggleHandlers(hBecomeAnswerer, responsebits.answerermarker)
   addToggleHandlers(hRevealMarker, responsebits.revealmarker)
   addToggleHandlers(hNextMarker, responsebits.nextmarker)
+
+  hContinueButton.onclick = () => (location.hash = "#play")
+  hRestartButton.onclick = () => (location.hash = "#restart")
+  hJoincode.oninput = () => handleJoinnameChange(hJoinname.value)
+  hJoinname.oninput = () => handleJoinnameChange(hJoinname.value)
+  hJoinButton.onclick = handleJoin
+  hPrintButton.onclick = handlePrint
+  hWeeklyButton.onclick = handleWeekly
+  hSeedPreviewButton.onclick = handleSeedPreview
+  hSeedRestartButton.onclick = () => (location.hash = "#restart")
+  hCustomDB.onclick = handleParse
+  hCustomText.onkeyup = handleCustomTextChange
+  hPrevButton.onclick = handlePrev
+  hNextButton.onclick = handleNext
+  hSettingsPrevButton.onclick = handlePrev
+  hSettingsNextButton.onclick = handleNext
+  hSettingsDetails.ontoggle = () => renderQuestion(rendermode.quick)
+  hJumpButton.onclick = () => handleJump(hJumpIndex.value)
+  hName.oninput = () => handleNameChange(hName.value)
+  hFullscreen.onclick = handleFullscreen
+  hHostGame.onclick = handleHost
+  hKick.oninput = handleKick
+  hMenuButton.onclick = () => (location.href = "#")
+  hThemeSystem.oninput = setTheme
+  hThemeLight.oninput = setTheme
+  hThemeDark.oninput = setTheme
+  hDate.oninput = () => setDate(hDate.value)
+  for (let e of [hqs, hqd, hqi, hqp, hqa, hqn, hql, hqh]) e.oninput = handleCategoryChange
 
   // Init category names.
   for (let cat of ["softball", "divisive", "intimate", "partner", "light-dares", "hot-dares", "activities", "naughty-activities"]) {

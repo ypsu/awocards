@@ -16,10 +16,10 @@ Start game:
 </p>
 
 <ul>
-  <li><button onclick='location.hash="#play"'>Continue</button> or <button onclick='location.hash="#restart"'>Restart</button> (to present the cards or to host a network game)
-  <li>Join code: <input type=number size=6 placeholder=CODE id=hJoincode oninput=handleJoinnameChange(hJoinname.value)> username: <input size=10 placeholder=NAME id=hJoinname oninput=handleJoinnameChange(hJoinname.value)> <button id=hJoinButton onclick=handleJoin()>Join</button> <span id=hJoinnameErr class=cfgNegative></span> (for spectating or joining a networked version of the game)
-  <li><button onclick=handlePrint()>Generate printable cards</button> (for creating an offline version of the game)
-  <li><button onclick=handleWeekly()>Weekly question</button> (for having a random but predictable discussion topic)
+  <li><button id=hContinueButton>Continue</button> or <button id=hRestartButton>Restart</button> (to present the cards or to host a network game)
+  <li>Join code: <input type=number size=6 placeholder=CODE id=hJoincode> username: <input size=10 placeholder=NAME id=hJoinname> <button id=hJoinButton>Join</button> <span id=hJoinnameErr class=cfgNegative></span> (for spectating or joining a networked version of the game)
+  <li><button id=hPrintButton>Generate printable cards</button> (for creating an offline version of the game)
+  <li><button id=hWeeklyButton>Weekly question</button> (for having a random but predictable discussion topic)
 </ul>
 
 <p>
@@ -27,10 +27,10 @@ Question cards:
 </p>
 
 <ul>
-  <li><input type=checkbox id=hqs oninput=handleCategoryChange() checked><label for=hqs> softball: easy, family friendly questions; can be used as a gentle intro into the game.</label>
-  <li><input type=checkbox id=hqd oninput=handleCategoryChange()><label for=hqd> divisive: political questions; ideal for turning friends into enemies.</label>
-  <li><input type=checkbox id=hqi oninput=handleCategoryChange()><label for=hqi> intimate: embarrassing, very private questions; ideal for making people regret coming to your drinking party.</label>
-  <li><input type=checkbox id=hqp oninput=handleCategoryChange()><label for=hqp> partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
+  <li><input type=checkbox id=hqs checked><label for=hqs> softball: easy, family friendly questions; can be used as a gentle intro into the game.</label>
+  <li><input type=checkbox id=hqd><label for=hqd> divisive: political questions; ideal for turning friends into enemies.</label>
+  <li><input type=checkbox id=hqi><label for=hqi> intimate: embarrassing, very private questions; ideal for making people regret coming to your drinking party.</label>
+  <li><input type=checkbox id=hqp><label for=hqp> partner: spicy questions for folks with partners; ideal for getting couples into fights.</label>
 </ul>
 
 <p>
@@ -38,8 +38,8 @@ Vote cards:
 </p>
 
 <ul>
-  <li><input type=checkbox id=hqa oninput=handleCategoryChange()><label for=hqa> activities: vote about vanilla activities to avoid just sitting home all the time.</label>
-  <li><input type=checkbox id=hqn oninput=handleCategoryChange()><label for=hqn> naughty-activities: vote about naughty activities to spice up life a bit.</label>
+  <li><input type=checkbox id=hqa><label for=hqa> activities: vote about vanilla activities to avoid just sitting home all the time.</label>
+  <li><input type=checkbox id=hqn><label for=hqn> naughty-activities: vote about naughty activities to spice up life a bit.</label>
 </ul>
 
 <p>
@@ -47,8 +47,8 @@ Dare cards:
 </p>
 
 <ul>
-  <li><input type=checkbox id=hql oninput=handleCategoryChange()><label for=hql> light-dares: semi-naughty but still a relatively gentle intro into dares.</label>
-  <li><input type=checkbox id=hqh oninput=handleCategoryChange()><label for=hqh> hot-dares: naughty dares in case you are all butt naked already; ideal as a warmup for your umm... hot party.</label>
+  <li><input type=checkbox id=hql><label for=hql> light-dares: semi-naughty but still a relatively gentle intro into dares.</label>
+  <li><input type=checkbox id=hqh><label for=hqh> hot-dares: naughty dares in case you are all butt naked already; ideal as a warmup for your umm... hot party.</label>
 </ul>
 
 <p>
@@ -60,10 +60,10 @@ See <a id=hQuestionsLink href=v0questions.js>the source code</a> to see what car
   <summary>Advanced settings</summary>
   <ul>
     <li>Game seed for randomizing the card order: <input type=number size=6 id=hSeed placeholder=SEED>
-      <button onclick=handleSeedPreview()>Preview</button>
-      <button onclick='location.hash="#restart"'>Restart with this seed</button>
-    <li><input type=checkbox id=hCustomDB onclick=handleParse()> <label for=hCustomDB>Use custom card database:</label><br>
-        <textarea cols=72 rows=10 id=hCustomText onkeyup=handleCustomTextChange()># One card per line.
+      <button id=hSeedPreviewButton>Preview</button>
+      <button id=hSeedRestartButton>Restart with this seed</button>
+    <li><input type=checkbox id=hCustomDB> <label for=hCustomDB>Use custom card database:</label><br>
+        <textarea cols=72 rows=10 id=hCustomText># One card per line.
 # Separate answers via @ for questions, dares and votes can't have answer.
 # Prefix the card with "dare: " or "vote: " to treat them as such.
 # Characters after # are comments and thus ignored.
@@ -227,7 +227,7 @@ Here is a forum if you want to discuss this site and its content:
 
 <div id=hGameUI hidden>
   <div id=hGameScreen>
-    <div id=hNavbar><button onclick=handlePrev() class=cNavButton>Prev</button> <button onclick=handleNext() class=cNavButton>Next</button></div>
+    <div id=hNavbar><button id=hPrevButton class=cNavButton>Prev</button> <button id=hNextButton class=cNavButton>Next</button></div>
     <div id=hStatusbox><p><span id=hStatusMarker>✋ volunteer</span></p><hr></div>
     <div id=hQuestion></div>
     <div id=hGroupControl>
@@ -242,20 +242,20 @@ Here is a forum if you want to discuss this site and its content:
   <hr>
   <p id=hStat></p>
   <p id=hPlayers>Players:</p>
-  <details ontoggle=renderQuestion(rendermode.quick)>
+  <details id=hSettingsDetails>
     <summary>Settings</summary>
     <ul>
       <li id=hNetwork hidden>
-      <li>Your name (set to empty to spectate): <input id=hName size=12 oninput=handleNameChange(hName.value)> <em id=hNameErr class=cfgNegative></em>
-      <li><input type=checkbox id=hFullscreen onclick=handleFullscreen()><label for=hFullscreen>Full screen mode</label>
-      <li>Jump to question: <button onclick=handlePrev()>Prev</button> <button onclick=handleNext()>Next</button> <input type=number size=5 value=1 id=hJumpIndex> <button onclick=handleJump(hJumpIndex.value)>Jump</button>
-      <li id=hHostGameLine><input type=checkbox id=hHostGame onclick=handleHost()><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode> <span id=hHostURL hidden></span>
-      <li id=hKickLine hidden><input type=checkbox id=hKick oninput=handleKick()><label for=hKick> Kick unresponded players (needs 2 players)</label>
+      <li>Your name (set to empty to spectate): <input id=hName size=12> <em id=hNameErr class=cfgNegative></em>
+      <li><input type=checkbox id=hFullscreen><label for=hFullscreen>Full screen mode</label>
+      <li>Jump to question: <button id=hSettingsPrevButton>Prev</button> <button id=hSettingsNextButton>Next</button> <input type=number size=5 value=1 id=hJumpIndex> <button id=hJumpButton>Jump</button>
+      <li id=hHostGameLine><input type=checkbox id=hHostGame><label for=hHostGame> Host game with join code:</label> <input type=number size=6 placeholder=CODE id=hHostcode> <span id=hHostURL hidden></span>
+      <li id=hKickLine hidden><input type=checkbox id=hKick><label for=hKick> Kick unresponded players (needs 2 players)</label>
       <li>Color theme:
-        <input type=radio name=iTheme oninput=setTheme() id=hThemeSystem><label for=hThemeSystem> system</label>
-        <input type=radio name=iTheme oninput=setTheme() id=hThemeLight><label for=hThemeLight> light</label>
-        <input type=radio name=iTheme oninput=setTheme() id=hThemeDark><label for=hThemeDark> dark</label>
-      <li><button onclick="location.href='#'">Back to menu</button>
+        <input type=radio name=iTheme id=hThemeSystem><label for=hThemeSystem> system</label>
+        <input type=radio name=iTheme id=hThemeLight><label for=hThemeLight> light</label>
+        <input type=radio name=iTheme id=hThemeDark><label for=hThemeDark> dark</label>
+      <li><button id=hMenuButton>Back to menu</button>
     </ul>
   </details>
 </div>
@@ -263,7 +263,7 @@ Here is a forum if you want to discuss this site and its content:
 <div id=hWeeklyUI hidden>
   <div id=hWeeklyCard><p>Question card comes here</p></div>
   <hr>
-  <p>Date in YYMMDD format (defaults to the last Monday, <span id=hLastMonday></span>): <input id=hDate type=number placeholder=YYMMDD size=9 oninput=setDate(hDate.value)></p>
+  <p>Date in YYMMDD format (defaults to the last Monday, <span id=hLastMonday></span>): <input id=hDate type=number placeholder=YYMMDD size=9></p>
 </div>
 
 <script src=v0.js></script>
