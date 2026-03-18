@@ -536,14 +536,7 @@ function makeQuestionHTML(q, name) {
         answerid++;
         if (name == "")
             return ""; // not interactive mode.
-        let props = `id=ha${answerid}`;
-        for (let ev of ["mousedown", "mouseup", "mouseleave"]) {
-            props += ` on${ev}=handleMouse(event,${answerid})`;
-        }
-        for (let ev of ["touchstart", "touchend", "touchcancel"]) {
-            props += ` on${ev}=handleTouch(event,${answerid})`;
-        }
-        return props;
+        return `id=ha${answerid} data-v=${answerid}`;
     };
     let p = () => {
         return `<br><em id=hp${answerid}></em>`;
@@ -779,7 +772,9 @@ function countPlayers() {
     });
     return c;
 }
-function handleMouse(event, v) {
+function handleMouse(event) {
+    if (event.target == null)
+        return;
     if (g.downbutton == 0 && (event.type == "mouseleave" || event.type == "mouseup"))
         return;
     if (event.type == "mouseleave") {
@@ -789,6 +784,7 @@ function handleMouse(event, v) {
     }
     if (event.button != 0)
         return;
+    let v = parseInt(event.target.dataset.v);
     if (v == g.downbutton && event.type == "mouseup") {
         reportClick(v);
     }
@@ -797,9 +793,10 @@ function handleMouse(event, v) {
     }
     renderQuestion(rendermode.quick);
 }
-function handleTouch(event, v) {
+function handleTouch(event) {
     event.stopPropagation();
     event.preventDefault();
+    let v = parseInt(event.target.dataset.v);
     if (event.type == "touchstart" && (v >= 8 || !g.disableInteraction)) {
         g.downbutton = v;
     }
@@ -1022,6 +1019,8 @@ function renderQuestion(mode) {
         lastRenderedName = answerer;
         let a = playercnt >= 2 && answerer == "" ? "?" : answerer;
         hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion, a);
+        for (let e of hQuestion.children[1].children)
+            addToggleHandlers(e);
         g.fontsize = 300;
         hGameScreen.style.fontSize = `300px`;
     }
@@ -1871,6 +1870,14 @@ function seterror(msg) {
     hError.hidden = false;
     document.body.classList.add("cbgNeutral");
 }
+function addToggleHandlers(h) {
+    h.onmousedown = handleMouse;
+    h.onmouseup = handleMouse;
+    h.onmouseleave = handleMouse;
+    h.ontouchstart = handleTouch;
+    h.ontouchend = handleTouch;
+    h.ontouchcancel = handleTouch;
+}
 function main() {
     hNeedJS.hidden = true;
     window.onerror = (msg, src, line) => seterror(`${src}:${line} ${msg}`);
@@ -1895,17 +1902,9 @@ function main() {
     let ss = new CSSStyleSheet();
     ss.replace(style);
     document.adoptedStyleSheets.push(ss);
-    let addToggleHandlers = (h, v) => {
-        h.onmousedown = (event) => handleMouse(event, v);
-        h.onmouseup = (event) => handleMouse(event, v);
-        h.onmouseleave = (event) => handleMouse(event, v);
-        h.ontouchstart = (event) => handleTouch(event, v);
-        h.ontouchend = (event) => handleTouch(event, v);
-        h.ontouchcancel = (event) => handleTouch(event, v);
-    };
-    addToggleHandlers(hBecomeAnswerer, responsebits.answerermarker);
-    addToggleHandlers(hRevealMarker, responsebits.revealmarker);
-    addToggleHandlers(hNextMarker, responsebits.nextmarker);
+    addToggleHandlers(hBecomeAnswerer);
+    addToggleHandlers(hRevealMarker);
+    addToggleHandlers(hNextMarker);
     hContinueButton.onclick = () => (location.hash = "#play");
     hRestartButton.onclick = () => (location.hash = "#restart");
     hJoincode.oninput = () => handleJoinnameChange(hJoinname.value);

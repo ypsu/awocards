@@ -665,14 +665,7 @@ function makeQuestionHTML(q: question, name: string) {
   let a = () => {
     answerid++
     if (name == "") return "" // not interactive mode.
-    let props = `id=ha${answerid}`
-    for (let ev of ["mousedown", "mouseup", "mouseleave"]) {
-      props += ` on${ev}=handleMouse(event,${answerid})`
-    }
-    for (let ev of ["touchstart", "touchend", "touchcancel"]) {
-      props += ` on${ev}=handleTouch(event,${answerid})`
-    }
-    return props
+    return `id=ha${answerid} data-v=${answerid}`
   }
   let p = () => {
     return `<br><em id=hp${answerid}></em>`
@@ -899,7 +892,8 @@ function countPlayers() {
   return c
 }
 
-function handleMouse(event: MouseEvent, v: number) {
+function handleMouse(event: MouseEvent) {
+  if (event.target == null) return
   if (g.downbutton == 0 && (event.type == "mouseleave" || event.type == "mouseup")) return
   if (event.type == "mouseleave") {
     g.downbutton = 0
@@ -907,6 +901,7 @@ function handleMouse(event: MouseEvent, v: number) {
     return
   }
   if (event.button != 0) return
+  let v = parseInt((event.target as HTMLElement).dataset.v as string)
   if (v == g.downbutton && event.type == "mouseup") {
     reportClick(v)
   } else if (event.type == "mousedown" && (v >= 8 || !g.disableInteraction)) {
@@ -915,9 +910,10 @@ function handleMouse(event: MouseEvent, v: number) {
   renderQuestion(rendermode.quick)
 }
 
-function handleTouch(event: TouchEvent, v: number) {
+function handleTouch(event: TouchEvent) {
   event.stopPropagation()
   event.preventDefault()
+  let v = parseInt((event.target as HTMLElement).dataset.v as string)
   if (event.type == "touchstart" && (v >= 8 || !g.disableInteraction)) {
     g.downbutton = v
   } else if (event.type == "touchcancel") {
@@ -1115,6 +1111,7 @@ function renderQuestion(mode: rendermode) {
     lastRenderedName = answerer
     let a = playercnt >= 2 && answerer == "" ? "?" : answerer
     hQuestion.innerHTML = makeQuestionHTML(g.currentQuestion, a)
+    for (let e of hQuestion.children[1].children) addToggleHandlers(e as HTMLElement)
     g.fontsize = 300
     hGameScreen.style.fontSize = `300px`
   }
@@ -1930,6 +1927,15 @@ function seterror(msg: string) {
   document.body.classList.add("cbgNeutral")
 }
 
+function addToggleHandlers(h: HTMLElement) {
+  h.onmousedown = handleMouse
+  h.onmouseup = handleMouse
+  h.onmouseleave = handleMouse
+  h.ontouchstart = handleTouch
+  h.ontouchend = handleTouch
+  h.ontouchcancel = handleTouch
+}
+
 function main() {
   hNeedJS.hidden = true
   window.onerror = (msg, src, line) => seterror(`${src}:${line} ${msg}`)
@@ -1954,17 +1960,9 @@ function main() {
   ss.replace(style)
   document.adoptedStyleSheets.push(ss)
 
-  let addToggleHandlers = (h: HTMLElement, v: number) => {
-    h.onmousedown = (event: MouseEvent) => handleMouse(event, v)
-    h.onmouseup = (event: MouseEvent) => handleMouse(event, v)
-    h.onmouseleave = (event: MouseEvent) => handleMouse(event, v)
-    h.ontouchstart = (event: TouchEvent) => handleTouch(event, v)
-    h.ontouchend = (event: TouchEvent) => handleTouch(event, v)
-    h.ontouchcancel = (event: TouchEvent) => handleTouch(event, v)
-  }
-  addToggleHandlers(hBecomeAnswerer, responsebits.answerermarker)
-  addToggleHandlers(hRevealMarker, responsebits.revealmarker)
-  addToggleHandlers(hNextMarker, responsebits.nextmarker)
+  addToggleHandlers(hBecomeAnswerer)
+  addToggleHandlers(hRevealMarker)
+  addToggleHandlers(hNextMarker)
 
   hContinueButton.onclick = () => (location.hash = "#play")
   hRestartButton.onclick = () => (location.hash = "#restart")
